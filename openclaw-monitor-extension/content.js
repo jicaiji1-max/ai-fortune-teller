@@ -1,4 +1,4 @@
-// Sessions Monitor - 通用 Agent 会话监控面板
+// Agents Monitor - OpenClaw Agent 状态监控面板
 // 支持任意 OpenClaw 实例，从 API 动态获取配置
 
 (function() {
@@ -7,7 +7,7 @@
   // ==================== 常量定义 ====================
   const API_URL = 'http://127.0.0.1:18790/api/sessions';
   const REFRESH_INTERVAL = 10000; // 10 秒
-  const PANEL_ID = 'sessions-monitor-panel';
+  const PANEL_ID = 'agents-monitor-panel';
   const PANEL_DEFAULT_WIDTH = 480;
   const PANEL_DEFAULT_HEIGHT = 450;
   const PANEL_MIN_WIDTH = 400;
@@ -562,7 +562,11 @@
     agentIds.forEach(function(agentId) {
       var agent = agentsData[agentId];
       var savedState = state.expandedStates[agentId] || { details: false, sessions: false };
-      renderAgentCard(agentId, agent, savedState);
+      var card = renderAgentCard(agentId, agent, savedState);
+      // 如果卡片是新创建的，添加到 section
+      if (card && !card.parentNode) {
+        section.appendChild(card);
+      }
     });
     
     // 移除不存在的卡片
@@ -607,16 +611,19 @@
       errorDiv.appendChild(hint);
       body.appendChild(errorDiv);
     }
-    console.error('[Monitor] 加载失败:', message);
+    console.error('[Agents Monitor] 加载失败:', message);
   }
   
   // 加载数据
   function loadData() {
+    console.log('[Agents Monitor] 开始加载数据...');
     fetchSessionsData()
       .then(function(agentsData) {
+        console.log('[Agents Monitor] 数据加载成功，agents:', Object.keys(agentsData));
         renderPanel(agentsData);
       })
       .catch(function(e) {
+        console.error('[Agents Monitor] 加载失败:', e.message);
         showError(e.message);
       });
   }
@@ -627,7 +634,7 @@
   function initPanel() {
     // 检查是否已存在
     if (document.getElementById(PANEL_ID)) {
-      console.log('[Monitor] 面板已存在，跳过初始化');
+      console.log('[Agents Monitor] 面板已存在，跳过初始化');
       return;
     }
     
@@ -645,7 +652,7 @@
     // 创建头部
     var header = createElement('div', 'monitor-header');
     var title = createElement('span', 'monitor-title');
-    title.textContent = '🤖 Sessions Monitor';
+    title.textContent = '🤖 Agents Monitor';
     var toggleBtn = createElement('button', 'monitor-toggle');
     toggleBtn.textContent = '−';
     header.appendChild(title);
@@ -676,15 +683,23 @@
     // 启动自动刷新
     state.refreshTimer = setInterval(loadData, REFRESH_INTERVAL);
     
-    // 页面卸载时清理
-    addEventListener(window, 'unload', function() {
-      if (state.refreshTimer) {
-        clearInterval(state.refreshTimer);
+    // 页面隐藏时暂停刷新（节省资源，Manifest V3 不允许 unload 事件）
+    addEventListener(document, 'visibilitychange', function() {
+      if (document.hidden) {
+        // 页面隐藏，暂停刷新
+        if (state.refreshTimer) {
+          clearInterval(state.refreshTimer);
+          state.refreshTimer = null;
+        }
+      } else {
+        // 页面显示，恢复刷新
+        if (!state.refreshTimer) {
+          state.refreshTimer = setInterval(loadData, REFRESH_INTERVAL);
+        }
       }
-      cleanupEventListeners();
     });
     
-    console.log('[Monitor] 面板已初始化');
+    console.log('[Agents Monitor] 面板已初始化');
   }
   
   // 初始化拖拽和调整大小
