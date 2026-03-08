@@ -225,28 +225,49 @@ node openclaw-sessions-api.js
 
 ---
 
-### 第三步：加载 Chrome 扩展
+### 第三步：加载 Chrome 扩展（重要！）
+
+这个扩展是 Chrome 浏览器扩展，需要手动加载到 Chrome 中。
+
+**详细步骤**：
 
 1. **打开 Chrome 浏览器**
+   - 注意：必须是 Google Chrome，不能用 Edge、Safari 等其他浏览器
 
 2. **进入扩展管理页面**
-   - 在地址栏输入：`chrome://extensions/`
-   - 或者：点击右上角三个点 → 扩展程序 → 管理扩展程序
+   - 方法 A：在地址栏输入 `chrome://extensions/` 回车
+   - 方法 B：点击右上角三个点 → 扩展程序 → 管理扩展程序
 
-3. **开启开发者模式**
-   - 在页面右上角，找到 **开发者模式** 开关
+3. **开启开发者模式** ⚠️
+   - 在页面**右上角**，找到 **开发者模式** 开关
    - 把它打开（开关变蓝色）
+   - **注意**：不开启开发者模式无法加载自定义扩展
 
 4. **加载扩展**
    - 点击左上角的 **加载已解压的扩展程序** 按钮
    - 在弹出的窗口中，选择你刚才下载的文件夹：
-     - Mac: `/Users/你的用户名/.openclaw/skills/sessions-monitor/openclaw-monitor-extension`
-     - Windows: `C:\Users\你的用户名\.openclaw\skills\sessions-monitor\openclaw-monitor-extension`
-   - 点击 **选择文件夹**
+     - **Mac**: `/Users/你的用户名/.openclaw/skills/sessions-monitor/openclaw-monitor-extension`
+     - **Windows**: `C:\Users\你的用户名\.openclaw\skills\sessions-monitor\openclaw-monitor-extension`
+   - 点击 **选择文件夹** 按钮
 
-5. **确认加载成功**
+5. **确认加载成功** ✅
    - 扩展列表中应该出现 "Sessions Monitor"
-   - 状态显示为 "已启用"
+   - 状态显示为 **"已启用"**（绿色开关）
+   - 如果显示"错误"，查看下面的常见问题
+
+**常见问题**：
+
+❌ **显示"错误"或红色提示**
+- 原因：manifest.json 配置有问题
+- 解决：检查 manifest.json 格式，重新加载扩展
+
+❌ **找不到"加载已解压的扩展程序"按钮**
+- 原因：没开开发者模式
+- 解决：先开启右上角的开发者模式开关
+
+❌ **加载后扩展列表没有出现**
+- 原因：文件夹选择错误
+- 解决：确保选择的是 `openclaw-monitor-extension` 文件夹（里面要有 manifest.json）
 
 ---
 
