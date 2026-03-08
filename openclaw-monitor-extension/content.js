@@ -844,9 +844,10 @@
       resizeStateBL.lastX = e.clientX;
       resizeStateBL.lastY = e.clientY;
       
-      var currentWidth = parseFloat(panel.style.width) || PANEL_DEFAULT_WIDTH;
-      var currentHeight = parseFloat(panel.style.height) || PANEL_DEFAULT_HEIGHT;
-      var currentLeft = parseFloat(panel.style.left) || 0;
+      var rect = panel.getBoundingClientRect();
+      var currentWidth = parseFloat(panel.style.width) || rect.width;
+      var currentHeight = parseFloat(panel.style.height) || rect.height;
+      var currentLeft = parseFloat(panel.style.left) || rect.left;
       
       var newWidth = currentWidth - deltaX;
       var newHeight = currentHeight + deltaY;
