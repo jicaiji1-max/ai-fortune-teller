@@ -11,7 +11,7 @@ const OPENCLAW_DIR = process.env.OPENCLAW_DIR || path.join(require('os').homedir
 console.log(`🦞 OpenClaw Sessions API`);
 console.log(`📂 读取目录：${OPENCLAW_DIR}`);
 console.log(`🌐 端口：${PORT}`);
-console.log(`🔗 API: http://localhost:${PORT}/api/sessions\n`);
+console.log(`🔗 API: http://127.0.0.1:${PORT}/api/sessions\n`);
 
 const server = http.createServer((req, res) => {
   // 设置 CORS 头
