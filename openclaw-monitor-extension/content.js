@@ -576,6 +576,13 @@
     }
   }
   
+  // HTML 转义函数（防止 XSS）
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
   // 显示错误信息
   function showError(message) {
     var body = document.querySelector('#' + PANEL_ID + ' .monitor-body');
@@ -583,7 +590,15 @@
     
     var existingCards = body.querySelectorAll('.agent-card');
     if (existingCards.length === 0) {
-      body.innerHTML = '<div class="error">加载失败：' + message + '<br><small>请确保 sessions API 服务正在运行</small></div>';
+      // 使用 createElement 避免 XSS
+      body.innerHTML = '';
+      var errorDiv = createElement('div', 'error');
+      errorDiv.textContent = '加载失败：' + message;
+      var hint = createElement('small');
+      hint.textContent = '请确保 sessions API 服务正在运行';
+      errorDiv.appendChild(document.createElement('br'));
+      errorDiv.appendChild(hint);
+      body.appendChild(errorDiv);
     }
     console.error('[Monitor] 加载失败:', message);
   }
