@@ -1042,17 +1042,18 @@
           }
           agentsData[agentId].sessions.push(s);
           agentsData[agentId].totalTokens = Math.max(agentsData[agentId].totalTokens, s.totalTokens || 0);
-          // 优先使用 contextWindow，其次使用 contextTokens
-          agentsData[agentId].contextTokens = s.contextWindow || s.contextTokens || agentsData[agentId].contextTokens;
+          // 使用最大的 contextWindow（避免 compaction 导致的跳变）
+          var currentContextWindow = s.contextWindow || s.contextTokens || 1000000;
+          agentsData[agentId].contextTokens = Math.max(agentsData[agentId].contextTokens, currentContextWindow);
+          // 记录最新的 updatedAt 用于状态判断
+          if (s.updatedAt > agentsData[agentId].lastUpdate) {
+            agentsData[agentId].lastUpdate = s.updatedAt;
+            agentsData[agentId].model = s.model || agentsData[agentId].model;
+          }
           
           if (s.aborted) {
             agentsData[agentId].abortedCount++;
             agentsData[agentId].status = 'aborted';
-          }
-          
-          if (s.updatedAt > agentsData[agentId].lastUpdate) {
-            agentsData[agentId].lastUpdate = s.updatedAt;
-            agentsData[agentId].model = s.model || agentsData[agentId].model;
           }
           
           var fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
