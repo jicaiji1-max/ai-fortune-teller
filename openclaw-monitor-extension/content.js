@@ -21,11 +21,11 @@
       position: fixed;
       top: 80px;
       right: 20px;
-      width: 420px;
-      height: 300px;
+      width: 480px;
+      height: 450px;
       max-height: 600px;
-      min-width: 350px;
-      min-height: 200px;
+      min-width: 400px;
+      min-height: 250px;
       background: #1a1a24;
       border: 1px solid #2a2a3a;
       border-radius: 12px;
@@ -33,7 +33,6 @@
       z-index: 999999;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       overflow: hidden;
-      cursor: move;
     }
     .monitor-header {
       display: flex;
@@ -394,14 +393,16 @@
   // 添加到页面
   document.body.appendChild(panel);
   
-  // 实现面板整体拖拽功能（改进灵敏度）
+  // 实现面板整体拖拽功能（修复跳动问题）
   let isDragging = false;
   let dragOffset = { x: 0, y: 0 };
   let lastMouseX = 0;
   let lastMouseY = 0;
+  let hasDragged = false; // 标记是否真的拖拽过（区分点击和拖拽）
   
   header.addEventListener('mousedown', function(e) {
     isDragging = true;
+    hasDragged = false;
     lastMouseX = e.clientX;
     lastMouseY = e.clientY;
     const rect = panel.getBoundingClientRect();
@@ -414,13 +415,20 @@
   document.addEventListener('mousemove', function(e) {
     if (!isDragging) return;
     
-    // 使用增量移动，更灵敏
     const deltaX = e.clientX - lastMouseX;
     const deltaY = e.clientY - lastMouseY;
+    
+    // 只有移动超过 5px 才算拖拽，否则视为点击
+    if (!hasDragged && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
+      hasDragged = true;
+    }
+    
+    if (!hasDragged) return;
+    
     lastMouseX = e.clientX;
     lastMouseY = e.clientY;
     
-    const currentLeft = parseFloat(panel.style.left) || 0;
+    const currentLeft = parseFloat(panel.style.left) || (window.innerWidth - 480 - 20);
     const currentTop = parseFloat(panel.style.top) || 80;
     
     let newLeft = currentLeft + deltaX;
@@ -447,7 +455,7 @@
   
   document.addEventListener('mouseup', function() {
     isDragging = false;
-    header.style.cursor = 'grab';
+    header.style.cursor = 'default';
   });
   
   // 实现右下角拖拽（改进灵敏度）
@@ -477,15 +485,15 @@
     lastResizeX = e.clientX;
     lastResizeY = e.clientY;
     
-    const currentWidth = parseFloat(panel.style.width) || 420;
-    const currentHeight = parseFloat(panel.style.height) || 300;
+    const currentWidth = parseFloat(panel.style.width) || 480;
+    const currentHeight = parseFloat(panel.style.height) || 450;
     
     let newWidth = currentWidth + deltaX;
     let newHeight = currentHeight + deltaY;
     
     // 最小尺寸限制
-    if (newWidth < 350) newWidth = 350;
-    if (newHeight < 200) newHeight = 200;
+    if (newWidth < 400) newWidth = 400;
+    if (newHeight < 250) newHeight = 250;
     
     panel.style.width = newWidth + 'px';
     panel.style.height = newHeight + 'px';
@@ -522,17 +530,17 @@
     lastResizeX_BL = e.clientX;
     lastResizeY_BL = e.clientY;
     
-    const currentWidth = parseFloat(panel.style.width) || 420;
-    const currentHeight = parseFloat(panel.style.height) || 300;
-    const currentLeft = parseFloat(panel.style.left) || 0;
+    const currentWidth = parseFloat(panel.style.width) || 480;
+    const currentHeight = parseFloat(panel.style.height) || 450;
+    const currentLeft = parseFloat(panel.style.left) || (window.innerWidth - 480 - 20);
     
     let newWidth = currentWidth - deltaX;
     let newHeight = currentHeight + deltaY;
     let newLeft = currentLeft + deltaX;
     
     // 最小尺寸限制
-    if (newWidth < 350) newWidth = 350;
-    if (newHeight < 200) newHeight = 200;
+    if (newWidth < 400) newWidth = 400;
+    if (newHeight < 250) newHeight = 250;
     // 左边界限制
     if (newLeft < 0) {
       newWidth += newLeft;
