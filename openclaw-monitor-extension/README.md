@@ -133,14 +133,22 @@ git clone https://github.com/jicaiji1-max/openclaw-monitor-extension.git
 **Mac 用户**:
 
 1. 打开终端（按 `Cmd+Space` 搜索 "终端"）
-2. 输入以下命令：
+2. 进入扩展目录：
 
 ```bash
 cd ~/.openclaw/skills/openclaw-monitor-extension
+```
+
+3. 启动 API 服务：
+
+```bash
 node openclaw-sessions-api.js
 ```
 
-**注意**: 此扩展直接调用 OpenClaw 主服务的 API，无需额外启动后台服务。OpenClaw 默认运行在 18789 端口。
+**注意**: 这个服务需要一直运行。如果想后台运行，使用：
+```bash
+node openclaw-sessions-api.js &
+```
 
 ---
 
