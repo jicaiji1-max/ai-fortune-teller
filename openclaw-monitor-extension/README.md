@@ -136,7 +136,7 @@ git clone https://github.com/jicaiji1-max/openclaw-monitor-extension.git
 2. 输入以下命令：
 
 ```bash
-cd ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension
+cd ~/.openclaw/skills/openclaw-monitor-extension
 node openclaw-sessions-api.js
 ```
 
@@ -165,7 +165,7 @@ node openclaw-sessions-api.js
 4. **加载扩展**
    - 点击左上角的 **加载已解压的扩展程序** 按钮
    - 在弹出的窗口中，选择你刚才下载的文件夹：
-     - **Mac**: `/Users/你的用户名/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension`
+     - **Mac**: `/Users/你的用户名/.openclaw/skills/openclaw-monitor-extension`
      - **Windows**: `C:\Users\你的用户名\.openclaw\skills\openclaw-monitor-extension\openclaw-monitor-extension`
    - 点击 **选择文件夹** 按钮
 
@@ -258,7 +258,7 @@ node openclaw-sessions-api.js
 
 1. 找到这个文件：
    ```
-   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension/openclaw-sessions-api.js
+   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-sessions-api.js
    ```
 
 2. 用文本编辑器打开（Mac 用 TextEdit，Windows 用记事本）
@@ -294,7 +294,7 @@ node openclaw-sessions-api.js
 
 1. 打开文件：
    ```
-   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension/content.js
+   ~/.openclaw/skills/openclaw-monitor-extension/content.js
    ```
 
 2. 找到这一行：
@@ -325,7 +325,7 @@ node openclaw-sessions-api.js
 curl http://127.0.0.1:18790/api/sessions
 # 如果返回 JSON 数据，说明服务正常
 # 如果报错，重新启动服务：
-cd ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension
+cd ~/.openclaw/skills/openclaw-monitor-extension
 node openclaw-sessions-api.js
 
 # 2. 检查扩展

@@ -146,7 +146,7 @@ cd ~/.openclaw/skills
 git clone https://github.com/jicaiji1-max/openclaw-monitor-extension.git
 
 # 3. Verify download success
-ls openclaw-monitor-extension/openclaw-monitor-extension
+ls openclaw-monitor-extension
 ```
 
 If you see files like `manifest.json`, `content.js`, the download succeeded.
@@ -171,7 +171,7 @@ This extension requires a background service to read data.
 2. Run:
 
 ```bash
-cd ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension
+cd ~/.openclaw/skills/openclaw-monitor-extension
 node openclaw-sessions-api.js
 ```
 
@@ -226,7 +226,7 @@ This extension is a Chrome browser extension that must be manually loaded.
 4. **Load Extension**
    - Click the **Load unpacked** button (top-left)
    - In the file picker, select the folder you downloaded:
-     - **Mac**: `/Users/your-username/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension`
+     - **Mac**: `/Users/your-username/.openclaw/skills/openclaw-monitor-extension`
      - **Windows**: `C:\Users\your-username\.openclaw\skills\openclaw-monitor-extension\openclaw-monitor-extension`
    - Click **Select Folder**
 
@@ -319,7 +319,7 @@ If the Chinese names displayed on the panel aren't what you want, you can modify
 
 1. Find this file:
    ```
-   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension/openclaw-sessions-api.js
+   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-sessions-api.js
    ```
 
 2. Open with text editor (Mac: TextEdit, Windows: Notepad)
@@ -355,7 +355,7 @@ Default refresh is every 10 seconds. To make it faster or slower:
 
 1. Open file:
    ```
-   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension/content.js
+   ~/.openclaw/skills/openclaw-monitor-extension/content.js
    ```
 
 2. Find this line:
@@ -386,7 +386,7 @@ Default refresh is every 10 seconds. To make it faster or slower:
 curl http://127.0.0.1:18790/api/sessions
 # If returns JSON data, service is running
 # If errors, restart service:
-cd ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension
+cd ~/.openclaw/skills/openclaw-monitor-extension
 node openclaw-sessions-api.js
 
 # 2. Check extension
