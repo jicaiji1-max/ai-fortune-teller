@@ -596,7 +596,9 @@
   
   // 更新 agent 卡片（不重新创建 DOM，只更新内容）
   function updateAgentCard(card, agent, detailsExpanded, sessionsExpanded) {
-    const contextPercent = getContextPercent(agent.totalTokens, agent.contextTokens);
+    // 处理 contextTokens 为 0 的情况（compaction 后可能重置）
+    var contextWindow = agent.contextWindow || agent.contextTokens || 1000000;
+    const contextPercent = getContextPercent(agent.totalTokens, contextWindow);
     const contextLevel = getContextLevel(contextPercent);
     
     // 更新卡片头部
@@ -666,7 +668,9 @@
         row1.appendChild(value);
         details.appendChild(row1);
       }
-      row1.querySelector('.detail-value').textContent = agent.sessions.length === 0 ? '- / -' : formatTokens(agent.totalTokens) + ' / ' + formatTokens(agent.contextTokens);
+      // 处理 contextTokens 为 0 的情况（compaction 后可能重置）
+      var contextWindow = agent.contextWindow || agent.contextTokens || 1000000;
+      row1.querySelector('.detail-value').textContent = agent.sessions.length === 0 ? '- / -' : formatTokens(agent.totalTokens) + ' / ' + formatTokens(contextWindow);
       
       // Context 使用率行（带进度条）
       if (!row2) {
@@ -1018,7 +1022,8 @@
               model: s.model || '-',
               sessions: [],
               totalTokens: 0,
-              contextTokens: s.contextTokens || 1000000,
+              contextTokens: s.contextWindow || s.contextTokens || 1000000,
+              contextWindow: s.contextWindow || s.contextTokens || 1000000,
               active: false,
               abortedCount: 0,
               status: 'idle',
@@ -1027,7 +1032,8 @@
           }
           agentsData[agentId].sessions.push(s);
           agentsData[agentId].totalTokens = Math.max(agentsData[agentId].totalTokens, s.totalTokens || 0);
-          agentsData[agentId].contextTokens = s.contextTokens || agentsData[agentId].contextTokens;
+          // 优先使用 contextWindow，其次使用 contextTokens
+          agentsData[agentId].contextTokens = s.contextWindow || s.contextTokens || agentsData[agentId].contextTokens;
           
           if (s.aborted) {
             agentsData[agentId].abortedCount++;
@@ -1107,7 +1113,11 @@
         }
       })
       .catch(function(e) {
-        body.innerHTML = '<div class="error">加载失败：' + e.message + '<br><small>确保 sessions API (18790) 在运行：cd ~/.openclaw/workspace-programmer && node openclaw-sessions-api.js</small></div>';
+        // 只在第一次加载失败时显示错误，后续失败保持现有内容
+        if (!body.querySelector('.agent-card')) {
+          body.innerHTML = '<div class="error">加载失败：' + e.message + '<br><small>确保 sessions API (18790) 在运行：cd ~/.openclaw/workspace-programmer && node openclaw-sessions-api.js</small></div>';
+        }
+        console.error('[OpenClaw Monitor] 加载失败:', e.message);
       });
   }
   
@@ -1115,7 +1125,14 @@
   loadData();
   
   // 自动刷新（每 10 秒）
-  setInterval(loadData, 10000);
+  var refreshInterval = setInterval(loadData, 10000);
+  
+  // 页面卸载时清理定时器（防止内存泄漏）
+  window.addEventListener('unload', function() {
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+    }
+  });
   
   console.log('[OpenClaw Monitor] 面板已注入');
 })();
