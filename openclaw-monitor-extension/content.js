@@ -63,7 +63,7 @@
       color: #fff;
     }
     .monitor-content {
-      max-height: calc(600px - 50px);
+      height: calc(100% - 50px);
       overflow-y: auto;
     }
     .monitor-body {
@@ -71,6 +71,7 @@
       background: #0a0a0f;
       color: #e4e4e7;
       font-size: 13px;
+      min-height: 100%;
     }
     .section { margin-bottom: 16px; }
     .section-title {
