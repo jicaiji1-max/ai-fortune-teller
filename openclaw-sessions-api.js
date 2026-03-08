@@ -8,14 +8,53 @@ const path = require('path');
 
 const PORT = 18790;
 const OPENCLAW_DIR = process.env.OPENCLAW_DIR || path.join(require('os').homedir(), '.openclaw');
+const WORKSPACE_DIR = path.join(OPENCLAW_DIR, 'workspace-programmer');
 
-// 可选的 Agent 中文名字映射（用户可以在配置文件中自定义）
-const AGENT_CN_NAMES = {};
+// 从配置文件自动提取 Agent 中文名字映射
+function loadAgentCnNames() {
+  const cnNames = {};
+  
+  try {
+    // 从 SOUL.md 提取当前 agent 的中文名字
+    const soulPath = path.join(WORKSPACE_DIR, 'SOUL.md');
+    if (fs.existsSync(soulPath)) {
+      const soulContent = fs.readFileSync(soulPath, 'utf8');
+      // 提取标题中的中文名字（格式：# SOUL.md - 代码助手）
+      const titleMatch = soulContent.match(/^#\s*SOUL\.md\s*-\s*(.+)$/m);
+      if (titleMatch) {
+        const cnName = titleMatch[1].trim();
+        // 从 session 数据推断当前 agentId，或者使用默认映射
+        cnNames['programmer'] = cnName;
+      }
+    }
+    
+    // 常用默认映射（可以被关闭）
+    const defaultMappings = {
+      'main': '主助手',
+      'programmer': '代码助手',
+      'product-manager': '产品助手',
+      'project-manager': '项目经理'
+    };
+    
+    // 合并默认映射（如果 SOUL.md 没有定义）
+    Object.assign(cnNames, defaultMappings);
+    
+  } catch (e) {
+    console.error('加载 agent 中文名字失败:', e.message);
+  }
+  
+  return cnNames;
+}
+
+// 加载 agent 中文名字
+const AGENT_CN_NAMES = loadAgentCnNames();
 
 console.log(`📊 Sessions API`);
 console.log(`📂 读取目录：${OPENCLAW_DIR}`);
 console.log(`🌐 端口：${PORT}`);
-console.log(`🔗 API: http://127.0.0.1:${PORT}/api/sessions\n`);
+console.log(`🔗 API: http://127.0.0.1:${PORT}/api/sessions`);
+console.log(`📝 Agent 中文名字:`, AGENT_CN_NAMES);
+console.log();
 
 const server = http.createServer((req, res) => {
   // 设置 CORS 头
