@@ -251,7 +251,7 @@
   }
   
   // 渲染卡片详情（公共逻辑）
-  function renderCardDetails(agent, sessionsExpanded) {
+  function renderCardDetails(agent, sessionsExpanded, onToggleSessions) {
     var details = createElement('div', 'agent-details');
     
     var contextPercent = getContextPercent(agent.totalTokens, agent.contextWindow);
@@ -288,7 +288,7 @@
     details.appendChild(row2);
     
     // 会话数量行
-    var row3 = createSessionCountRow(agent, sessionsExpanded);
+    var row3 = createSessionCountRow(agent, sessionsExpanded, onToggleSessions);
     details.appendChild(row3);
     
     // 会话列表
@@ -313,7 +313,7 @@
   }
   
   // 创建会话数量行
-  function createSessionCountRow(agent, sessionsExpanded) {
+  function createSessionCountRow(agent, sessionsExpanded, onToggle) {
     var row3 = createElement('div', 'detail-row row-sessions');
     
     if (agent.sessions.length === 0) {
@@ -348,6 +348,14 @@
     valueContainer.appendChild(abortedLabel);
     row3.appendChild(label3);
     row3.appendChild(valueContainer);
+    
+    // 绑定点击事件
+    if (agent.sessions.length > 0 && onToggle) {
+      row3.addEventListener('click', function(e) {
+        e.stopPropagation();
+        onToggle();
+      });
+    }
     
     return row3;
   }
@@ -421,12 +429,22 @@
     var cardHeader = renderCardHeader(agent, detailsExpanded);
     card.appendChild(cardHeader);
     
+    // 创建切换会话列表的回调函数
+    var onToggleSessions = function() {
+      sessionsExpanded = !sessionsExpanded;
+      state.expandedStates[agent.id] = { 
+        details: detailsExpanded, 
+        sessions: sessionsExpanded 
+      };
+      updateExistingCard(card, agent, detailsExpanded, sessionsExpanded);
+    };
+    
     if (detailsExpanded) {
-      var details = renderCardDetails(agent, sessionsExpanded);
+      var details = renderCardDetails(agent, sessionsExpanded, onToggleSessions);
       card.appendChild(details);
     }
     
-    // 绑定点击事件
+    // 绑定卡片头部点击事件（展开/收起详情）
     addEventListener(cardHeader, 'click', function() {
       detailsExpanded = !detailsExpanded;
       state.expandedStates[agent.id] = { 
@@ -474,11 +492,21 @@
     // 更新或创建详情区域
     var existingDetails = card.querySelector('.agent-details');
     if (detailsExpanded) {
+      // 创建切换会话列表的回调函数
+      var onToggleSessions = function() {
+        sessionsExpanded = !sessionsExpanded;
+        state.expandedStates[agent.id] = { 
+          details: detailsExpanded, 
+          sessions: sessionsExpanded 
+        };
+        updateExistingCard(card, agent, detailsExpanded, sessionsExpanded);
+      };
+      
       if (!existingDetails) {
-        existingDetails = renderCardDetails(agent, sessionsExpanded);
+        existingDetails = renderCardDetails(agent, sessionsExpanded, onToggleSessions);
         card.appendChild(existingDetails);
       } else {
-        updateCardDetails(existingDetails, agent, sessionsExpanded);
+        updateCardDetails(existingDetails, agent, sessionsExpanded, onToggleSessions);
       }
       existingDetails.style.display = 'block';
     } else if (existingDetails) {
@@ -487,7 +515,7 @@
   }
   
   // 更新卡片详情
-  function updateCardDetails(details, agent, sessionsExpanded) {
+  function updateCardDetails(details, agent, sessionsExpanded, onToggleSessions) {
     var contextPercent = getContextPercent(agent.totalTokens, agent.contextWindow);
     var contextLevel = getContextLevel(contextPercent);
     
@@ -517,6 +545,15 @@
       var abortedLabel = row3.querySelectorAll('.detail-label')[1];
       if (abortedLabel) {
         abortedLabel.textContent = agent.abortedCount > 0 ? '(aborted: ' + agent.abortedCount + ')' : '';
+      }
+      
+      // 重新绑定点击事件
+      row3.removeEventListener('click');
+      if (agent.sessions.length > 0 && onToggleSessions) {
+        row3.addEventListener('click', function(e) {
+          e.stopPropagation();
+          onToggleSessions();
+        });
       }
     }
     
