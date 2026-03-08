@@ -1419,6 +1419,417 @@ npm run dev
 
 ---
 
-**文档版本**: 1.0  
-**最后更新**: 2026-03-08  
+## 📊 完整图表汇总
+
+### 1. 系统架构图（Mermaid）
+
+```mermaid
+graph TB
+    subgraph 飞书 APP["📱 飞书 APP"]
+        H5["🌐 H5 监控面板"]
+        Vue["Vue.js 3 + Vite<br/>- AgentCard 组件<br/>- SessionList 组件<br/>- 自动刷新（10 秒轮询）"]
+        H5 --> Vue
+    end
+    
+    subgraph 服务器["🖥️ 服务器"]
+        API["⚙️ openclaw-sessions-api.js<br/>端口：18790"]
+    end
+    
+    subgraph OpenClaw["📦 OpenClaw"]
+        Data["💾 Sessions 数据<br/>~/.openclaw/agents/*/sessions/"]
+    end
+    
+    H5 ==>|fetch HTTP| API
+    API ==>|读取 | Data
+    
+    style 飞书 APP fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style 服务器 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style OpenClaw fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+```
+
+---
+
+### 2. 数据流时序图（Mermaid）
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 用户
+    participant Feishu as 📱 飞书 APP
+    participant H5 as 🌐 H5 页面
+    participant API as ⚙️ API 服务
+    participant Data as 💾 Sessions 数据
+    
+    User->>Feishu: 打开飞书
+    Feishu->>H5: 访问 H5 页面
+    H5->>API: fetch sessions
+    API->>Data: 读取数据
+    Data-->>API: 返回 JSON
+    API-->>H5: 返回数据
+    H5->>H5: 渲染页面
+    
+    Note over H5,API: 每 10 秒轮询
+    loop 每 10 秒
+        H5->>API: 自动刷新数据
+        API-->>H5: 返回最新数据
+        H5->>H5: 更新页面
+    end
+```
+
+---
+
+### 3. 技术调用链路图（Mermaid）
+
+```mermaid
+graph LR
+    A[👤 用户] -->|打开飞书 | B[📱 飞书 APP]
+    B -->|加载 H5| C[🌐 Vue.js 应用]
+    C -->|watchSessions| D[📡 API 调用模块]
+    D -->|HTTP fetch| E[⚙️ API 服务：18790]
+    E -->|fs.readFileSync| F[📁 sessions.json]
+    F -->|解析 JSON| E
+    E -->|返回 JSON| D
+    D -->|callback| C
+    C -->|渲染 | G[🎨 UI 组件]
+    G -->|display| A
+    
+    style A fill:#ffebee,stroke:#c62828
+    style B fill:#e3f2fd,stroke:#1976d2
+    style C fill:#f3e5f5,stroke:#7b1fa2
+    style D fill:#fff3e0,stroke:#f57c00
+    style E fill:#e8f5e9,stroke:#2e7d32
+    style F fill:#fce4ec,stroke:#c2185b
+    style G fill:#e0f7fa,stroke:#00838f
+```
+
+---
+
+### 4. 开发流程图（Mermaid）
+
+```mermaid
+graph TD
+    A[📋 需求分析] --> B[🏗️ 技术选型]
+    B --> C[📁 初始化项目]
+    C --> D[💻 开发 H5 页面]
+    D --> E{完成？}
+    E -->|否 | D
+    E -->|是 | F[🧪 本地测试]
+    F --> G[🚀 部署到 Vercel]
+    G --> H[⚙️ 配置飞书应用]
+    H --> I[📱 飞书 APP 测试]
+    I --> J{测试通过？}
+    J -->|否 | D
+    J -->|是 | K[✅ 发布上线]
+    
+    style A fill:#ffebee
+    style K fill:#e8f5e9
+```
+
+---
+
+### 5. 部署流程图（Mermaid）
+
+```mermaid
+graph TD
+    A[💻 本地开发完成] --> B[npm run build]
+    B --> C{选择部署平台}
+    C -->|Vercel| D1[vercel --prod]
+    C -->|飞书云 | D2[上传到飞书云空间]
+    C -->|自建服务器 | D3[上传到 Nginx]
+    
+    D1 --> E1[获得 Vercel URL]
+    D2 --> E2[获得飞书云 URL]
+    D3 --> E3[获得服务器 URL]
+    
+    E1 --> F[⚙️ 配置飞书应用首页]
+    E2 --> F
+    E3 --> F
+    
+    F --> G[📱 添加到飞书工作台]
+    G --> H[🧪 测试验证]
+    H --> I{验证通过？}
+    I -->|否 | F
+    I -->|是 | J[🎉 正式上线]
+    
+    style A fill:#fff3e0
+    style J fill:#e8f5e9
+```
+
+---
+
+### 6. 项目时间计划（甘特图）
+
+```mermaid
+gantt
+    title 飞书 H5 开发计划
+    dateFormat  YYYY-MM-DD
+    axisFormat  %m-%d
+    excludes    周末
+    
+    section 准备阶段
+    创建飞书应用       :done, prep1, 2026-03-08, 1d
+    初始化 Vue 项目     :done, prep2, after prep1, 1d
+    
+    section 开发阶段
+    开发 API 调用模块    :active, dev1, 2026-03-09, 2d
+    开发 AgentCard 组件 :dev2, after dev1, 2d
+    开发主应用组件      :dev3, after dev2, 2d
+    样式开发和优化      :dev4, after dev3, 1d
+    
+    section 测试阶段
+    本地测试          :test1, after dev4, 1d
+    部署测试          :test2, after test1, 1d
+    
+    section 部署阶段
+    部署到 Vercel      :deploy1, after test2, 1d
+    配置飞书应用      :deploy2, after deploy1, 1d
+    上线验证          :deploy3, after deploy2, 1d
+```
+
+---
+
+### 7. 组件关系图（Mermaid）
+
+```mermaid
+classDiagram
+    class App {
+        +Object agents
+        +Boolean loading
+        +Object error
+        +processSessions()
+        +refresh()
+    }
+    
+    class AgentCard {
+        +Object agent
+        +Boolean detailsExpanded
+        +Boolean sessionsExpanded
+        +toggleDetails()
+        +toggleSessions()
+    }
+    
+    class SessionList {
+        +Array sessions
+        +sortedSessions()
+        +getSessionTask()
+    }
+    
+    class API {
+        +String API_BASE
+        +getSessions()
+        +watchSessions()
+    }
+    
+    class Utils {
+        +formatTokens()
+        +getContextPercent()
+        +getContextLevel()
+        +getStatusText()
+    }
+    
+    App --> AgentCard : 包含多个
+    AgentCard --> SessionList : 展开时显示
+    App --> API : 调用
+    AgentCard --> Utils : 使用工具函数
+    API --> Utils : 使用工具函数
+```
+
+---
+
+### 8. 数据模型图（Mermaid）
+
+```mermaid
+classDiagram
+    class Session {
+        +String key
+        +String agentId
+        +String label
+        +String model
+        +Number totalTokens
+        +Number contextTokens
+        +Number contextWindow
+        +String kind
+        +Number updatedAt
+        +Number createdAt
+        +Boolean aborted
+    }
+    
+    class Agent {
+        +String id
+        +String model
+        +Array sessions
+        +Number totalTokens
+        +Number contextWindow
+        +Boolean active
+        +Number abortedCount
+        +String status
+        +String cnName
+    }
+    
+    class APIResponse {
+        +Array sessions
+        +Object agentCnNames
+        +Array agents
+    }
+    
+    Session --> Agent : 属于
+    APIResponse --> Session : 包含多个
+    APIResponse --> Agent : 包含多个
+```
+
+---
+
+### 9. 状态流转图（Mermaid）
+
+```mermaid
+stateDiagram-v2
+    [*] --> Loading : 页面加载
+    Loading --> Success : API 成功
+    Loading --> Error : API 失败
+    Error --> Loading : 用户重试
+    Success --> Success : 每 10 秒刷新
+    Success --> Error : API 失败
+    Error --> [*] : 用户离开
+    Success --> [*] : 用户离开
+    
+    note right of Loading
+        显示加载动画
+        调用 API 获取数据
+    end note
+    
+    note right of Success
+        显示 Agent 卡片
+        每 10 秒自动刷新
+    end note
+    
+    note right of Error
+        显示错误提示
+        提供重试按钮
+    end note
+```
+
+---
+
+### 10. 用户操作流程图（Mermaid）
+
+```mermaid
+journey
+    title 用户使用流程
+    section 打开应用
+      打开飞书 APP: 5: 用户
+      进入工作台：5: 用户
+      点击 Agents Monitor: 5: 用户
+    section 查看状态
+      查看 Agent 列表：5: 用户
+      点击卡片展开：4: 用户
+      查看详情信息：5: 用户
+    section 交互操作
+      点击会话数量：4: 用户
+      查看会话列表：5: 用户
+      等待自动刷新：5: 系统
+```
+
+---
+
+### 11. 测试流程图（Mermaid）
+
+```mermaid
+graph TD
+    A[🧪 开始测试] --> B[本地开发环境测试]
+    B --> C{功能正常？}
+    C -->|否 | D[修复 Bug]
+    D --> B
+    C -->|是 | E[部署到 Vercel]
+    E --> F[生产环境测试]
+    F --> G{功能正常？}
+    G -->|否 | D
+    G -->|是 | H[飞书 APP 测试]
+    H --> I{体验良好？}
+    I -->|否 | J[优化 UI/UX]
+    J --> H
+    I -->|是 | K[✅ 测试通过]
+    
+    style A fill:#fff3e0
+    style K fill:#e8f5e9
+```
+
+---
+
+### 12. 完整技术栈图（Mermaid）
+
+```mermaid
+graph TB
+    subgraph 前端["🎨 前端技术栈"]
+        Vue[Vue.js 3]
+        Vite[Vite]
+        CSS[原生 CSS]
+        JS[JavaScript ES5]
+    end
+    
+    subgraph 后端["⚙️ 后端服务"]
+        Node[Node.js]
+        HTTP[HTTP Server]
+        FS[File System]
+        CORS[CORS 中间件]
+    end
+    
+    subgraph 部署["🚀 部署平台"]
+        Vercel[Vercel]
+        Feishu[飞书云]
+        Nginx[Nginx]
+    end
+    
+    subgraph 数据["💾 数据来源"]
+        OpenClaw[OpenClaw]
+        Sessions[Sessions JSON]
+    end
+    
+    Vue --> Vite
+    Vite --> HTTP
+    HTTP --> Node
+    Node --> FS
+    FS --> Sessions
+    Sessions --> OpenClaw
+    
+    Vite --> Vercel
+    Vite --> Feishu
+    Vite --> Nginx
+    
+    style 前端 fill:#e3f2fd
+    style 后端 fill:#fff3e0
+    style 部署 fill:#f3e5f5
+    style 数据 fill:#e8f5e9
+```
+
+---
+
+## 📌 附录：draw.io 图表模板
+
+### 推荐使用 draw.io 绘制的图表
+
+以下图表建议使用 draw.io 绘制（更美观）：
+
+1. **详细系统架构图** - 包含服务器、网络、负载均衡等
+2. **网络拓扑图** - 显示网络结构和设备连接
+3. **基础设施图** - 显示云服务和部署架构
+4. **业务流程图** - 复杂的业务流程
+
+### draw.io 绘制步骤
+
+1. 访问 https://app.diagrams.net/
+2. 选择模板或从空白开始
+3. 拖拽元素、连接、设置样式
+4. 导出为 SVG/PNG
+5. 插入到文档中
+
+### 推荐的 draw.io 模板
+
+- **AWS 架构图** - 使用 AWS 图标库
+- **Azure 架构图** - 使用 Azure 图标库
+- **Kubernetes 部署图** - 使用 K8s 图标库
+- **微服务架构图** - 使用通用架构图标
+
+---
+
+**文档版本**: 2.0  
+**最后更新**: 2026-03-08 19:31  
 **维护者**: 菜🐒
