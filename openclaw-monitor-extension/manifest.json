@@ -5,9 +5,7 @@
   "description": "在 OpenClaw 页面上显示 Agent 状态监控面板",
   "host_permissions": [
     "http://127.0.0.1:18789/*",
-    "http://127.0.0.1:18790/*",
-    "http://localhost:18789/*",
-    "http://localhost:18790/*"
+    "http://localhost:18789/*"
   ],
   "content_scripts": [
     {

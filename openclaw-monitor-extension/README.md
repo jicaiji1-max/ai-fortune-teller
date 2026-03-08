@@ -2,7 +2,7 @@
 
 > **一句话介绍**: 这是一个 Chrome 浏览器扩展，安装后会在你的 OpenClaw 页面右上角显示一个监控面板，实时展示所有 AI 助手（Agent）的工作状态、使用的模型、Tokens 消耗等信息。
 
-![Version](https://img.shields.io/badge/version-1.0.4-blue)
+![Version](https://img.shields.io/badge/version-1.0.7-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
@@ -163,17 +163,17 @@
 cd ~/.openclaw/skills
 
 # 2. 下载这个扩展
-git clone https://github.com/jicaiji1-max/workspace-programmer.git sessions-monitor
+git clone https://github.com/jicaiji1-max/openclaw-monitor-extension.git
 
 # 3. 确认下载成功
-ls sessions-monitor/openclaw-monitor-extension
+ls openclaw-monitor-extension/openclaw-monitor-extension
 ```
 
 如果看到 `manifest.json`、`content.js` 等文件，说明下载成功。
 
 **方法 B：如果你不会用 Git**
 
-1. 打开浏览器，访问：https://github.com/jicaiji1-max/workspace-programmer
+1. 打开浏览器，访问：https://github.com/jicaiji1-max/openclaw-monitor-extension
 2. 点击绿色的 **Code** 按钮
 3. 选择 **Download ZIP**
 4. 下载完成后解压
@@ -191,7 +191,7 @@ ls sessions-monitor/openclaw-monitor-extension
 2. 输入以下命令：
 
 ```bash
-cd ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension
+cd ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension
 node openclaw-sessions-api.js
 ```
 
@@ -219,7 +219,7 @@ node openclaw-sessions-api.js &
 2. 输入以下命令：
 
 ```cmd
-cd %USERPROFILE%\.openclaw\skills\sessions-monitor\openclaw-monitor-extension
+cd %USERPROFILE%\.openclaw\skills\openclaw-monitor-extension\openclaw-monitor-extension
 node openclaw-sessions-api.js
 ```
 
@@ -246,8 +246,8 @@ node openclaw-sessions-api.js
 4. **加载扩展**
    - 点击左上角的 **加载已解压的扩展程序** 按钮
    - 在弹出的窗口中，选择你刚才下载的文件夹：
-     - **Mac**: `/Users/你的用户名/.openclaw/skills/sessions-monitor/openclaw-monitor-extension`
-     - **Windows**: `C:\Users\你的用户名\.openclaw\skills\sessions-monitor\openclaw-monitor-extension`
+     - **Mac**: `/Users/你的用户名/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension`
+     - **Windows**: `C:\Users\你的用户名\.openclaw\skills\openclaw-monitor-extension\openclaw-monitor-extension`
    - 点击 **选择文件夹** 按钮
 
 5. **确认加载成功** ✅
@@ -339,7 +339,7 @@ node openclaw-sessions-api.js
 
 1. 找到这个文件：
    ```
-   ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension/openclaw-sessions-api.js
+   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension/openclaw-sessions-api.js
    ```
 
 2. 用文本编辑器打开（Mac 用 TextEdit，Windows 用记事本）
@@ -375,7 +375,7 @@ node openclaw-sessions-api.js
 
 1. 打开文件：
    ```
-   ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension/content.js
+   ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension/content.js
    ```
 
 2. 找到这一行：
@@ -406,7 +406,7 @@ node openclaw-sessions-api.js
 curl http://127.0.0.1:18790/api/sessions
 # 如果返回 JSON 数据，说明服务正常
 # 如果报错，重新启动服务：
-cd ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension
+cd ~/.openclaw/skills/openclaw-monitor-extension/openclaw-monitor-extension
 node openclaw-sessions-api.js
 
 # 2. 检查扩展
@@ -458,7 +458,7 @@ node openclaw-sessions-api.js
 3. 点击 **移除**
 4. 删除文件：
    ```bash
-   rm -rf ~/.openclaw/skills/sessions-monitor
+   rm -rf ~/.openclaw/skills/openclaw-monitor-extension
    ```
 
 **停止后台服务**:
@@ -524,7 +524,7 @@ openclaw-monitor-extension/
 如果上面的常见问题没解决你的问题：
 
 1. **查看 GitHub Issues**
-   - 访问：https://github.com/jicaiji1-max/workspace-programmer/issues
+   - 访问：https://github.com/jicaiji1-max/openclaw-monitor-extension/issues
    - 搜索有没有人遇到类似问题
 
 2. **提交新 Issue**
