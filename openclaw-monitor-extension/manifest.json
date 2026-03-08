@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "OpenClaw Monitor",
-  "version": "1.0.2",
-  "description": "在 OpenClaw 页面上显示 Session 和 Agent 状态监控",
+  "name": "Sessions Monitor",
+  "version": "1.0.3",
+  "description": "在 Agent 页面上显示 Session 状态监控面板",
   "permissions": ["storage"],
   "host_permissions": ["http://127.0.0.1:18789/*", "http://127.0.0.1:18790/*"],
   "content_scripts": [
@@ -11,12 +11,6 @@
       "js": ["content.js"],
       "css": ["style.css"],
       "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["monitor.html"],
-      "matches": ["http://127.0.0.1:18789/*"]
     }
   ]
 }
