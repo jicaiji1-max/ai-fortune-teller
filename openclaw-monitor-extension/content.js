@@ -707,16 +707,20 @@
     content.appendChild(body);
     panel.appendChild(content);
     
-    // 添加拖拽手柄
+    // 添加拖拽手柄（右下角和左下角）
     var resizeHandleBR = createElement('div', 'resize-handle-br');
     resizeHandleBR.title = '拖拽调整大小';
     panel.appendChild(resizeHandleBR);
+    
+    var resizeHandleBL = createElement('div', 'resize-handle-bl');
+    resizeHandleBL.title = '拖拽调整大小';
+    panel.appendChild(resizeHandleBL);
     
     // 添加到页面
     document.body.appendChild(panel);
     
     // 初始化拖拽和调整大小
-    initDragAndResize(panel, header, resizeHandleBR, toggleBtn, content);
+    initDragAndResize(panel, header, resizeHandleBR, resizeHandleBL, toggleBtn, content);
     
     // 初始加载
     loadData();
@@ -744,9 +748,10 @@
   }
   
   // 初始化拖拽和调整大小
-  function initDragAndResize(panel, header, resizeHandleBR, toggleBtn, content) {
+  function initDragAndResize(panel, header, resizeHandleBR, resizeHandleBL, toggleBtn, content) {
     var dragState = { isDragging: false, hasDragged: false, lastX: 0, lastY: 0 };
-    var resizeState = { isResizing: false, lastX: 0, lastY: 0 };
+    var resizeStateBR = { isResizing: false, lastX: 0, lastY: 0 };
+    var resizeStateBL = { isResizing: false, lastX: 0, lastY: 0 };
     var isExpanded = true;
     
     // 面板拖拽
@@ -791,24 +796,26 @@
     addEventListener(document, 'mouseup', function() {
       dragState.isDragging = false;
       header.style.cursor = 'default';
+      resizeStateBR.isResizing = false;
+      resizeStateBL.isResizing = false;
     });
     
     // 右下角调整大小
     addEventListener(resizeHandleBR, 'mousedown', function(e) {
-      resizeState.isResizing = true;
-      resizeState.lastX = e.clientX;
-      resizeState.lastY = e.clientY;
+      resizeStateBR.isResizing = true;
+      resizeStateBR.lastX = e.clientX;
+      resizeStateBR.lastY = e.clientY;
       e.preventDefault();
       e.stopPropagation();
     }, { passive: false });
     
     addEventListener(document, 'mousemove', function(e) {
-      if (!resizeState.isResizing) return;
+      if (!resizeStateBR.isResizing) return;
       
-      var deltaX = e.clientX - resizeState.lastX;
-      var deltaY = e.clientY - resizeState.lastY;
-      resizeState.lastX = e.clientX;
-      resizeState.lastY = e.clientY;
+      var deltaX = e.clientX - resizeStateBR.lastX;
+      var deltaY = e.clientY - resizeStateBR.lastY;
+      resizeStateBR.lastX = e.clientX;
+      resizeStateBR.lastY = e.clientY;
       
       var newWidth = (parseFloat(panel.style.width) || PANEL_DEFAULT_WIDTH) + deltaX;
       var newHeight = (parseFloat(panel.style.height) || PANEL_DEFAULT_HEIGHT) + deltaY;
@@ -818,6 +825,46 @@
       
       panel.style.width = newWidth + 'px';
       panel.style.height = newHeight + 'px';
+    }, { passive: true });
+    
+    // 左下角调整大小
+    addEventListener(resizeHandleBL, 'mousedown', function(e) {
+      resizeStateBL.isResizing = true;
+      resizeStateBL.lastX = e.clientX;
+      resizeStateBL.lastY = e.clientY;
+      e.preventDefault();
+      e.stopPropagation();
+    }, { passive: false });
+    
+    addEventListener(document, 'mousemove', function(e) {
+      if (!resizeStateBL.isResizing) return;
+      
+      var deltaX = e.clientX - resizeStateBL.lastX;
+      var deltaY = e.clientY - resizeStateBL.lastY;
+      resizeStateBL.lastX = e.clientX;
+      resizeStateBL.lastY = e.clientY;
+      
+      var currentWidth = parseFloat(panel.style.width) || PANEL_DEFAULT_WIDTH;
+      var currentHeight = parseFloat(panel.style.height) || PANEL_DEFAULT_HEIGHT;
+      var currentLeft = parseFloat(panel.style.left) || 0;
+      
+      var newWidth = currentWidth - deltaX;
+      var newHeight = currentHeight + deltaY;
+      var newLeft = currentLeft + deltaX;
+      
+      // 最小尺寸限制
+      if (newWidth < PANEL_MIN_WIDTH) newWidth = PANEL_MIN_WIDTH;
+      if (newHeight < PANEL_MIN_HEIGHT) newHeight = PANEL_MIN_HEIGHT;
+      // 左边界限制
+      if (newLeft < 0) {
+        newWidth += newLeft;
+        newLeft = 0;
+      }
+      
+      panel.style.width = newWidth + 'px';
+      panel.style.height = newHeight + 'px';
+      panel.style.left = newLeft + 'px';
+      panel.style.right = 'auto';
     }, { passive: true });
     
     addEventListener(document, 'mouseup', function() {
@@ -1109,6 +1156,23 @@
         background: linear-gradient(135deg, transparent 50%, #6366f1 50%);
         border-radius: 0 0 12px 0;
         box-shadow: -2px -2px 8px rgba(0, 0, 0, 0.3);
+      }
+      .resize-handle-bl {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        cursor: nesw-resize;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 1000;
+      }
+      .resize-handle-bl:hover {
+        opacity: 1;
+        background: linear-gradient(45deg, transparent 50%, #6366f1 50%);
+        border-radius: 0 0 0 12px;
+        box-shadow: 2px -2px 8px rgba(0, 0, 0, 0.3);
       }
     `;
   }
