@@ -5,7 +5,7 @@
   'use strict';
   
   // ==================== 常量定义 ====================
-  const API_URL = 'http://127.0.0.1:18789/api/sessions';
+  const API_URL = 'http://127.0.0.1:18790/api/sessions';
   const REFRESH_INTERVAL = 10000; // 10 秒
   const PANEL_ID = 'agents-monitor-panel';
   const PANEL_DEFAULT_WIDTH = 480;
