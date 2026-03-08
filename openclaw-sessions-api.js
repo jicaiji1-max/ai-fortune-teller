@@ -1,5 +1,6 @@
 // 轻量级 sessions API 服务
 // 读取 ~/.openclaw/agents/*/sessions/sessions.json 并提供 HTTP API
+// 通用版本，支持任意 OpenClaw 用户
 
 const http = require('http');
 const fs = require('fs');
@@ -8,7 +9,10 @@ const path = require('path');
 const PORT = 18790;
 const OPENCLAW_DIR = process.env.OPENCLAW_DIR || path.join(require('os').homedir(), '.openclaw');
 
-console.log(`🦞 OpenClaw Sessions API`);
+// 可选的 Agent 中文名字映射（用户可以在配置文件中自定义）
+const AGENT_CN_NAMES = {};
+
+console.log(`📊 Sessions API`);
 console.log(`📂 读取目录：${OPENCLAW_DIR}`);
 console.log(`🌐 端口：${PORT}`);
 console.log(`🔗 API: http://127.0.0.1:${PORT}/api/sessions\n`);
@@ -42,6 +46,7 @@ const server = http.createServer((req, res) => {
   
   try {
     const allSessions = [];
+    const agentsData = {};
     const agentsDir = path.join(OPENCLAW_DIR, 'agents');
     const agentDirs = fs.readdirSync(agentsDir).filter(f => {
       try {
@@ -52,6 +57,7 @@ const server = http.createServer((req, res) => {
     });
     
     for (const agentId of agentDirs) {
+      agentsData[agentId] = true;
       try {
         const agentSessDir = path.join(agentsDir, agentId, 'sessions');
         const sFile = path.join(agentSessDir, 'sessions.json');
@@ -81,7 +87,11 @@ const server = http.createServer((req, res) => {
     }
     
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(allSessions));
+    res.end(JSON.stringify({
+      sessions: allSessions,
+      agents: Object.keys(agentsData),
+      agentCnNames: AGENT_CN_NAMES
+    }));
     console.log(`✅ 返回 ${allSessions.length} 个 sessions`);
   } catch (e) {
     console.error('Error:', e.message);

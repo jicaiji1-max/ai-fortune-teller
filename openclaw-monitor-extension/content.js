@@ -6,13 +6,9 @@
   // 保存展开状态
   var expandedStates = {};
   
-  // Agent 中文名字映射（默认映射，如果 API 返回了中文名字则使用 API 的）
-  const DEFAULT_AGENT_CN_NAMES = {
-    'main': '主助手',
-    'programmer': '代码助手',
-    'product-manager': '产品小助手',
-    'project-manager': '项目总负责人'
-  };
+  // Agent 中文名字映射（可选的默认映射，用户可以在 API 中自定义）
+  // 如果 API 返回了 cnName 字段则使用 API 的，否则不显示中文名字
+  const DEFAULT_AGENT_CN_NAMES = {};
   
   // 创建样式
   const style = document.createElement('style');
@@ -334,7 +330,7 @@
   `;
   document.head.appendChild(style);
   
-  // 会话任务描述映射
+  // 会话任务描述映射（通用版本，不依赖特定 agent 名称）
   function getSessionTask(session) {
     const label = session.label || session.key || '';
     const key = session.key || '';
@@ -348,14 +344,18 @@
       }
       return '💬 飞书私聊';
     }
-    if (label.includes('main') && key.includes('main')) {
-      return '🏠 主会话';
-    }
     if (key.includes('run:')) {
       return '⚡ 任务执行';
     }
     if (label.includes('topic') || key.includes('topic')) {
       return '📝 话题讨论';
+    }
+    // 通用会话类型判断
+    if (key.includes('group')) {
+      return '💬 群聊会话';
+    }
+    if (key.includes('direct') || key.includes('user:')) {
+      return '💬 私聊会话';
     }
     return '💭 对话会话';
   }
@@ -370,7 +370,7 @@
   
   const title = document.createElement('span');
   title.className = 'monitor-title';
-  title.textContent = '🤖 OpenClaw Monitor';
+  title.textContent = '🤖 Sessions Monitor';
   
   const toggleBtn = document.createElement('button');
   toggleBtn.className = 'monitor-toggle';
@@ -611,7 +611,7 @@
     // 更新名字
     nameContainer.querySelector('.agent-name').textContent = agent.id;
     let cnNameSpan = nameContainer.querySelector('.agent-cn-name');
-    const cnName = DEFAULT_AGENT_CN_NAMES[agent.id] || '';
+    const cnName = agent.cnName || '';
     if (cnName) {
       if (!cnNameSpan) {
         cnNameSpan = document.createElement('span');
@@ -807,9 +807,9 @@
     name.className = 'agent-name';
     name.textContent = agent.id;
     
-    // 动态获取中文名字（如果有默认映射则显示，否则不显示）
-    const cnName = DEFAULT_AGENT_CN_NAMES[agent.id] || '';
-    if (cnName && cnName !== agent.id) {
+    // 动态获取中文名字（从 agent 对象中获取）
+    const cnName = agent.cnName || '';
+    if (cnName) {
       const cnNameSpan = document.createElement('span');
       cnNameSpan.className = 'agent-cn-name';
       cnNameSpan.textContent = '（' + cnName + '）';
@@ -1011,11 +1011,20 @@
     // 从本地轻量级服务获取数据（127.0.0.1:18790）
     fetch('http://127.0.0.1:18790/api/sessions')
       .then(function(res) { return res.json(); })
-      .then(function(sessions) {
+      .then(function(response) {
+        // 支持新旧两种响应格式（向后兼容）
+        var sessions = response.sessions || response;
+        var apiAgentCnNames = response.agentCnNames || {};
+        
+        // 合并 API 返回的中文名字和默认映射
+        var agentCnNames = Object.assign({}, DEFAULT_AGENT_CN_NAMES, apiAgentCnNames);
+        
         // 获取所有 agents 的 sessions
         var agentsData = {};
         sessions.forEach(function(s) {
-          var agentId = s.agentId || 'main';
+          var agentId = s.agentId;
+          if (!agentId) return; // 跳过无效的 session
+          
           if (!agentsData[agentId]) {
             agentsData[agentId] = {
               id: agentId,
@@ -1027,7 +1036,8 @@
               active: false,
               abortedCount: 0,
               status: 'idle',
-              lastUpdate: 0
+              lastUpdate: 0,
+              cnName: agentCnNames[agentId] || ''
             };
           }
           agentsData[agentId].sessions.push(s);
@@ -1115,9 +1125,9 @@
       .catch(function(e) {
         // 只在第一次加载失败时显示错误，后续失败保持现有内容
         if (!body.querySelector('.agent-card')) {
-          body.innerHTML = '<div class="error">加载失败：' + e.message + '<br><small>确保 sessions API (18790) 在运行：cd ~/.openclaw/workspace-programmer && node openclaw-sessions-api.js</small></div>';
+          body.innerHTML = '<div class="error">加载失败：' + e.message + '<br><small>请确保 sessions API 服务正在运行</small></div>';
         }
-        console.error('[OpenClaw Monitor] 加载失败:', e.message);
+        console.error('[Monitor] 加载失败:', e.message);
       });
   }
   
@@ -1134,5 +1144,5 @@
     }
   });
   
-  console.log('[OpenClaw Monitor] 面板已注入');
+  console.log('[Monitor] 面板已注入');
 })();
