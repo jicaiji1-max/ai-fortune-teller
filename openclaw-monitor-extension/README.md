@@ -1,352 +1,447 @@
-# Sessions Monitor Skill for OpenClaw
+# Sessions Monitor - OpenClaw 会话监控面板
 
-📊 一个 OpenClaw Skill，为你的 OpenClaw 页面添加实时 Agent/Session 监控面板。
+> **一句话介绍**: 这是一个 Chrome 浏览器扩展，安装后会在你的 OpenClaw 页面右上角显示一个监控面板，实时展示所有 AI 助手（Agent）的工作状态、使用的模型、Tokens 消耗等信息。
 
 ![Version](https://img.shields.io/badge/version-1.0.4-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
 
-## 🎯 功能特性
+## 📸 效果预览
 
-- **实时监控** - 显示所有 Agent 的状态、模型、Tokens 使用情况
-- **自动刷新** - 每 10 秒自动更新，无需手动刷新
-- **可自定义 UI** - 支持拖拽移动、调整大小、展开/收起详情
-- **安全可靠** - 无 XSS 漏洞，内存泄漏已修复，通过完整 Code Review
-- **通用设计** - 支持任意 OpenClaw 实例，无硬编码配置
-- **中文支持** - 自动从 SOUL.md 读取 Agent 中文名字
+安装后，你的 OpenClaw 页面右上角会显示这样一个监控面板：
+
+```
+┌─────────────────────────────────────────┐
+│ 🤖 Sessions Monitor              [−]    │
+├─────────────────────────────────────────┤
+│ ┌─────────────────────────────────────┐ │
+│ │ main (主助手)               qwen... │ │
+│ │                           🟢 运行中 │ │
+│ └─────────────────────────────────────┘ │
+│ ┌─────────────────────────────────────┐ │
+│ │ programmer (代码助手)       qwen... │ │
+│ │                           🟡 空闲   │ │
+│ └─────────────────────────────────────┘ │
+│                                         │
+│ [刷新（10 秒自动刷新）]                  │
+└─────────────────────────────────────────┘
+```
+
+**面板功能**:
+- 📊 显示所有 AI 助手的实时状态
+- 🔄 每 10 秒自动刷新数据
+- 🎨 可以拖拽移动位置、调整大小
+- 🔍 点击卡片可以展开查看详情（Tokens 使用、会话列表等）
 
 ---
 
-## 📦 安装方式
+## 🎯 这个扩展能帮你做什么？
 
-### 方式一：作为 OpenClaw Skill 安装（推荐）
+如果你使用 OpenClaw 管理多个 AI 助手，这个扩展可以帮你：
+
+1. **一眼看到所有助手在干什么** - 哪个在运行、哪个在空闲
+2. **监控资源使用** - 每个助手用了多少 Tokens，Context 还剩多少
+3. **快速定位问题** - 如果有助手出错（aborted），红色标记立刻能看到
+4. **无需刷新页面** - 数据自动更新，不干扰你正常工作
+
+**适合谁用**:
+- ✅ 同时运行多个 AI 助手的 OpenClaw 用户
+- ✅ 想监控助手状态和 Token 消耗的用户
+- ✅ 需要知道哪个助手在忙、哪个空闲的用户
+
+**不适合谁**:
+- ❌ 只用一个助手、不关心状态的用户
+- ❌ 不想安装 Chrome 扩展的用户
+
+---
+
+## 📦 安装教程（小白友好）
+
+### 第一步：准备文件
+
+**方法 A：如果你会用 Git（推荐）**
+
+打开终端（Mac 用户按 `Cmd+Space` 搜索 "终端"），输入以下命令：
 
 ```bash
-# 1. 进入 OpenClaw skills 目录
+# 1. 进入 OpenClaw 的 skills 目录
 cd ~/.openclaw/skills
 
-# 2. 克隆此仓库
+# 2. 下载这个扩展
 git clone https://github.com/jicaiji1-max/workspace-programmer.git sessions-monitor
 
-# 3. 进入扩展目录
-cd sessions-monitor/openclaw-monitor-extension
-
-# 4. 启动 API 服务（后台运行）
-node openclaw-sessions-api.js &
-
-# 5. 验证服务是否启动
-curl http://127.0.0.1:18790/api/sessions
+# 3. 确认下载成功
+ls sessions-monitor/openclaw-monitor-extension
 ```
 
-### 方式二：直接从 GitHub 下载
+如果看到 `manifest.json`、`content.js` 等文件，说明下载成功。
+
+**方法 B：如果你不会用 Git**
+
+1. 打开浏览器，访问：https://github.com/jicaiji1-max/workspace-programmer
+2. 点击绿色的 **Code** 按钮
+3. 选择 **Download ZIP**
+4. 下载完成后解压
+5. 把解压后的 `openclaw-monitor-extension` 文件夹移动到 `~/.openclaw/skills/` 目录下
+
+---
+
+### 第二步：启动后台服务
+
+这个扩展需要一个后台服务来读取数据。
+
+**Mac 用户**:
+
+1. 打开终端（按 `Cmd+Space` 搜索 "终端"）
+2. 输入以下命令：
 
 ```bash
-# 1. 下载扩展文件
-mkdir -p ~/.openclaw/skills/sessions-monitor
-cd ~/.openclaw/skills/sessions-monitor
+cd ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension
+node openclaw-sessions-api.js
+```
 
-# 2. 下载文件（或手动复制）
-wget https://raw.githubusercontent.com/jicaiji1-max/workspace-programmer/main/openclaw-monitor-extension/manifest.json
-wget https://raw.githubusercontent.com/jicaiji1-max/workspace-programmer/main/openclaw-monitor-extension/content.js
-wget https://raw.githubusercontent.com/jicaiji1-max/workspace-programmer/main/openclaw-monitor-extension/openclaw-sessions-api.js
+3. 如果看到类似下面的输出，说明启动成功：
+```
+📊 Sessions API
+📂 读取目录：/Users/你的用户名/.openclaw
+🌐 端口：18790
+🔗 API: http://127.0.0.1:18790/api/sessions
 
-# 3. 启动 API 服务
+✅ 服务已启动
+```
+
+**重要**: 这个服务需要一直运行，不要关闭终端窗口。如果想后台运行，按 `Ctrl+C` 停止后，用下面命令重新启动：
+
+```bash
 node openclaw-sessions-api.js &
 ```
 
-### 方式三：使用 clawhub（如果支持）
+（末尾的 `&` 符号表示后台运行）
 
-```bash
-# 安装 clawhub CLI
-npm install -g clawhub
+**Windows 用户**:
 
-# 搜索并安装 skill
-clawhub install sessions-monitor
+1. 按 `Win+R`，输入 `cmd`，回车
+2. 输入以下命令：
+
+```cmd
+cd %USERPROFILE%\.openclaw\skills\sessions-monitor\openclaw-monitor-extension
+node openclaw-sessions-api.js
 ```
 
 ---
 
-## 🔧 Chrome 扩展配置
+### 第三步：加载 Chrome 扩展
 
-### 步骤 1：加载扩展
+1. **打开 Chrome 浏览器**
 
-1. 打开 Chrome 浏览器
-2. 访问 `chrome://extensions/`
-3. 开启右上角的 **开发者模式** 开关
-4. 点击 **加载已解压的扩展程序** 按钮
-5. 选择扩展目录：
-   - 方式一：`~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension`
-   - 方式二：你下载的 `openclaw-monitor-extension` 文件夹
+2. **进入扩展管理页面**
+   - 在地址栏输入：`chrome://extensions/`
+   - 或者：点击右上角三个点 → 扩展程序 → 管理扩展程序
 
-### 步骤 2：验证安装
+3. **开启开发者模式**
+   - 在页面右上角，找到 **开发者模式** 开关
+   - 把它打开（开关变蓝色）
 
-1. 访问你的 OpenClaw 页面：`http://127.0.0.1:18789`
-2. 页面右上角应该自动显示监控面板
-3. 如果看不到，检查 API 服务是否运行：
-   ```bash
-   curl http://127.0.0.1:18790/api/sessions
+4. **加载扩展**
+   - 点击左上角的 **加载已解压的扩展程序** 按钮
+   - 在弹出的窗口中，选择你刚才下载的文件夹：
+     - Mac: `/Users/你的用户名/.openclaw/skills/sessions-monitor/openclaw-monitor-extension`
+     - Windows: `C:\Users\你的用户名\.openclaw\skills\sessions-monitor\openclaw-monitor-extension`
+   - 点击 **选择文件夹**
+
+5. **确认加载成功**
+   - 扩展列表中应该出现 "Sessions Monitor"
+   - 状态显示为 "已启用"
+
+---
+
+### 第四步：验证安装
+
+1. **打开你的 OpenClaw 页面**
+   - 在浏览器地址栏输入：`http://127.0.0.1:18789`
+   - 或者你平时访问 OpenClaw 的地址
+
+2. **查看右上角**
+   - 应该能看到一个深色背景的监控面板
+   - 标题是 "🤖 Sessions Monitor"
+
+3. **如果看不到面板**
+   - 检查后台服务是否在运行（第二步的终端窗口）
+   - 刷新浏览器页面（按 `F5` 或 `Cmd+R`）
+   - 查看浏览器控制台有没有报错（按 `F12` → Console）
+
+---
+
+## 🎮 如何使用
+
+### 基本操作
+
+| 你想做什么 | 操作方法 |
+|-----------|---------|
+| 移动面板位置 | 鼠标点住面板顶部（标题栏），拖拽到任意位置 |
+| 调整面板大小 | 鼠标点住面板右下角，拖拽调整 |
+| 查看助手详情 | 点击任意助手卡片，展开详细信息 |
+| 收起详情 | 再次点击卡片头部，收起详情 |
+| 查看会话列表 | 点击 "会话数量" 那一行，展开当前助手的所有会话 |
+| 手动刷新数据 | 点击底部的绿色 "刷新" 按钮 |
+| 隐藏/显示面板 | 点击右上角的 `−` 按钮 |
+
+### 读懂面板信息
+
+每个助手卡片显示：
+
+```
+┌─────────────────────────────────────┐
+│ main (主助手)              [▼]      │  ← 助手名字
+│                          🟢 运行中   │  ← 状态
+│                                     │
+│ [展开后显示]                        │
+│ 累计 Tokens / Context Window:       │
+│   198.9K / 1.0M                    │  ← Token 使用情况
+│ Context 使用率：19.9% [====    ]    │  ← Context 占用进度条
+│ 会话数量：17 (aborted: 0) ▶         │  ← 当前会话数
+└─────────────────────────────────────┘
+```
+
+**状态说明**:
+- 🟢 **运行中** - 助手正在处理任务（5 分钟内有活动）
+- 🟡 **空闲** - 助手暂时没事做
+- 🔴 **aborted** - 助手出错或任务被中断
+
+**进度条颜色**:
+- 🟢 绿色 - Context 使用率 < 50%（健康）
+- 🟡 黄色 - Context 使用率 50-80%（注意）
+- 🔴 红色 - Context 使用率 > 80%（可能需要清理）
+
+---
+
+## ⚙️ 自定义配置
+
+### 修改中文名字
+
+如果面板上显示的中文名字不是你想要的，可以自己改。
+
+1. 找到这个文件：
+   ```
+   ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension/openclaw-sessions-api.js
    ```
 
----
+2. 用文本编辑器打开（Mac 用 TextEdit，Windows 用记事本）
 
-## 📖 使用说明
+3. 找到这一行：
+   ```javascript
+   const AGENT_CN_NAMES = {
+     'main': '主助手',
+     'programmer': '代码助手',
+     'product-manager': '产品助手',
+     'project-manager': '项目经理'
+   };
+   ```
 
-### 面板交互
+4. 修改成你想要的名字，比如：
+   ```javascript
+   const AGENT_CN_NAMES = {
+     'main': '大助手',
+     'programmer': '写代码的',
+     'my-custom-agent': '我的自定义助手'
+   };
+   ```
 
-| 操作 | 效果 |
-|------|------|
-| 点击卡片头部 | 展开/收起 Agent 详情 |
-| 点击会话数量 | 展开/收起会话列表 |
-| 拖拽头部 | 移动面板位置 |
-| 拖拽右下角 | 调整面板大小 |
-| 点击刷新按钮 | 手动刷新数据 |
-| 点击 −/+ 按钮 | 收起/展开整个面板 |
+5. 保存文件
 
-### 显示内容
+6. 重启后台服务（先按 `Ctrl+C` 停止，再运行 `node openclaw-sessions-api.js`）
 
-每个 Agent 卡片显示：
-- **Agent ID** - 如 `main`, `programmer`
-- **中文名字** - 如 `主助手`, `代码助手`（可选）
-- **模型** - 当前使用的模型名称
-- **状态** - 🟢运行中 / 🟡空闲 / 🔴aborted
-- **Tokens** - 累计 Tokens / Context Window
-- **Context 使用率** - 百分比 + 进度条
-- **会话数量** - 当前活跃的会话数
-
----
-
-## ⚙️ 配置选项
-
-### 自定义 Agent 中文名字
-
-编辑 `openclaw-sessions-api.js` 文件，找到 `AGENT_CN_NAMES` 配置：
-
-```javascript
-const AGENT_CN_NAMES = {
-  'main': '主助手',
-  'programmer': '代码助手',
-  'product-manager': '产品助手',
-  'project-manager': '项目经理',
-  // 添加你的自定义 agent
-  'custom-agent': '自定义名字'
-};
-```
-
-### 从 SOUL.md 自动读取
-
-API 服务会自动从工作区的 `SOUL.md` 文件标题提取中文名字：
-
-```markdown
-# SOUL.md - 代码助手
-```
-
-上面的标题会被解析为：`programmer → 代码助手`
+7. 刷新浏览器页面
 
 ### 修改刷新频率
 
-编辑 `content.js`，找到 `REFRESH_INTERVAL` 常量：
+默认每 10 秒刷新一次，如果想改快或改慢：
 
-```javascript
-const REFRESH_INTERVAL = 10000; // 10 秒，单位毫秒
-```
+1. 打开文件：
+   ```
+   ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension/content.js
+   ```
 
-### 修改面板默认大小
+2. 找到这一行：
+   ```javascript
+   const REFRESH_INTERVAL = 10000; // 10 秒
+   ```
 
-编辑 `content.js`，找到以下常量：
+3. 修改数字（单位是毫秒）：
+   - `5000` = 5 秒（更快）
+   - `30000` = 30 秒（更慢）
 
-```javascript
-const PANEL_DEFAULT_WIDTH = 480;   // 默认宽度
-const PANEL_DEFAULT_HEIGHT = 450;  // 默认高度
-const PANEL_MIN_WIDTH = 400;       // 最小宽度
-const PANEL_MIN_HEIGHT = 250;      // 最小高度
-```
+4. 保存文件，刷新浏览器页面
 
 ---
 
-## 🏗️ 项目结构
+## ❓ 常见问题
 
+### Q1: 面板完全不显示
+
+**可能原因**:
+1. 后台服务没运行
+2. Chrome 扩展没加载成功
+3. 浏览器地址不对
+
+**解决方法**:
+```bash
+# 1. 检查后台服务
+curl http://127.0.0.1:18790/api/sessions
+# 如果返回 JSON 数据，说明服务正常
+# 如果报错，重新启动服务：
+cd ~/.openclaw/skills/sessions-monitor/openclaw-monitor-extension
+node openclaw-sessions-api.js
+
+# 2. 检查扩展
+# 访问 chrome://extensions/ 确认 "Sessions Monitor" 在列表中
+
+# 3. 确认访问地址
+# 必须是 http://127.0.0.1:18789 或 http://localhost:18789
 ```
-openclaw-monitor-extension/
-├── manifest.json              # Chrome 扩展配置
-├── content.js                 # 核心注入脚本（1,054 行）
-├── openclaw-sessions-api.js   # 轻量级 API 服务（120 行）
-└── README.md                  # 本文档
+
+### Q2: 显示"加载失败"
+
+**原因**: 后台服务没响应
+
+**解决方法**:
+1. 检查终端窗口，服务是否还在运行
+2. 如果服务挂了，重新启动：
+   ```bash
+   node openclaw-sessions-api.js &
+   ```
+3. 刷新浏览器页面
+
+### Q3: 中文名字不显示
+
+**原因**: 配置没生效
+
+**解决方法**:
+1. 检查 `openclaw-sessions-api.js` 中的 `AGENT_CN_NAMES` 是否正确
+2. 重启后台服务
+3. 刷新浏览器页面
+
+### Q4: 面板位置跑偏了
+
+**原因**: 浏览器窗口大小变化
+
+**解决方法**:
+- 直接拖拽面板头部，移到你想要的位置
+- 刷新页面会恢复默认位置（右上角）
+
+### Q5: 怎么关闭这个扩展？
+
+**方法 A**: 暂时禁用
+1. 访问 `chrome://extensions/`
+2. 找到 "Sessions Monitor"
+3. 关闭开关（不用删除）
+
+**方法 B**: 完全卸载
+1. 访问 `chrome://extensions/`
+2. 找到 "Sessions Monitor"
+3. 点击 **移除**
+4. 删除文件：
+   ```bash
+   rm -rf ~/.openclaw/skills/sessions-monitor
+   ```
+
+**停止后台服务**:
+```bash
+# 找到进程
+ps aux | grep openclaw-sessions-api
+
+# 杀掉进程（替换 <PID> 为实际数字）
+kill <PID>
 ```
-
-### 文件说明
-
-| 文件 | 作用 | 行数 |
-|------|------|------|
-| `manifest.json` | Chrome 扩展清单文件 | ~20 |
-| `content.js` | 注入到 OpenClaw 页面的监控脚本 | 1,054 |
-| `openclaw-sessions-api.js` | 读取 sessions 并提供 HTTP API | ~120 |
 
 ---
 
 ## 🔒 安全说明
 
-本扩展已通过完整安全审计：
+这个扩展很安全，你可以放心使用：
 
-- ✅ **无 XSS 漏洞** - 使用 `createElement` 而非 `innerHTML`
-- ✅ **无内存泄漏** - 事件监听器自动清理
-- ✅ **本地运行** - 仅监听 `127.0.0.1`，不暴露到外网
-- ✅ **无外部依赖** - 纯原生 JavaScript，无 npm 包
-- ✅ **无数据外传** - 所有数据本地处理
+- ✅ **只在本地运行** - 所有数据都在你的电脑上，不会发送到任何服务器
+- ✅ **不需要联网** - 安装后可以断网使用
+- ✅ **开源代码** - 所有代码在 GitHub 上公开，可以审查
+- ✅ **无外部依赖** - 不下载任何额外的包或插件
+- ✅ **通过安全审计** - 无 XSS 漏洞、无内存泄漏
+
+**隐私说明**:
+- 这个扩展只读取你本地 OpenClaw 的 sessions 数据
+- 不会访问你的浏览器历史记录
+- 不会访问你的其他网站
+- 不会收集任何个人信息
 
 ---
 
-## 🐛 常见问题
+## 🛠️ 技术信息（给开发者看）
 
-### Q: 面板不显示怎么办？
+### 项目结构
 
-**A:** 按以下步骤排查：
-
-1. 检查 API 服务是否运行：
-   ```bash
-   curl http://127.0.0.1:18790/api/sessions
-   ```
-   应该返回 JSON 数据
-
-2. 检查扩展是否加载：
-   - 访问 `chrome://extensions/`
-   - 确认 "Sessions Monitor" 在列表中
-   - 确认开关已开启
-
-3. 刷新 OpenClaw 页面
-
-4. 查看 Console 日志：
-   - 按 F12 打开开发者工具
-   - 查看 Console 是否有 `[Monitor]` 开头的错误
-
-### Q: API 服务启动失败？
-
-**A:** 检查端口是否被占用：
-
-```bash
-# 检查 18790 端口
-lsof -i :18790
-
-# 如果被占用，杀掉进程或修改端口
-kill -9 <PID>
+```
+openclaw-monitor-extension/
+├── manifest.json              # Chrome 扩展配置
+├── content.js                 # 注入脚本（1,054 行）
+├── openclaw-sessions-api.js   # 后台 API 服务（~120 行）
+└── README.md                  # 本文档
 ```
 
-### Q: 显示"加载失败"？
+### 技术栈
 
-**A:** 可能原因：
+- **前端**: 原生 JavaScript (ES5)，无框架
+- **后端**: Node.js HTTP 服务
+- **样式**: 内嵌 CSS
 
-1. API 服务未运行 → 启动 `node openclaw-sessions-api.js`
-2. 端口不匹配 → 检查 `content.js` 中的 `API_URL`
-3. CORS 问题 → 确保访问 `http://127.0.0.1:18789` 而非 `localhost`
-
-### Q: 中文名字不显示？
-
-**A:** 检查：
-
-1. `openclaw-sessions-api.js` 中的 `AGENT_CN_NAMES` 配置
-2. `SOUL.md` 文件是否存在且标题格式正确
-3. 重启 API 服务使配置生效
-
----
-
-## 🛠️ 开发与调试
-
-### 本地开发
-
-```bash
-# 1. 克隆仓库
-git clone https://github.com/jicaiji1-max/workspace-programmer.git
-cd workspace-programmer/openclaw-monitor-extension
-
-# 2. 启动 API 服务
-node openclaw-sessions-api.js
-
-# 3. 在 Chrome 中加载扩展
-# chrome://extensions/ → 加载已解压的扩展程序
-```
-
-### 调试日志
-
-打开 Chrome 开发者工具（F12），查看 Console：
-
-- `[Monitor]` - 前端脚本日志
-- `[Sessions API]` - 后端 API 日志
-
-### 修改后重新加载
-
-1. 修改代码后保存
-2. 在 `chrome://extensions/` 找到 "Sessions Monitor"
-3. 点击刷新按钮 🔄
-4. 刷新 OpenClaw 页面
-
----
-
-## 📋 Code Review 状态
-
-已通过完整 Code Review，所有高优先级问题已修复：
-
-| 问题 | 状态 | 修复方案 |
-|------|------|---------|
-| 代码重复严重 | ✅ 已修复 | 重构为模块化函数，重复率 40% → <5% |
-| 内存泄漏风险 | ✅ 已修复 | 事件监听器自动清理 |
-| 错误处理薄弱 | ✅ 已修复 | HTTP/JSON 错误完善处理 |
-| 边界情况处理 | ✅ 已修复 | 空值检查 + 默认值 |
-| XSS 安全漏洞 | ✅ 已修复 | 使用 `createElement` 避免 `innerHTML` |
-| CSS 重复定义 | ✅ 已修复 | 删除 style.css，样式内嵌 |
-| 未使用权限 | ✅ 已修复 | 移除 storage 权限 |
-
----
-
-## 📊 性能指标
+### 性能
 
 | 指标 | 数值 |
 |------|------|
 | 代码行数 | 1,174 行 |
-| 代码重复率 | <5% |
 | 内存占用 | ~5MB |
 | CPU 占用 | <1% |
 | 刷新间隔 | 10 秒 |
-| 首次加载时间 | <500ms |
 
 ---
 
-## 🤝 贡献
+## 📞 遇到问题怎么办？
 
-欢迎提交 Issue 和 Pull Request！
+如果上面的常见问题没解决你的问题：
 
-### 贡献指南
+1. **查看 GitHub Issues**
+   - 访问：https://github.com/jicaiji1-max/workspace-programmer/issues
+   - 搜索有没有人遇到类似问题
 
-1. Fork 本仓库
-2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 开启 Pull Request
+2. **提交新 Issue**
+   - 描述你的问题
+   - 附上截图和错误信息
+   - 说明你的操作系统和 OpenClaw 版本
 
----
-
-## 📄 License
-
-MIT License - 详见 [LICENSE](LICENSE)
+3. **联系维护者**
+   - GitHub: @jicaiji1-max
 
 ---
 
-## 📞 联系方式
+## 📄 许可证
 
-- **维护者**: 菜🐒 @jicaiji1-max
-- **GitHub**: https://github.com/jicaiji1-max/workspace-programmer
-- **OpenClaw**: https://openclaw.ai
-
----
-
-## 🎉 致谢
-
-感谢以下贡献者：
-
-- **product-manager** - Code Review
-- **project-manager** - Code Review
-- **老板** - 需求指导
+MIT License - 你可以自由使用、修改、分发
 
 ---
 
 **最后更新**: 2026-03-08  
-**版本**: 1.0.4
+**版本**: 1.0.4  
+**维护者**: 菜🐒 @jicaiji1-max
+
+---
+
+## 🎉 快速开始检查清单
+
+安装完成后，对照这个清单检查：
+
+- [ ] 后台服务已启动（终端看到 "✅ 服务已启动"）
+- [ ] Chrome 扩展已加载（chrome://extensions/ 能看到）
+- [ ] OpenClaw 页面右上角有监控面板
+- [ ] 面板显示至少一个助手卡片
+- [ ] 数据每 10 秒自动刷新
+
+全部打勾？恭喜，安装成功！🎊
