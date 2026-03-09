@@ -28,7 +28,7 @@ function loadAgentCnNames() {
       }
     }
     
-    // 常用默认映射（可以被关闭）
+    // 常用默认映射（可以被覆盖）
     const defaultMappings = {
       'main': '主助手',
       'programmer': '代码助手',
@@ -36,8 +36,11 @@ function loadAgentCnNames() {
       'project-manager': '项目经理'
     };
     
-    // 合并默认映射（如果 SOUL.md 没有定义）
-    Object.assign(cnNames, defaultMappings);
+    // Bug fix: 先设置默认值，再用 SOUL.md 的值覆盖（而不是相反）
+    const finalNames = Object.assign({}, defaultMappings, cnNames);
+    Object.keys(finalNames).forEach(key => {
+      cnNames[key] = finalNames[key];
+    });
     
   } catch (e) {
     console.error('加载 agent 中文名字失败:', e.message);
@@ -136,6 +139,18 @@ const server = http.createServer((req, res) => {
     console.error('Error:', e.message);
     res.writeHead(500);
     res.end(JSON.stringify({ error: e.message }));
+  }
+});
+
+// Bug fix: 添加错误处理，防止端口冲突时进程崩溃
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ 端口 ${PORT} 已被占用`);
+    console.error('   请检查是否有其他实例正在运行');
+    process.exit(1);
+  } else {
+    console.error('❌ 服务器错误:', err.message);
+    process.exit(1);
   }
 });
 

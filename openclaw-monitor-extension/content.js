@@ -13,6 +13,7 @@
   const PANEL_MIN_WIDTH = 400;
   const PANEL_MIN_HEIGHT = 250;
   const PANEL_MAX_HEIGHT = 600;
+  const FETCH_TIMEOUT_MS = 5000; // API 请求超时时间（毫秒）
   
   // ==================== 状态管理 ====================
   var state = {
@@ -109,16 +110,28 @@
   // ==================== 数据获取与处理 ====================
   
   // 获取并处理 sessions 数据
-  function fetchSessionsData() {
+  function fetchSessionsData(retryCount) {
+    // 支持重试机制
+    retryCount = retryCount || 0;
+    
+    // Bug fix: 使用可配置的超时时间
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function() { controller.abort(); }, FETCH_TIMEOUT_MS);
+    
     return fetch(API_URL, {
       method: 'GET',
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Accept': 'application/json' },
+      signal: controller.signal
     })
+    .finally(function() { clearTimeout(timeoutId); })
     .then(function(res) {
       if (!res.ok) {
         throw new Error('HTTP ' + res.status + ': ' + res.statusText);
       }
-      return res.json();
+      // Bug fix: res.json() 失败时提供友好错误
+      return res.json().catch(function() {
+        throw new Error('响应解析失败：服务返回了非 JSON 格式的数据');
+      });
     })
     .then(function(response) {
       // 支持新旧两种响应格式
@@ -195,6 +208,25 @@
       });
       
       return agentsData;
+    })
+    .catch(function(e) {
+      // Bug fix: AbortError 特殊处理，提供友好提示
+      if (e.name === 'AbortError') {
+        throw new Error('请求超时（超过 ' + (FETCH_TIMEOUT_MS / 1000) + ' 秒），请检查 API 服务是否正常运行');
+      }
+      
+      // Bug fix: 添加重试机制（失败后自动重试 1 次）
+      if (retryCount < 1) {
+        console.log('[Agents Monitor] 请求失败，1 秒后重试...', e.message);
+        return new Promise(function(resolve) { 
+          setTimeout(resolve, 1000); 
+        }).then(function() { 
+          return fetchSessionsData(retryCount + 1); 
+        });
+      }
+      
+      // 重试后仍失败，抛出原始错误
+      throw e;
     });
   }
   
@@ -818,6 +850,8 @@
       resizeStateBR.lastX = e.clientX;
       resizeStateBR.lastY = e.clientY;
       
+      // Bug fix: rect must be defined in this scope
+      var rect = panel.getBoundingClientRect();
       var newWidth = (parseFloat(panel.style.width) || rect.width) + deltaX;
       var newHeight = (parseFloat(panel.style.height) || rect.height) + deltaY;
       
@@ -1195,4 +1229,12 @@
   
   // ==================== 启动 ====================
   initPanel();
+  
+  // Bug fix: 页面卸载时清理事件监听器，防止内存泄漏
+  window.addEventListener('beforeunload', function() {
+    cleanupEventListeners();
+    if (state.refreshTimer) {
+      clearInterval(state.refreshTimer);
+    }
+  });
 })();
