@@ -19,6 +19,8 @@
 		A92E01C6A417BB91A41C2380 /* TextEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F18C1F240ED197BCC3D208 /* TextEditorView.swift */; };
 		AC9C9C4D58AA4440C758E63C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B672F3764B1314EFE11BC40 /* ContentView.swift */; };
 		AF52C7B39FB4772A196B2FA0 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D592D565FB07A795AFD993BA /* CameraView.swift */; };
+		829BE3ACB1FA4620B2CEA8C1 /* SearchOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D383DC6A292949259ADD527F /* SearchOverlayView.swift */; };
+		D383DC6A292949259ADD527F /* SearchOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchOverlayView.swift; sourceTree = "<group>"; };
 		5425A5AD47BB4527B31FD430 /* PreviewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87AD4882A674B6DA8DAE6CC /* PreviewManager.swift */; };
 		D87AD4882A674B6DA8DAE6CC /* PreviewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewManager.swift; sourceTree = "<group>"; };
 		B40C9E57CABA4401904F1F3D /* SuishoujiTests/EndToEndIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6F9F097FCE4107B22A8375 /* SuishoujiTests/EndToEndIntegrationTests.swift */; };
@@ -109,6 +111,7 @@
 			children = (
 				9AEBC2EACE0A3B7EC6C2C9DD /* Assets.xcassets */,
 				D592D565FB07A795AFD993BA /* CameraView.swift */,
+				D383DC6A292949259ADD527F /* SearchOverlayView.swift */,
 				D87AD4882A674B6DA8DAE6CC /* PreviewManager.swift */,
 				BB1111111111111111111111 /* VideoRecorderView.swift */,
 				BB3333333333333333333333 /* VideoPlayerView.swift */,
@@ -280,6 +283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AF52C7B39FB4772A196B2FA0 /* CameraView.swift in Sources */,
+				829BE3ACB1FA4620B2CEA8C1 /* SearchOverlayView.swift in Sources */,
 				5425A5AD47BB4527B31FD430 /* PreviewManager.swift in Sources */,
 				BB2222222222222222222222 /* VideoRecorderView.swift in Sources */,
 				BB4444444444444444444444 /* VideoPlayerView.swift in Sources */,

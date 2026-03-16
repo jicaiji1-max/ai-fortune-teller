@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产品起名器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f6f3;
+      --surface: #ffffff;
+      --surface2: #f0eeea;
+      --border: #e5e2db;
+      --text: #1a1917;
+      --text-muted: #78746c;
+      --accent: #d4572a;
+      --accent-light: #fdf0eb;
+      --radius: 14px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-hover: 0 6px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* Header */
+    .header {
+      padding: 48px 20px 0;
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .header-badge {
+      display: inline-block;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: clamp(28px, 6vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto 40px;
+    }
+
+    /* Input area */
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      max-width: 640px;
+      margin: 0 auto;
+      box-shadow: var(--shadow);
+    }
+    .input-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: block;
+    }
+    textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--surface2);
+      resize: none;
+      outline: none;
+      line-height: 1.6;
+      min-height: 100px;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--accent); background: #fff; }
+    textarea::placeholder { color: #b5b0a8; }
+
+    .input-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .char-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Generate button */
+    .btn-generate {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-generate:hover:not(:disabled) {
+      background: #333;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+    .btn-generate:active { transform: translateY(0); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-generate svg { transition: transform 0.3s; }
+    .btn-generate.loading svg { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Divider */
+    .section-divider {
+      max-width: 640px;
+      margin: 36px auto 0;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .section-divider.visible { opacity: 1; }
+    .section-divider::before, .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Results grid */
+    .results-container {
+      max-width: 640px;
+      margin: 20px auto 0;
+      padding: 0 20px;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    /* Name card */
+    .name-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      animation: slideIn 0.3s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .name-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .name-card.copied {
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+    .name-card.copied::after {
+      content: '已复制';
+      position: absolute;
+      top: 0; right: 0;
+      background: #22c55e;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 0 var(--radius) 0 8px;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-index {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 20px;
+      margin-top: 3px;
+      letter-spacing: 0.04em;
+    }
+    .card-content { flex: 1; min-width: 0; }
+    .card-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .card-slogan {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .copy-icon {
+      color: var(--border);
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: color 0.2s;
+    }
+    .name-card:hover .copy-icon { color: var(--accent); }
+
+    /* Loading skeleton */
+    .skeleton-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      gap: 12px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .skel-idx { width: 16px; height: 14px; background: var(--border); border-radius: 4px; margin-top: 4px; flex-shrink: 0; }
+    .skel-body { flex: 1; }
+    .skel-line {
+      height: 14px;
+      background: var(--border);
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .skel-line.title { width: 45%; height: 18px; margin-bottom: 10px; }
+    .skel-line.short { width: 72%; }
+
+    /* Error */
+    .error-msg {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 14px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+    .empty-text { font-size: 15px; }
+
+    /* API key config */
+    .config-toggle {
+      max-width: 640px;
+      margin: 12px auto 0;
+      padding: 0 20px;
+      text-align: right;
+    }
+    .config-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .config-btn:hover { color: var(--text); background: var(--surface2); }
+    .config-panel {
+      max-width: 640px;
+      margin: 8px auto 0;
+      padding: 0 20px;
+      display: none;
+    }
+    .config-panel.open { display: block; }
+    .config-inner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .config-inner p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .config-inner a { color: var(--accent); text-decoration: none; }
+    .config-row {
+      display: flex;
+      gap: 8px;
+    }
+    .config-row input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--text);
+      background: var(--surface2);
+    }
+    .config-row input:focus { border-color: var(--accent); }
+    .btn-save {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-save:hover { background: #333; }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 100px;
+      margin-left: 8px;
+    }
+    .mode-badge.demo { background: #fef9c3; color: #854d0e; }
+    .mode-badge.live { background: #dcfce7; color: #166534; }
+    .mode-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .mode-badge.demo .mode-dot { background: #ca8a04; }
+    .mode-badge.live .mode-dot { background: #16a34a; }
+
+    @media (min-width: 500px) {
+      .results-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 400px) {
+      .header { padding: 32px 16px 0; }
+      .input-card { margin: 0 16px; }
+      .results-container { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">✦ 产品起名器</div>
+  <h1>给你的产品<br>起一个好名字</h1>
+  <p class="subtitle">描述你的产品，一键生成 10 个带 Slogan 的名字方案</p>
+</div>
+
+<div style="max-width:640px;margin:0 auto;padding:0 20px;">
+  <div class="input-card">
+    <label class="input-label" for="desc-input">描述你的产品</label>
+    <textarea
+      id="desc-input"
+      placeholder="比如：一个帮助程序员记笔记的 app，支持代码高亮和标签分类"
+      maxlength="300"
+    ></textarea>
+    <div class="input-footer">
+      <span class="char-hint" id="char-count">0 / 300</span>
+      <button class="btn-generate" id="gen-btn" onclick="generate()">
+        <svg id="btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.636 5.636l2.122 2.122m8.484 8.484 2.122 2.122M5.636 18.364l2.122-2.122m8.484-8.484 2.122-2.122"/>
+        </svg>
+        <span id="btn-text">生成名字</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="config-toggle">
+  <button class="config-btn" onclick="toggleConfig()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07M4.93 4.93A10 10 0 0 1 19.07 19.07"/>
+    </svg>
+    <span id="mode-label">API 设置</span>
+    <span class="mode-badge demo" id="mode-badge">
+      <span class="mode-dot"></span>演示模式
+    </span>
+  </button>
+</div>
+
+<div class="config-panel" id="config-panel">
+  <div class="config-inner">
+    <p>
+      接入 <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a> 免费 API Key，获得更好的生成效果。
+      不填则使用演示模式（本地模拟生成）。
+    </p>
+    <div class="config-row">
+      <input type="password" id="api-key-input" placeholder="sk-or-v1-xxxxxxx（OpenRouter API Key）">
+      <button class="btn-save" onclick="saveApiKey()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider" id="results-divider">结果</div>
+
+<div class="results-container">
+  <div class="results-grid" id="results-grid">
+    <!-- results rendered here -->
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// State
+// ─────────────────────────────────────────
+let apiKey = localStorage.getItem('openrouter_key') || '';
+let isLoading = false;
+
+const textarea = document.getElementById('desc-input');
+const genBtn = document.getElementById('gen-btn');
+const btnText = document.getElementById('btn-text');
+const btnIcon = document.getElementById('btn-icon');
+const resultsGrid = document.getElementById('results-grid');
+const resultsDivider = document.getElementById('results-divider');
+
+// Init UI state
+if (apiKey) updateModeBadge(true);
+
+textarea.addEventListener('input', () => {
+  document.getElementById('char-count').textContent = `${textarea.value.length} / 300`;
+});
+
+textarea.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) generate();
+});
+
+function toggleConfig() {
+  const panel = document.getElementById('config-panel');
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  if (!isOpen && apiKey) {
+    document.getElementById('api-key-input').value = apiKey;
+  }
+}
+
+function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  apiKey = val;
+  if (val) {
+    localStorage.setItem('openrouter_key', val);
+    updateModeBadge(true);
+  } else {
+    localStorage.removeItem('openrouter_key');
+    updateModeBadge(false);
+  }
+  document.getElementById('config-panel').classList.remove('open');
+}
+
+function updateModeBadge(isLive) {
+  const badge = document.getElementById('mode-badge');
+  if (isLive) {
+    badge.className = 'mode-badge live';
+    badge.innerHTML = '<span class="mode-dot"></span>AI 模式';
+  } else {
+    badge.className = 'mode-badge demo';
+    badge.innerHTML = '<span class="mode-dot"></span>演示模式';
+  }
+}
+
+// ─────────────────────────────────────────
+// Generate
+// ─────────────────────────────────────────
+async function generate() {
+  const desc = textarea.value.trim();
+  if (!desc) {
+    textarea.focus();
+    textarea.style.borderColor = '#f87171';
+    setTimeout(() => { textarea.style.borderColor = ''; }, 1500);
+    return;
+  }
+  if (isLoading) return;
+
+  isLoading = true;
+  setLoading(true);
+  showSkeletons();
+
+  try {
+    let names;
+    if (apiKey) {
+      names = await generateWithAI(desc, apiKey);
+    } else {
+      names = await generateDemo(desc);
+    }
+    renderResults(names);
+  } catch (err) {
+    showError(err.message || '生成失败，请稍后重试');
+  } finally {
+    isLoading = false;
+    setLoading(false);
+  }
+}
+
+function setLoading(on) {
+  genBtn.disabled = on;
+  genBtn.classList.toggle('loading', on);
+  btnText.textContent = on ? '生成中…' : '生成名字';
+  if (on) {
+    btnIcon.innerHTML = `<path d="M21 12a9 9 0 1 1-6.219-8.56"/>`;
+    btnIcon.setAttribute('stroke-width', '2.5');
+  } else {
+    btnIcon.innerHTML = `<path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.636 5.636l2.122 2.122m8.484 8.484 2.122 2.122M5.636 18.364l2.122-2.122m8.484-8.484 2.122-2.122"/>`;
+  }
+}
+
+function showSkeletons() {
+  resultsDivider.classList.add('visible');
+  resultsGrid.innerHTML = Array(10).fill(0).map(() => `
+    <div class="skeleton-card">
+      <div class="skel-idx"></div>
+      <div class="skel-body">
+        <div class="skel-line title"></div>
+        <div class="skel-line short"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderResults(names) {
+  resultsDivider.classList.add('visible');
+  resultsGrid.innerHTML = names.map((item, i) => `
+    <div class="name-card" onclick="copyName(this, '${escAttr(item.name)}')" title="点击复制名字">
+      <span class="card-index">${String(i + 1).padStart(2, '0')}</span>
+      <div class="card-content">
+        <div class="card-name">${esc(item.name)}</div>
+        <div class="card-slogan">${esc(item.slogan)}</div>
+      </div>
+      <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+    </div>
+  `).join('');
+}
+
+function showError(msg) {
+  resultsDivider.classList.add('visible');
+  resultsGrid.innerHTML = `<div class="error-msg" style="grid-column:1/-1">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>${esc(msg)}</span>
+  </div>`;
+}
+
+function copyName(card, name) {
+  navigator.clipboard.writeText(name).then(() => {
+    card.classList.add('copied');
+    setTimeout(() => card.classList.remove('copied'), 1800);
+  }).catch(() => {
+    // Fallback
+    const el = document.createElement('textarea');
+    el.value = name;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    card.classList.add('copied');
+    setTimeout(() => card.classList.remove('copied'), 1800);
+  });
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return String(s).replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/\n/g, ' ');
+}
+
+// ─────────────────────────────────────────
+// AI generation via OpenRouter
+// ─────────────────────────────────────────
+async function generateWithAI(desc, key) {
+  const systemPrompt = `你是一位专业的产品命名专家。用户会描述一个产品，你需要为其生成10个产品名称，每个名称配一句精炼的 Slogan。
+
+要求：
+- 名字要有创意、简洁、易记、国际化（中英文均可）
+- 涵盖不同风格：简约型、有力量感、有温度感、科技感、文艺感等
+- Slogan 不超过20个字，要体现核心价值
+- 输出严格的 JSON 格式，不要任何额外说明
+
+输出格式：
+[
+  {"name": "ProductName", "slogan": "一句话介绍"},
+  ...
+]`;
+
+  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': location.href,
+      'X-Title': '产品起名器'
+    },
+    body: JSON.stringify({
+      model: 'meta-llama/llama-3.3-70b-instruct:free',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `产品描述：${desc}` }
+      ],
+      temperature: 0.9,
+      max_tokens: 800
+    })
+  });
+
+  if (!resp.ok) {
+    const errData = await resp.json().catch(() => ({}));
+    throw new Error(errData?.error?.message || `API 错误 ${resp.status}`);
+  }
+
+  const data = await resp.json();
+  const content = data.choices?.[0]?.message?.content || '';
+  
+  // Extract JSON from response
+  const jsonMatch = content.match(/\[[\s\S]*\]/);
+  if (!jsonMatch) throw new Error('AI 返回格式异常，请重试');
+  
+  const parsed = JSON.parse(jsonMatch[0]);
+  if (!Array.isArray(parsed) || parsed.length === 0) throw new Error('返回数据为空');
+  
+  return parsed.slice(0, 10).map(item => ({
+    name: String(item.name || ''),
+    slogan: String(item.slogan || '')
+  }));
+}
+
+// ─────────────────────────────────────────
+// Demo mode: smart local simulation
+// ─────────────────────────────────────────
+async function generateDemo(desc) {
+  await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
+  
+  const lower = desc.toLowerCase();
+  
+  // Detect keywords for themed generation
+  const themes = {
+    note: ['笔记','记录','note','memo','写','记','文档'],
+    dev: ['程序员','开发','代码','code','dev','工程','技术'],
+    health: ['健康','运动','锻炼','健身','跑步','饮食','wellness','fit'],
+    finance: ['财务','理财','记账','钱','投资','finance','money'],
+    social: ['社交','朋友','交友','社区','community','chat','connect'],
+    edu: ['学习','教育','课程','知识','learn','study','education'],
+    shop: ['购物','商城','电商','shop','buy','商品','store'],
+    ai: ['ai','智能','人工智能','机器学习','自动'],
+    travel: ['旅行','旅游','出行','travel','trip','酒店'],
+    food: ['美食','餐厅','食物','吃','饭','food','restaurant'],
+  };
+  
+  let detectedTheme = 'general';
+  for (const [theme, keywords] of Object.entries(themes)) {
+    if (keywords.some(k => lower.includes(k))) {
+      detectedTheme = theme;
+      break;
+    }
+  }
+  
+  const pools = {
+    note: [
+      { name: 'Notely', slogan: '思维的栖息地，灵感随时落地' },
+      { name: 'MemoLeaf', slogan: '每一片叶子，都是你的想法' },
+      { name: 'PinNote', slogan: '钉住灵感，告别遗忘' },
+      { name: '脑图本', slogan: '把脑子里的东西，搬到纸上来' },
+      { name: 'Clarit', slogan: '清晰思考，从好的记录开始' },
+      { name: 'Snippr', slogan: '代码、文字、想法，一网打尽' },
+      { name: '知事', slogan: '知道的，都在这里' },
+      { name: 'Noteflow', slogan: '让灵感自然流淌' },
+      { name: 'DraftBox', slogan: '未完成的想法，也值得被记住' },
+      { name: 'Memora', slogan: '记忆延伸器，大脑的外接硬盘' },
+    ],
+    dev: [
+      { name: 'Snippr', slogan: '开发者的代码笔记本' },
+      { name: 'DevMemo', slogan: '写代码，也写想法' },
+      { name: 'CodeLeaf', slogan: '每段代码，都有来历' },
+      { name: '码记', slogan: '程序员专属的知识管理' },
+      { name: 'Logify', slogan: '记录你的开发历程' },
+      { name: 'StackNote', slogan: '技术栈上的灵感捕手' },
+      { name: 'Codebase', slogan: '你的私人技术知识库' },
+      { name: 'Devora', slogan: '为开发者而生的笔记工具' },
+      { name: 'Repomark', slogan: '让知识像代码一样版本化' },
+      { name: 'Shiftlog', slogan: '记录每一次技术突破' },
+    ],
+    health: [
+      { name: 'Vitaly', slogan: '健康是你最好的投资' },
+      { name: 'FitFlow', slogan: '动起来，让生活更流畅' },
+      { name: '好状态', slogan: '每天进步一点点' },
+      { name: 'Runly', slogan: '跑起来，人生才跑起来' },
+      { name: 'Wellr', slogan: '科学管理，活得更好' },
+      { name: 'PulseMe', slogan: '了解你的身体，掌控你的生活' },
+      { name: 'Activit', slogan: '活动是最好的药' },
+      { name: '元气', slogan: '满满元气，从今天开始' },
+      { name: 'BodyLog', slogan: '身体数据，尽在掌握' },
+      { name: 'Striive', slogan: '努力，每一天都算数' },
+    ],
+    finance: [
+      { name: 'Pockly', slogan: '钱的流向，一目了然' },
+      { name: '账本', slogan: '记录每一分钱的意义' },
+      { name: 'Budgio', slogan: '预算管理，告别月光' },
+      { name: 'Coinly', slogan: '小钱积大钱，一切都有数' },
+      { name: 'Savvy', slogan: '聪明理财，从记账开始' },
+      { name: 'Splity', slogan: '花得明白，存得开心' },
+      { name: 'FundLog', slogan: '让每一分钱都产生价值' },
+      { name: 'Monelio', slogan: '财务自由，从清晰开始' },
+      { name: '钱迹', slogan: '留住金钱的痕迹' },
+      { name: 'Cashflow', slogan: '掌控现金流，掌控未来' },
+    ],
+    social: [
+      { name: 'Circlio', slogan: '你的圈子，你做主' },
+      { name: 'Convo', slogan: '有意义的对话，才是真连接' },
+      { name: 'Linktor', slogan: '连接人，而不只是信息' },
+      { name: '熟人圈', slogan: '深度连接，从熟人开始' },
+      { name: 'Vibelink', slogan: '找到同频的人' },
+      { name: 'Bondly', slogan: '关系，值得被精心维护' },
+      { name: 'Peerly', slogan: '志同道合，自然相聚' },
+      { name: 'Toggl', slogan: '在一起，更有力量' },
+      { name: 'Wavely', slogan: '找到属于你的那道波' },
+      { name: 'Groupr', slogan: '小圈子，大能量' },
+    ],
+    general: [
+      { name: 'Clarit', slogan: '让事情变得简单清晰' },
+      { name: 'Launchly', slogan: '更快，更好，更有力量' },
+      { name: 'Forma', slogan: '优雅地解决问题' },
+      { name: 'Simplo', slogan: '少即是多，简单就是答案' },
+      { name: 'Pivio', slogan: '以人为本，以结果为导向' },
+      { name: 'Flowo', slogan: '让工作像流水一样自然' },
+      { name: 'Nexgen', slogan: '下一代的解决方案' },
+      { name: '好用', slogan: '不需要教程的产品' },
+      { name: 'Crafto', slogan: '每一个细节，都是用心打磨' },
+      { name: 'Liftly', slogan: '让你的生活更上一层楼' },
+    ]
+  };
+
+  const base = pools[detectedTheme] || pools.general;
+  
+  // Shuffle a bit for variety
+  const shuffled = [...base].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 10);
+}
+</script>
+
+</body>
+</html>

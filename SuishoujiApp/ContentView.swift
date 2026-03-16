@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Photos
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
@@ -14,6 +15,50 @@ struct ContentView: View {
     @State private var showTagManager = false
     @FocusState private var searchFocused: Bool
     @ObservedObject private var tagStore = TagStore.shared
+
+    private func restoreMissingVideos() {
+        let fm = FileManager.default
+        guard let docsDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let videosDir = docsDir.appendingPathComponent("Videos", isDirectory: true)
+        try? fm.createDirectory(at: videosDir, withIntermediateDirectories: true)
+        var restoreTasks: [(note: Note, pathIndex: Int, assetId: String)] = []
+        for note in notes {
+            guard let paths = note.videoPaths, !paths.isEmpty, let assetIds = note.videoAssetIds, !assetIds.isEmpty else { continue }
+            for (i, path) in paths.enumerated() {
+                let fullURL = path.hasPrefix("/") ? URL(fileURLWithPath: path) : docsDir.appendingPathComponent(path)
+                if fm.fileExists(atPath: fullURL.path) { continue }
+                guard i < assetIds.count, !assetIds[i].isEmpty else { continue }
+                restoreTasks.append((note: note, pathIndex: i, assetId: assetIds[i]))
+            }
+        }
+        guard !restoreTasks.isEmpty else { return }
+        Task {
+            for task in restoreTasks {
+                if let relPath = await Self.restoreVideoFromAsset(assetId: task.assetId, videosDir: videosDir, docsDir: docsDir) {
+                    if var paths = task.note.videoPaths, task.pathIndex < paths.count {
+                        paths[task.pathIndex] = relPath
+                        task.note.videoPaths = paths
+                    }
+                }
+            }
+        }
+    }
+
+    private static nonisolated func restoreVideoFromAsset(assetId: String, videosDir: URL, docsDir: URL) async -> String? {
+        let assets = PHAsset.fetchAssets(withLocalIdentifiers: [assetId], options: nil)
+        guard let asset = assets.firstObject else { return nil }
+        let resources = PHAssetResource.assetResources(for: asset)
+        guard let resource = resources.first(where: { $0.type == .video || $0.type == .fullSizeVideo }) ?? resources.first else { return nil }
+        let filename = resource.originalFilename
+        let ext = (filename as NSString).pathExtension
+        let dest = videosDir.appendingPathComponent("restored_\(UUID().uuidString).\(ext.isEmpty ? "mov" : ext)")
+        let opts = PHAssetResourceRequestOptions()
+        opts.isNetworkAccessAllowed = true
+        do {
+            try await PHAssetResourceManager.default().writeData(for: resource, toFile: dest, options: opts)
+            return String(dest.path.dropFirst(docsDir.path.count + 1))
+        } catch { return nil }
+    }
 
     private var filteredNotes: [Note] {
         notes.filter { note in
@@ -43,25 +88,23 @@ struct ContentView: View {
                 Color.clear.frame(height: 0)  // 占位，避免手势冲突
                 VStack(spacing: 20) {
                     // Action Buttons
-                    HStack(spacing: 16) {
+                    HStack(spacing: 12) {
                         ActionButton(
-                            title: "拍照",
+                            title: "定格",
                             systemImage: "camera.fill",
-                            color: .blue,
                             gradientColors: [
-                                Color(red: 0.18, green: 0.35, blue: 0.88),
-                                Color(red: 0.42, green: 0.22, blue: 0.85)
+                                Color(red: 0.18, green: 0.38, blue: 0.95),
+                                Color(red: 0.38, green: 0.18, blue: 0.90)
                             ]
                         ) {
                             showCamera = true
                         }
                         ActionButton(
-                            title: "写字",
-                            systemImage: "pencil",
-                            color: .purple,
+                            title: "落笔",
+                            systemImage: "pencil.line",
                             gradientColors: [
-                                Color(red: 0.52, green: 0.20, blue: 0.88),
-                                Color(red: 0.78, green: 0.28, blue: 0.72)
+                                Color(red: 0.55, green: 0.18, blue: 0.90),
+                                Color(red: 0.85, green: 0.25, blue: 0.65)
                             ]
                         ) {
                             showTextEditor = true
@@ -178,6 +221,7 @@ struct ContentView: View {
             }
             .navigationTitle("随手记")
             .scrollDismissesKeyboard(.immediately)
+            .task { restoreMissingVideos() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { showTagManager = true }) {
@@ -286,48 +330,62 @@ struct ContentView: View {
 struct ActionButton: View {
     let title: String
     let systemImage: String
-    let color: Color
-    var gradientColors: [Color]? = nil
+    var gradientColors: [Color] = [.blue, .purple]
     let action: () -> Void
+
+    @State private var isPressed = false
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 12) {
+            ZStack(alignment: .bottomLeading) {
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(LinearGradient(colors: gradientColors, startPoint: .topTrailing, endPoint: .bottomLeading))
+                    .frame(height: 120)
                 Image(systemName: systemImage)
-                    .font(.system(size: 36, weight: .medium))
-                Text(title)
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 52, weight: .light))
+                    .foregroundStyle(.white.opacity(0.18))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding(.top, 12).padding(.trailing, 16)
+                VStack(alignment: .leading, spacing: 2) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 20, weight: .regular))
+                        .foregroundStyle(.white.opacity(0.9))
+                    Text(title)
+                        .font(.system(size: 22, weight: .thin))
+                        .tracking(3)
+                        .foregroundStyle(.white)
+                }
+                .padding(.leading, 20).padding(.bottom, 18)
             }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 110)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(
-                        LinearGradient(
-                            colors: gradientColors ?? [color, color.opacity(0.8)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-            )
+            .frame(height: 120)
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+            .shadow(color: gradientColors.first?.opacity(0.3) ?? .clear, radius: 12, x: 0, y: 6)
         }
+        .buttonStyle(.plain)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in withAnimation(.easeInOut(duration: 0.1)) { isPressed = true } }
+                .onEnded { _ in withAnimation(.spring()) { isPressed = false } }
+        )
     }
 }
 
 struct EmptyStateView: View {
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "note.text")
-                .font(.system(size: 48))
-                .foregroundStyle(.tertiary)
-            Text("还没有记录")
-                .font(.title3)
+        VStack(spacing: 16) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 44, weight: .ultraLight))
+                .foregroundStyle(LinearGradient(
+                    colors: [Color(red: 0.38, green: 0.18, blue: 0.90), Color(red: 0.85, green: 0.25, blue: 0.65)],
+                    startPoint: .topLeading, endPoint: .bottomTrailing))
+            Text("从这里开始")
+                .font(.system(size: 18, weight: .thin))
+                .tracking(2)
                 .foregroundStyle(.secondary)
-            Text("点击上方按钮开始记录")
-                .font(.subheadline)
+            Text("定格瞬间，落笔心情")
+                .font(.system(size: 13))
                 .foregroundStyle(.tertiary)
         }
+        .padding(.top, 20)
     }
 }

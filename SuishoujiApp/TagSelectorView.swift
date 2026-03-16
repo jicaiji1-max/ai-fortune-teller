@@ -75,17 +75,22 @@ struct TagChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(isSelected ? .white : Color.primary.opacity(0.75))
+                .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
+                .foregroundStyle(isSelected ? .white : Color.primary.opacity(0.6))
                 .padding(.horizontal, 14)
                 .padding(.vertical, 6)
-                .background(
-                    Capsule().fill(
-                        isSelected
-                        ? LinearGradient(colors: [Color(red: 0.20, green: 0.35, blue: 0.88), Color(red: 0.55, green: 0.22, blue: 0.83)], startPoint: .leading, endPoint: .trailing)
-                        : LinearGradient(colors: [Color(.systemGray6), Color(.systemGray6)], startPoint: .leading, endPoint: .trailing)
-                    )
-                )
+                .background {
+                    if isSelected {
+                        Capsule()
+                            .fill(LinearGradient(
+                                colors: [Color(red: 0.20, green: 0.35, blue: 0.95), Color(red: 0.55, green: 0.18, blue: 0.90)],
+                                startPoint: .leading, endPoint: .trailing
+                            ))
+                    } else {
+                        Capsule()
+                            .stroke(Color.primary.opacity(0.12), lineWidth: 1)
+                    }
+                }
         }
         .buttonStyle(.plain)
     }

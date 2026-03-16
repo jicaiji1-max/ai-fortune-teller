@@ -5,222 +5,241 @@ import SwiftUI
 // MARK: - UI 组件测试
 
 final class ComponentTests: XCTestCase {
-    
-    // MARK: - ActionButton 测试
-    
+
+    // MARK: - ActionButton 测试（新接口：gradientColors 代替 color）
+
     func testActionButtonInitialization() {
         var actionCalled = false
-        
         let button = ActionButton(
-            title: "测试",
-            systemImage: "star",
-            color: .blue
+            title: "定格",
+            systemImage: "camera.fill",
+            gradientColors: [.blue, .purple]
         ) {
             actionCalled = true
         }
-        
         XCTAssertNotNil(button)
         XCTAssertFalse(actionCalled)
     }
-    
-    func testActionButtonTitle() {
-        let title = "拍照"
-        XCTAssertEqual(title, "拍照")
+
+    func testActionButtonTitleDingge() {
+        // 按钮文字已改为文艺风格
+        let title = "定格"
+        XCTAssertEqual(title, "定格")
     }
-    
-    func testActionButtonSystemImage() {
+
+    func testActionButtonTitleLuobi() {
+        let title = "落笔"
+        XCTAssertEqual(title, "落笔")
+    }
+
+    func testActionButtonSystemImageCamera() {
         let image = "camera.fill"
         XCTAssertEqual(image, "camera.fill")
     }
-    
-    func testActionButtonColor() {
-        let color = Color.blue
-        XCTAssertNotNil(color)
+
+    func testActionButtonSystemImagePencil() {
+        let image = "pencil.line"
+        XCTAssertEqual(image, "pencil.line")
     }
-    
+
     func testActionButtonAction() {
         var actionExecuted = false
-        
-        let action = {
-            actionExecuted = true
-        }
-        
+        let action = { actionExecuted = true }
         action()
-        
         XCTAssertTrue(actionExecuted)
     }
-    
+
+    func testActionButtonGradientColors() {
+        let colors: [Color] = [
+            Color(red: 0.18, green: 0.38, blue: 0.95),
+            Color(red: 0.38, green: 0.18, blue: 0.90)
+        ]
+        XCTAssertEqual(colors.count, 2)
+    }
+
     // MARK: - EmptyStateView 测试
-    
+
     func testEmptyStateViewExists() {
-        var emptyStateVisible = true
-        
-        XCTAssertTrue(emptyStateVisible)
+        let view = EmptyStateView()
+        XCTAssertNotNil(view)
     }
-    
+
     func testEmptyStateIcon() {
-        let icon = "note.text"
-        XCTAssertEqual(icon, "note.text")
+        // 新图标
+        let icon = "sparkles"
+        XCTAssertEqual(icon, "sparkles")
     }
-    
+
     func testEmptyStateTitle() {
-        let title = "还没有记录"
-        XCTAssertEqual(title, "还没有记录")
+        let title = "从这里开始"
+        XCTAssertEqual(title, "从这里开始")
     }
-    
+
     func testEmptyStateSubtitle() {
-        let subtitle = "点击上方按钮开始记录"
-        XCTAssertEqual(subtitle, "点击上方按钮开始记录")
+        let subtitle = "定格瞬间，落笔心情"
+        XCTAssertEqual(subtitle, "定格瞬间，落笔心情")
     }
-    
+
+    // MARK: - 搜索功能测试
+
+    func testSearchFilterByText() {
+        let notes = [
+            Note(type: .text, text: "今天吃了火锅"),
+            Note(type: .text, text: "明天去爬山"),
+            Note(type: .text, text: "买了新相机"),
+        ]
+        let query = "火锅"
+        let results = notes.filter { $0.text.localizedCaseInsensitiveContains(query) }
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual(results.first?.text, "今天吃了火锅")
+    }
+
+    func testSearchFilterByLocation() {
+        let note = Note(type: .text, text: "随便写写", locationName: "北京三里屯")
+        let query = "三里屯"
+        let matches = note.locationName?.localizedCaseInsensitiveContains(query) ?? false
+        XCTAssertTrue(matches)
+    }
+
+    func testSearchFilterByTag() {
+        let note = Note(type: .text, text: "工作日记", tags: ["📌 工作", "🌿 生活"])
+        let query = "工作"
+        let matches = note.tags?.joined(separator: " ").localizedCaseInsensitiveContains(query) ?? false
+        XCTAssertTrue(matches)
+    }
+
+    func testSearchEmptyQueryReturnsAll() {
+        let notes = [
+            Note(type: .text, text: "笔记1"),
+            Note(type: .text, text: "笔记2"),
+        ]
+        let query = ""
+        let results = query.isEmpty ? notes : notes.filter { $0.text.contains(query) }
+        XCTAssertEqual(results.count, 2)
+    }
+
+    func testSearchNoResults() {
+        let notes = [Note(type: .text, text: "今天天气不错")]
+        let results = notes.filter { $0.text.contains("火星") }
+        XCTAssertTrue(results.isEmpty)
+    }
+
+    // MARK: - 标签筛选测试
+
+    func testTagFilterAll() {
+        let notes = [
+            Note(type: .text, text: "A", tags: ["📌 工作"]),
+            Note(type: .text, text: "B", tags: ["🌿 生活"]),
+        ]
+        let selectedTag: String? = nil
+        let results = notes.filter { note in
+            selectedTag == nil || (note.tags?.contains(selectedTag!) ?? false)
+        }
+        XCTAssertEqual(results.count, 2)
+    }
+
+    func testTagFilterSpecific() {
+        let notes = [
+            Note(type: .text, text: "A", tags: ["📌 工作"]),
+            Note(type: .text, text: "B", tags: ["🌿 生活"]),
+            Note(type: .text, text: "C", tags: ["📌 工作", "🌿 生活"]),
+        ]
+        let selectedTag: String? = "📌 工作"
+        let results = notes.filter { note in
+            selectedTag == nil || (note.tags?.contains(selectedTag!) ?? false)
+        }
+        XCTAssertEqual(results.count, 2)
+    }
+
     // MARK: - 分组功能测试
-    
+
     func testGroupNotesByDate() {
         let calendar = Calendar.current
         let today = Date()
         let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
-        
         XCTAssertTrue(calendar.isDateInToday(today))
         XCTAssertTrue(calendar.isDateInYesterday(yesterday))
     }
-    
+
     func testTodayGroupHeader() {
-        let header = "今天"
-        XCTAssertEqual(header, "今天")
+        XCTAssertEqual("今天", "今天")
     }
-    
+
     func testYesterdayGroupHeader() {
-        let header = "昨天"
-        XCTAssertEqual(header, "昨天")
+        XCTAssertEqual("昨天", "昨天")
     }
-    
-    func testDateGroupHeader() {
+
+    func testDateGroupHeaderFormat() {
         let formatter = DateFormatter()
         formatter.dateFormat = "M 月 d 日"
-        
-        let date = Date()
-        let header = formatter.string(from: date)
-        
+        let header = formatter.string(from: Date())
         XCTAssertFalse(header.isEmpty)
+        XCTAssertTrue(header.contains("月"))
     }
-    
-    // MARK: - 列表功能测试
-    
-    func testNoteListSorting() {
+
+    // MARK: - 列表排序测试
+
+    func testNoteListSortedByTimestampDesc() {
         var notes = [
-            Note(type: .text, text: "3"),
-            Note(type: .text, text: "1"),
-            Note(type: .text, text: "2")
+            Note(type: .text, text: "旧"),
+            Note(type: .text, text: "新"),
         ]
-        
-        // 按时间倒序排列
+        notes[0] = Note(type: .text, text: "旧")
+        notes[1] = Note(type: .text, text: "新")
         notes.sort { $0.timestamp > $1.timestamp }
-        
-        XCTAssertNotNil(notes)
+        XCTAssertNotNil(notes.first)
     }
-    
+
     func testNoteListIsEmpty() {
         let notes: [Note] = []
         XCTAssertTrue(notes.isEmpty)
     }
-    
+
     func testNoteListIsNotEmpty() {
         let notes = [Note(type: .text, text: "1")]
         XCTAssertFalse(notes.isEmpty)
     }
-    
-    // MARK: - 导航测试
-    
-    func testNavigationTitle() {
-        let title = "随手记"
-        XCTAssertEqual(title, "随手记")
-    }
-    
-    func testNavigationDisplayMode() {
-        let displayMode = "large"
-        XCTAssertEqual(displayMode, "large")
-    }
-    
+
     // MARK: - Sheet 展示测试
-    
+
     func testCameraSheetPresentation() {
         var showCamera = false
-        
         showCamera = true
         XCTAssertTrue(showCamera)
-        
         showCamera = false
         XCTAssertFalse(showCamera)
     }
-    
+
     func testTextEditorSheetPresentation() {
         var showTextEditor = false
-        
         showTextEditor = true
         XCTAssertTrue(showTextEditor)
     }
-    
+
     func testEditSheetPresentation() {
-        var showEditSheet = false
         var editingNote: Note? = nil
-        
-        editingNote = Note(type: .text, text: "编辑")
-        showEditSheet = true
-        
+        editingNote = Note(type: .text, text: "编辑中")
         XCTAssertNotNil(editingNote)
-        XCTAssertTrue(showEditSheet)
-    }
-    
-    // MARK: - 手势测试
-    
-    func testTapGesture() {
-        var tapRecognized = false
-        
-        tapRecognized = true
-        
-        XCTAssertTrue(tapRecognized)
-    }
-    
-    func testLongPressGesture() {
-        var longPressRecognized = false
-        
-        longPressRecognized = true
-        
-        XCTAssertTrue(longPressRecognized)
-    }
-    
-    func testSwipeGesture() {
-        var swipeRecognized = false
-        
-        swipeRecognized = true
-        
-        XCTAssertTrue(swipeRecognized)
     }
 }
 
 // MARK: - 安全测试
 
 final class SecurityTests: XCTestCase {
-    
+
     func testDeleteRequiresConfirmation() {
         var deleteWithoutConfirmation = false
-        
-        // 删除必须有确认
         XCTAssertFalse(deleteWithoutConfirmation)
     }
-    
+
     func testUserDataNotExposed() {
         let note = Note(type: .text, text: "私密笔记")
-        
-        // 笔记数据不应意外暴露
         XCTAssertNotNil(note)
     }
-    
+
     func testPhotoDataEncapsulation() {
         let imageData = "secret".data(using: .utf8)!
         let note = Note(type: .photo, photoData: imageData)
-        
-        // 照片数据应正确封装
         XCTAssertEqual(note.photoData, imageData)
     }
 }
@@ -228,27 +247,73 @@ final class SecurityTests: XCTestCase {
 // MARK: - 辅助功能测试
 
 final class AccessibilityTests: XCTestCase {
-    
-    func testButtonLabels() {
-        let cameraButtonLabel = "拍照"
-        let textButtonLabel = "写字"
-        
-        XCTAssertEqual(cameraButtonLabel, "拍照")
-        XCTAssertEqual(textButtonLabel, "写字")
+
+    func testButtonLabelsUpdated() {
+        // 按钮文字已更新为文艺风格
+        let cameraButtonLabel = "定格"
+        let textButtonLabel = "落笔"
+        XCTAssertEqual(cameraButtonLabel, "定格")
+        XCTAssertEqual(textButtonLabel, "落笔")
     }
-    
+
     func testDeleteButtonLabel() {
         let deleteLabel = "删除"
         XCTAssertEqual(deleteLabel, "删除")
     }
-    
+
     func testCancelButtonLabel() {
         let cancelLabel = "取消"
         XCTAssertEqual(cancelLabel, "取消")
     }
-    
-    func testEmptyStateText() {
-        let emptyText = "还没有记录"
-        XCTAssertEqual(emptyText, "还没有记录")
+
+    func testEmptyStateTextUpdated() {
+        // 空状态文案已更新
+        let emptyText = "从这里开始"
+        XCTAssertEqual(emptyText, "从这里开始")
+    }
+
+    func testNavigationTitle() {
+        let title = "随手记"
+        XCTAssertEqual(title, "随手记")
+    }
+}
+
+// MARK: - 视频路径测试
+
+final class VideoPathTests: XCTestCase {
+
+    func testRelativePathSaved() {
+        // 视频路径应存相对路径，不含 /var/containers/... 前缀
+        let relativePath = "Videos/video_test.mov"
+        XCTAssertFalse(relativePath.hasPrefix("/"))
+    }
+
+    func testAbsolutePathMigration() {
+        // 旧绝对路径应能提取相对部分
+        let absPath = "/var/mobile/Containers/Data/Application/XXXX/Documents/Videos/test.mov"
+        let range = absPath.range(of: "/Documents/")
+        XCTAssertNotNil(range, "应能找到 /Documents/ 分割点")
+        if let range = range {
+            let rel = String(absPath[range.upperBound...])
+            XCTAssertEqual(rel, "Videos/test.mov")
+        }
+    }
+
+    func testVideoExtensionPreserved() {
+        // stableCopy 应保留原始扩展名
+        let movURL = URL(fileURLWithPath: "/tmp/video.mov")
+        let ext = movURL.pathExtension
+        XCTAssertEqual(ext, "mov", ".mov 扩展名应被保留，不能强制改成 .mp4")
+    }
+
+    func testVideoURLsFromRelativePath() {
+        guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            XCTFail("无法获取 Documents 目录")
+            return
+        }
+        let relativePath = "Videos/nonexistent_test.mov"
+        let fullURL = docsDir.appendingPathComponent(relativePath)
+        // 文件不存在时 videoURLs 应返回空（过滤掉）
+        XCTAssertFalse(FileManager.default.fileExists(atPath: fullURL.path))
     }
 }

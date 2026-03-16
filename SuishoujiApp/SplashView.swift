@@ -14,6 +14,7 @@ struct RootView: View {
             .opacity(splashOpacity)
             .allowsHitTesting(splashOpacity > 0.01)
         }
+
     }
 }
 

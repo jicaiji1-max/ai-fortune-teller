@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AI玄学小助手 · 易经占卜</title>
+<style>
+:root{
+  --bg:#1a1a2e;--bg2:#16213e;--bg3:#0f3460;
+  --gold:#ffd700;--gold2:#ffaa00;--gold3:rgba(255,215,0,0.15);
+  --red:#e94560;--red2:#c73652;
+  --text:#f0e6d3;--text2:rgba(240,230,211,0.7);--text3:rgba(240,230,211,0.4);
+  --card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.08);
+  --border:rgba(255,215,0,0.2);--border2:rgba(255,215,0,0.4);
+  --shadow:0 8px 32px rgba(0,0,0,0.4);
+  --glow:0 0 20px rgba(255,215,0,0.3);
+  --glow2:0 0 40px rgba(255,215,0,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'STSong','SimSun','Source Han Serif CN','Noto Serif CJK SC',serif;color:var(--text);touch-action:manipulation}
+
+/* Canvas BG */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* App wrapper */
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+
+/* Header */
+.header{padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.logo{font-size:18px;font-weight:bold;background:linear-gradient(135deg,var(--gold),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.logo-sub{font-size:11px;color:var(--text3);font-family:sans-serif;margin-top:1px}
+.header-right{display:flex;gap:12px;align-items:center}
+.header-btn{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px;transition:color .2s}
+.header-btn:hover{color:var(--gold)}
+
+/* Pages */
+.page{flex:1;overflow-y:auto;overflow-x:hidden;display:none;-webkit-overflow-scrolling:touch}
+.page.active{display:flex;flex-direction:column}
+.page::-webkit-scrollbar{display:none}
+
+/* Nav */
+.nav{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border);background:rgba(26,26,46,0.95);backdrop-filter:blur(10px)}
+.nav-item{display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;transition:all .2s;position:relative}
+.nav-item .icon{font-size:20px;transition:transform .2s}
+.nav-item .label{font-size:10px;font-family:sans-serif;color:var(--text3);margin-top:3px;transition:color .2s;letter-spacing:1px}
+.nav-item.active .icon{filter:drop-shadow(0 0 8px var(--gold))}
+.nav-item.active .label{color:var(--gold)}
+.nav-item::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--gold);transition:width .3s}
+.nav-item.active::after{width:60%}
+
+/* ============ HOME PAGE ============ */
+#page-home{align-items:center;justify-content:center;padding:20px;text-align:center;gap:0}
+.home-title{font-size:32px;background:linear-gradient(135deg,var(--gold),#fff,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;text-shadow:none;line-height:1.2;margin-bottom:6px}
+.home-subtitle{font-size:13px;color:var(--text3);letter-spacing:2px;font-family:sans-serif;margin-bottom:30px}
+.trigram-deco{font-size:80px;line-height:1;margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(255,215,0,0.4));animation:floatY 4s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+.question-input-wrap{width:100%;margin-bottom:20px}
+.question-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-size:14px;font-family:serif;outline:none;text-align:center;transition:border-color .3s}
+.question-input::placeholder{color:var(--text3)}
+.question-input:focus{border-color:var(--border2);box-shadow:var(--glow)}
+
+/* Divination button */
+.divine-btn{position:relative;width:160px;height:160px;margin:0 auto 16px;cursor:pointer;user-select:none}
+.divine-btn-inner{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3a2d00,#1a1400);border:2px solid var(--gold);box-shadow:var(--glow),inset 0 0 30px rgba(255,215,0,0.1);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .3s;position:relative;overflow:hidden}
+.divine-btn-inner::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(transparent,rgba(255,215,0,0.15),transparent);animation:rotateBg 8s linear infinite}
+@keyframes rotateBg{to{transform:rotate(360deg)}}
+.divine-btn:active .divine-btn-inner{transform:scale(0.93);box-shadow:0 0 50px rgba(255,215,0,0.6),inset 0 0 40px rgba(255,215,0,0.2)}
+.divine-icon{font-size:52px;position:relative;z-index:1}
+.divine-text{font-size:13px;color:var(--gold);letter-spacing:3px;margin-top:4px;position:relative;z-index:1}
+.divine-hint{font-size:11px;color:var(--text3);letter-spacing:1px;font-family:sans-serif}
+
+/* Coins animation */
+.coins-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;display:none}
+.coin{position:absolute;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,#ffe066,#b8860b);border:2px solid #ffd700;display:flex;align-items:center;justify-content:center;font-size:18px;color:#1a1400;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.4);animation:coinFly 1.5s ease-out forwards}
+@keyframes coinFly{
+  0%{transform:translate(0,0) rotate(0deg) scale(0);opacity:0}
+  20%{opacity:1;transform:translate(var(--tx1),var(--ty1)) rotate(180deg) scale(1.2)}
+  80%{opacity:1;transform:translate(var(--tx2),var(--ty2)) rotate(720deg) scale(1)}
+  100%{transform:translate(var(--tx3),var(--ty3)) rotate(1080deg) scale(0.5);opacity:0}
+}
+
+/* ============ RESULT PAGE ============ */
+#page-result{padding:0;gap:0}
+.result-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.result-back{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:4px}
+.result-title-wrap{flex:1}
+.result-title{font-size:20px;color:var(--gold);letter-spacing:2px}
+.result-date{font-size:11px;color:var(--text3);font-family:sans-serif;margin-top:2px}
+.result-actions{display:flex;gap:8px}
+.action-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text2);font-size:12px;cursor:pointer;font-family:sans-serif;transition:all .2s}
+.action-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+.result-body{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.result-body::-webkit-scrollbar{display:none}
+
+/* Hexagram display */
+.hexagram-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;position:relative;overflow:hidden}
+.hexagram-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.hexa-char{font-size:88px;line-height:1;color:var(--gold);filter:drop-shadow(0 0 20px rgba(255,215,0,0.5));margin-bottom:8px;display:block;animation:glowPulse 3s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 15px rgba(255,215,0,0.4))}50%{filter:drop-shadow(0 0 30px rgba(255,215,0,0.8))}}
+.hexa-name{font-size:28px;color:var(--gold);letter-spacing:4px;margin-bottom:4px}
+.hexa-full{font-size:14px;color:var(--text2);letter-spacing:2px;margin-bottom:12px}
+.hexa-nature{display:inline-block;padding:4px 16px;border-radius:20px;font-size:13px;letter-spacing:2px;font-family:sans-serif;margin-bottom:16px}
+.nature-daji{background:rgba(255,215,0,0.15);border:1px solid var(--gold);color:var(--gold)}
+.nature-ji{background:rgba(100,200,100,0.15);border:1px solid #64c864;color:#64c864}
+.nature-zhong{background:rgba(100,150,255,0.15);border:1px solid #6496ff;color:#6496ff}
+.nature-xiong{background:rgba(233,69,96,0.15);border:1px solid var(--red);color:var(--red)}
+
+.hexa-lines{display:flex;flex-direction:column;gap:6px;width:120px;margin:0 auto 16px}
+.hexa-line{display:flex;gap:8px;align-items:center;justify-content:center}
+.line-yang{height:6px;width:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:3px;box-shadow:0 0 8px rgba(255,215,0,0.4)}
+.line-yin-l,.line-yin-r{height:6px;width:44%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:3px;box-shadow:0 0 8px rgba(255,215,0,0.4)}
+
+.hexa-trigrams{display:flex;justify-content:space-around;font-size:12px;color:var(--text3);letter-spacing:1px;font-family:sans-serif}
+
+/* Judgment card */
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.info-card-title{font-size:12px;color:var(--text3);letter-spacing:2px;font-family:sans-serif;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.info-card-title::before{content:'';display:block;width:3px;height:14px;background:var(--gold);border-radius:2px}
+.info-card-text{font-size:15px;line-height:1.8;color:var(--text2)}
+.info-card-text.classical{font-size:16px;color:var(--text);letter-spacing:1px}
+
+/* Fortune grid */
+.fortune-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.fortune-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.fortune-label{font-size:11px;color:var(--text3);font-family:sans-serif;letter-spacing:1px;margin-bottom:6px}
+.fortune-stars{font-size:16px;color:var(--gold)}
+.fortune-empty{color:var(--text3)}
+
+/* AI interpretation */
+.ai-card{background:linear-gradient(135deg,rgba(15,52,96,0.8),rgba(26,26,46,0.8));border:1px solid rgba(100,150,255,0.3);border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.ai-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#6496ff,transparent)}
+.ai-title{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(100,150,255,0.8);letter-spacing:2px;font-family:sans-serif;margin-bottom:12px}
+.ai-dot{width:8px;height:8px;background:#6496ff;border-radius:50%;box-shadow:0 0 8px #6496ff;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.ai-text{font-size:14px;line-height:1.9;color:var(--text);white-space:pre-wrap}
+.ai-loading{display:flex;align-items:center;gap:8px;color:var(--text3);font-family:sans-serif;font-size:13px}
+.spinner{width:20px;height:20px;border:2px solid var(--text3);border-top-color:#6496ff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ HISTORY PAGE ============ */
+#page-history{padding:0}
+.page-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.page-header-title{font-size:16px;color:var(--gold);letter-spacing:2px}
+.clear-btn{background:none;border:1px solid rgba(233,69,96,0.4);border-radius:6px;padding:5px 10px;color:var(--red);font-size:12px;cursor:pointer;font-family:sans-serif;transition:all .2s}
+.clear-btn:hover{background:rgba(233,69,96,0.1)}
+.history-list{flex:1;overflow-y:auto;padding:12px}
+.history-list::-webkit-scrollbar{display:none}
+.history-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text3)}
+.history-empty .icon{font-size:48px;opacity:0.4}
+.history-empty p{font-family:sans-serif;font-size:14px;letter-spacing:1px}
+.history-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.history-item:hover{border-color:var(--border2);background:var(--card2)}
+.history-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);border-radius:0 2px 2px 0}
+.history-char{font-size:40px;color:var(--gold);filter:drop-shadow(0 0 8px rgba(255,215,0,0.3));flex-shrink:0}
+.history-info{flex:1;min-width:0}
+.history-name{font-size:16px;color:var(--text);letter-spacing:2px;margin-bottom:3px}
+.history-question{font-size:12px;color:var(--text3);font-family:sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.history-date{font-size:11px;color:var(--text3);font-family:sans-serif}
+.history-nature-badge{font-size:11px;padding:2px 8px;border-radius:10px;flex-shrink:0;font-family:sans-serif}
+
+/* ============ SETTINGS PAGE ============ */
+#page-settings{padding:0}
+.settings-body{flex:1;overflow-y:auto;padding:16px}
+.settings-body::-webkit-scrollbar{display:none}
+.settings-section{margin-bottom:20px}
+.settings-section-title{font-size:11px;color:var(--text3);letter-spacing:2px;font-family:sans-serif;padding:0 4px 8px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.settings-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px}
+.settings-label{font-size:12px;color:var(--text2);font-family:sans-serif;letter-spacing:1px;margin-bottom:8px}
+.settings-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;font-family:sans-serif;outline:none;transition:border-color .2s}
+.settings-input:focus{border-color:var(--border2)}
+.settings-select{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;font-family:sans-serif;outline:none;-webkit-appearance:none}
+.settings-select option{background:#1a1a2e;color:var(--text)}
+.settings-save-btn{width:100%;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:10px;padding:14px;color:#1a1400;font-size:15px;font-family:serif;letter-spacing:2px;cursor:pointer;font-weight:bold;transition:all .2s;margin-top:4px}
+.settings-save-btn:hover{box-shadow:var(--glow)}
+.settings-hint{font-size:11px;color:var(--text3);font-family:sans-serif;margin-top:6px;line-height:1.6}
+.settings-link{color:var(--gold);text-decoration:none}
+
+/* ============ SHARE MODAL ============ */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.active{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:360px;overflow:hidden}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;color:var(--gold);letter-spacing:2px}
+.modal-close{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer}
+.modal-body{padding:16px}
+.share-canvas-wrap{width:100%;border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow)}
+#share-canvas{width:100%;display:block}
+.share-download-btn{width:100%;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:10px;padding:13px;color:#1a1400;font-size:15px;font-family:serif;letter-spacing:2px;cursor:pointer;font-weight:bold}
+
+/* ============ TOAST ============ */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(30,30,50,0.95);border:1px solid var(--border);border-radius:20px;padding:10px 20px;color:var(--text);font-size:13px;font-family:sans-serif;z-index:300;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Divination overlay */
+.divine-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,8,20,0.97);z-index:150;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.divine-overlay.active{display:flex}
+.divine-overlay-text{font-size:18px;color:var(--gold);letter-spacing:4px;animation:fadeInOut 2s ease-in-out infinite}
+@keyframes fadeInOut{0%,100%{opacity:0.4}50%{opacity:1}}
+.divine-overlay-sub{font-size:13px;color:var(--text3);font-family:sans-serif;letter-spacing:2px}
+.divine-hexagram-reveal{font-size:100px;color:var(--gold);filter:drop-shadow(0 0 40px rgba(255,215,0,0.6));animation:revealPop .5s cubic-bezier(0.175,0.885,0.32,1.275) forwards;opacity:0}
+@keyframes revealPop{0%{opacity:0;transform:scale(0.3)}100%{opacity:1;transform:scale(1)}}
+.divine-smoke{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(100,150,255,0.2),transparent);animation:smokeExpand 2s ease-out forwards}
+@keyframes smokeExpand{0%{transform:scale(0.5);opacity:0.8}100%{transform:scale(3);opacity:0}}
+
+/* Responsive tweaks */
+@media(max-height:600px){
+  .trigram-deco{font-size:50px;margin-bottom:10px}
+  .divine-btn{width:120px;height:120px}
+  .divine-icon{font-size:38px}
+  .home-title{font-size:24px;margin-bottom:4px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div id="app">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="logo">AI玄学小助手</div>
+      <div class="logo-sub">ICHING · AI ORACLE</div>
+    </div>
+    <div class="header-right">
+      <button class="header-btn" onclick="showSettings()" title="设置">⚙️</button>
+    </div>
+  </div>
+
+  <!-- Pages -->
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="trigram-deco">☯</div>
+    <h1 class="home-title">易经占卜</h1>
+    <p class="home-subtitle">天人合一 · 洞见未来</p>
+    <div class="question-input-wrap">
+      <input class="question-input" id="question-input" type="text" placeholder="可输入心中所问之事（选填）" maxlength="50">
+    </div>
+    <div class="divine-btn" id="divine-btn" onclick="startDivination()">
+      <div class="divine-btn-inner">
+        <span class="divine-icon">𝄇</span>
+        <span class="divine-text">问卦</span>
+      </div>
+    </div>
+    <p class="divine-hint">点击 或 摇晃手机 开始占卜</p>
+  </div>
+
+  <!-- RESULT -->
+  <div class="page" id="page-result">
+    <div class="result-header">
+      <button class="result-back" onclick="showPage('home')">←</button>
+      <div class="result-title-wrap">
+        <div class="result-title" id="result-title">卦象解读</div>
+        <div class="result-date" id="result-date"></div>
+      </div>
+      <div class="result-actions">
+        <button class="action-btn" onclick="saveToHistory()">💾 保存</button>
+        <button class="action-btn" onclick="openShareModal()">🎨 分享</button>
+      </div>
+    </div>
+    <div class="result-body" id="result-body">
+      <!-- dynamically filled -->
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="page" id="page-history">
+    <div class="page-header">
+      <span class="page-header-title">占卜历史</span>
+      <button class="clear-btn" onclick="clearHistory()">清空</button>
+    </div>
+    <div class="history-list" id="history-list">
+      <!-- filled dynamically -->
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="page-header">
+      <span class="page-header-title">设置</span>
+    </div>
+    <div class="settings-body">
+      <div class="settings-section">
+        <div class="settings-section-title">AI 接口配置</div>
+        <div class="settings-item">
+          <div class="settings-label">AI 服务提供商</div>
+          <select class="settings-select" id="setting-provider">
+            <option value="deepseek">DeepSeek</option>
+            <option value="openai">OpenAI</option>
+            <option value="custom">自定义（兼容 OpenAI 格式）</option>
+            <option value="none">不使用 AI（内置解读）</option>
+          </select>
+        </div>
+        <div class="settings-item" id="setting-apikey-wrap">
+          <div class="settings-label">API Key</div>
+          <input class="settings-input" id="setting-apikey" type="password" placeholder="sk-...">
+          <div class="settings-hint">
+            🔑 DeepSeek：<a class="settings-link" href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a> 免费注册获取<br>
+            🔑 OpenAI：<a class="settings-link" href="https://platform.openai.com" target="_blank">platform.openai.com</a><br>
+            <strong>Key 仅保存在本地，不会上传。</strong>
+          </div>
+        </div>
+        <div class="settings-item" id="setting-baseurl-wrap" style="display:none">
+          <div class="settings-label">自定义 API 地址</div>
+          <input class="settings-input" id="setting-baseurl" type="text" placeholder="https://your-api.com/v1">
+        </div>
+        <div class="settings-item">
+          <div class="settings-label">AI 模型</div>
+          <input class="settings-input" id="setting-model" type="text" placeholder="deepseek-chat">
+          <div class="settings-hint">DeepSeek 默认：deepseek-chat &nbsp;|&nbsp; OpenAI 默认：gpt-3.5-turbo</div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">解读风格</div>
+        <div class="settings-item">
+          <div class="settings-label">占卜视角</div>
+          <select class="settings-select" id="setting-style">
+            <option value="balanced">综合（工作·感情·财运）</option>
+            <option value="career">事业运势</option>
+            <option value="love">感情运势</option>
+            <option value="wealth">财富运势</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="settings-save-btn" onclick="saveSettings()">保存设置</button>
+
+      <div class="settings-section" style="margin-top:20px">
+        <div class="settings-section-title">关于</div>
+        <div class="settings-item">
+          <div class="settings-hint" style="color:var(--text2);line-height:1.8">
+            <strong>AI玄学小助手</strong> 基于《易经》64卦，融合AI智能解读，<br>
+            提供个性化的运势分析。<br><br>
+            ⚠️ 仅供娱乐参考，不构成决策依据。<br>
+            数据存储于本地设备，不上传云端。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <div class="nav-item active" data-page="home" onclick="navTo('home')">
+      <span class="icon">☯️</span>
+      <span class="label">占卜</span>
+    </div>
+    <div class="nav-item" data-page="history" onclick="navTo('history')">
+      <span class="icon">📜</span>
+      <span class="label">历史</span>
+    </div>
+    <div class="nav-item" data-page="settings" onclick="navTo('settings')">
+      <span class="icon">⚙️</span>
+      <span class="label">设置</span>
+    </div>
+  </div>
+</div>
+
+<!-- Divination overlay -->
+<div class="divine-overlay" id="divine-overlay">
+  <div class="divine-smoke" id="divine-smoke"></div>
+  <div class="divine-overlay-text" id="divine-overlay-text">天地初开，阴阳运转...</div>
+  <div class="divine-overlay-sub" id="divine-overlay-sub">静心感应，等待天机</div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">生成分享海报</span>
+      <button class="modal-close" onclick="closeShareModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="share-canvas-wrap">
+        <canvas id="share-canvas" width="600" height="900"></canvas>
+      </div>
+      <button class="share-download-btn" onclick="downloadPoster()">⬇ 保存图片</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// HEXAGRAM DATA (64卦)
+// =============================================
+const HEXAGRAMS = [
+{id:1,char:'䷀',name:'乾',full:'乾为天',nature:'大吉',lines:[1,1,1,1,1,1],
+ upper:'乾天',lower:'乾天',
+ judgment:'元亨，利贞。',image:'天行健，君子以自强不息。',
+ interp:'刚健纯阳，万象之始。代表天道运行不息，象征极强的创造力、领导力与进取心。事业如日中天，但需防过刚易折，知进退之道。',
+ fortune:{overall:5,love:4,career:5,wealth:4},
+ advice:'以积极进取为要，保持刚健之气，同时需懂得审时度势。'},
+{id:2,char:'䷁',name:'坤',full:'坤为地',nature:'大吉',lines:[0,0,0,0,0,0],
+ upper:'坤地',lower:'坤地',
+ judgment:'元亨，利牝马之贞。君子有攸往，先迷后得主。',image:'地势坤，君子以厚德载物。',
+ interp:'柔顺纯阴，大地承载万物。代表包容、养育与坚守，象征厚德载物之德。适合蓄力待时，以退为进，厚积薄发。',
+ fortune:{overall:5,love:5,career:4,wealth:4},
+ advice:'以包容厚德为要，顺势而为，静待时机，切勿急于求成。'},
+{id:3,char:'䷂',name:'屯',full:'水雷屯',nature:'中',lines:[0,1,0,0,0,1],
+ upper:'坎水',lower:'震雷',
+ judgment:'元亨，利贞，勿用有攸往，利建侯。',image:'云雷屯，君子以经纶。',
+ interp:'万物初生，困难重重但生机盎然。如同草木破土而出，虽历艰难，终将成长。凡事起步维艰，坚持方能开花结果。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'初始之难，需坚持不懈。寻求贵人相助，不可独行冒进。'},
+{id:4,char:'䷃',name:'蒙',full:'山水蒙',nature:'中',lines:[1,0,0,0,1,0],
+ upper:'艮山',lower:'坎水',
+ judgment:'亨。匪我求童蒙，童蒙求我。初筮告，再三渎，渎则不告。',image:'山下出泉，蒙；君子以果行育德。',
+ interp:'蒙昧初开，如山泉初涌。代表求知与启蒙，提示需虚心学习，端正态度，方能获益。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'虚心求教，端正态度。学习新知，培育德行，循序渐进。'},
+{id:5,char:'䷄',name:'需',full:'水天需',nature:'吉',lines:[0,1,0,1,1,1],
+ upper:'坎水',lower:'乾天',
+ judgment:'有孚，光亨，贞吉，利涉大川。',image:'云上于天，需；君子以饮食宴乐。',
+ interp:'等待时机，水在天上，雨未降落。有信心等待是智慧，时机未到需静待，时机到来则大有可为。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'时机尚未成熟，需耐心等待。养精蓄锐，待时而动，切勿急躁。'},
+{id:6,char:'䷅',name:'讼',full:'天水讼',nature:'凶',lines:[1,1,1,0,1,0],
+ upper:'乾天',lower:'坎水',
+ judgment:'有孚，窒惕，中吉，终凶。利见大人，不利涉大川。',image:'天与水违行，讼；君子以作事谋始。',
+ interp:'争讼之卦，天水相违，矛盾冲突。提示当前有纷争或意见相左的情况，宜以和为贵，避免诉诸争斗。',
+ fortune:{overall:2,love:2,career:3,wealth:2},
+ advice:'以和为贵，避免争讼。若有纠纷，寻公正第三方调解，切勿硬碰硬。'},
+{id:7,char:'䷆',name:'师',full:'地水师',nature:'中',lines:[0,0,0,0,1,0],
+ upper:'坤地',lower:'坎水',
+ judgment:'贞，丈人，吉无咎。',image:'地中有水，师；君子以容民畜众。',
+ interp:'军旅之卦，地中藏水，代表统率与纪律。凡事需有周密计划，坚守原则，方能制胜。',
+ fortune:{overall:3,love:3,career:4,wealth:3},
+ advice:'凡事谋定后动，纪律严明。寻有经验的长者或领导者指引。'},
+{id:8,char:'䷇',name:'比',full:'水地比',nature:'吉',lines:[0,1,0,0,0,0],
+ upper:'坎水',lower:'坤地',
+ judgment:'吉。原筮，元永贞，无咎。不宁方来，后夫凶。',image:'地上有水，比；先王以建万国，亲诸侯。',
+ interp:'亲比之卦，众水归地。代表亲密合作与团结，适合建立良好的人际关系和伙伴关系，共同奋进。',
+ fortune:{overall:4,love:5,career:4,wealth:4},
+ advice:'广结善缘，加强团队协作。真诚相待，互利共赢。'},
+{id:9,char:'䷈',name:'小畜',full:'风天小畜',nature:'中吉',lines:[1,1,0,1,1,1],
+ upper:'巽风',lower:'乾天',
+ judgment:'亨。密云不雨，自我西郊。',image:'风行天上，小畜；君子以懿文德。',
+ interp:'小有积蓄，如密云未雨。力量积累尚不充分，事业或计划稍受阻滞，需继续积累实力，时机未到。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'积少成多，耐心积累。暂缓大行动，修炼内功，等待时机。'},
+{id:10,char:'䷉',name:'履',full:'天泽履',nature:'吉',lines:[1,1,1,0,1,1],
+ upper:'乾天',lower:'兑泽',
+ judgment:'履虎尾，不咥人，亨。',image:'上天下泽，履；君子以辩上下，定民志。',
+ interp:'脚踏实地，如踩虎尾而不被咬。代表谨慎行事，知礼守法，即便面对危险也能化险为夷。',
+ fortune:{overall:4,love:4,career:4,wealth:3},
+ advice:'谨慎行事，知礼守分。步步为营，敬畏风险，可以转危为安。'},
+{id:11,char:'䷊',name:'泰',full:'地天泰',nature:'大吉',lines:[0,0,0,1,1,1],
+ upper:'坤地',lower:'乾天',
+ judgment:'小往大来，吉，亨。',image:'天地交，泰；后以财成天地之道，辅相天地之宜，以左右民。',
+ interp:'通泰顺畅，天地交感，万物生长。运势极佳，诸事顺遂，上下沟通顺畅，吉祥如意的大好时机。',
+ fortune:{overall:5,love:5,career:5,wealth:5},
+ advice:'把握大好时机，积极进取。天时地利人和，大展身手。'},
+{id:12,char:'䷋',name:'否',full:'天地否',nature:'凶',lines:[1,1,1,0,0,0],
+ upper:'乾天',lower:'坤地',
+ judgment:'否之匪人，不利君子贞，大往小来。',image:'天地不交，否；君子以俭德辟难，不可荣以禄。',
+ interp:'闭塞不通，天地不交，上下隔绝。当前运势受阻，沟通不畅，诸事不顺。宜退守保全，等待时机转变。',
+ fortune:{overall:2,love:2,career:2,wealth:2},
+ advice:'逆境中保持沉着，以俭德避难。不可强行突破，静待时局转变。'},
+{id:13,char:'䷌',name:'同人',full:'天火同人',nature:'大吉',lines:[1,1,1,1,0,1],
+ upper:'乾天',lower:'离火',
+ judgment:'同人于野，亨。利涉大川，利君子贞。',image:'天与火，同人；君子以类族辨物。',
+ interp:'志同道合，天火上升，众心归一。适合团队合作，志同道合之人相聚，共同成就大事。人脉运势极佳。',
+ fortune:{overall:5,love:4,career:5,wealth:4},
+ advice:'广结同道，共谋大业。开放胸怀，寻找志同道合的伙伴。'},
+{id:14,char:'䷍',name:'大有',full:'火天大有',nature:'大吉',lines:[1,0,1,1,1,1],
+ upper:'离火',lower:'乾天',
+ judgment:'元亨。',image:'火在天上，大有；君子以遏恶扬善，顺天休命。',
+ interp:'大有所获，火在天上，光照四方。代表财富丰盛、事业成功，一切皆在掌握之中，运势旺盛。',
+ fortune:{overall:5,love:4,career:5,wealth:5},
+ advice:'积极进取，把握机遇。以公平正直的心态处事，方能长久持有。'},
+{id:15,char:'䷎',name:'谦',full:'地山谦',nature:'大吉',lines:[0,0,0,1,0,0],
+ upper:'坤地',lower:'艮山',
+ judgment:'亨，君子有终。',image:'地中有山，谦；君子以裒多益寡，称物平施。',
+ interp:'谦逊内敛，山在地下，低调而厚实。谦虚之德乃处世之宝，低调行事往往能获得更多尊重与成功。',
+ fortune:{overall:5,love:4,career:4,wealth:4},
+ advice:'保持谦逊，戒骄戒躁。低调务实，以谦让赢得尊重和机遇。'},
+{id:16,char:'䷏',name:'豫',full:'雷地豫',nature:'吉',lines:[0,0,1,0,0,0],
+ upper:'震雷',lower:'坤地',
+ judgment:'利建侯行师。',image:'雷出地奋，豫；先王以作乐崇德，殷荐之上帝，以配祖考。',
+ interp:'欢欣豫乐，雷声震地，万物欢腾。代表顺势而为，调动众人积极性，适合举办活动、展示才能。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'保持热情，带动团队士气。顺势借力，发挥感召力。'},
+{id:17,char:'䷐',name:'随',full:'泽雷随',nature:'吉',lines:[0,1,1,0,0,1],
+ upper:'兑泽',lower:'震雷',
+ judgment:'元亨，利贞，无咎。',image:'泽中有雷，随；君子以向晦入宴息。',
+ interp:'顺时而随，泽雷相随，顺势而变。懂得随机应变，跟随时代潮流，与人和谐相处，方能无往不利。',
+ fortune:{overall:4,love:5,career:4,wealth:4},
+ advice:'灵活变通，顺势而为。学会适应环境，与人随和相处。'},
+{id:18,char:'䷑',name:'蛊',full:'山风蛊',nature:'中',lines:[1,0,0,1,1,0],
+ upper:'艮山',lower:'巽风',
+ judgment:'元亨，利涉大川，先甲三日，后甲三日。',image:'山下有风，蛊；君子以振民育德。',
+ interp:'整治弊病，山风蛊惑，需要拨乱反正。当前可能面临积弊已久的问题，需勇于改革，着手整治。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'正视问题，勇于改革。找出积弊根源，分步骤稳健解决。'},
+{id:19,char:'䷒',name:'临',full:'地泽临',nature:'大吉',lines:[0,0,0,0,1,1],
+ upper:'坤地',lower:'兑泽',
+ judgment:'元亨，利贞，至于八月有凶。',image:'泽上有地，临；君子以教思无穷，容保民无疆。',
+ interp:'居高临下，大地高临泽水，代表高位俯瞰、监督管理的卦象。运势上升，适合担当领导，积极作为。',
+ fortune:{overall:5,love:4,career:5,wealth:4},
+ advice:'把握上升机遇，承担更多责任。以宽厚之心领导，方能长久。'},
+{id:20,char:'䷓',name:'观',full:'风地观',nature:'吉',lines:[1,1,0,0,0,0],
+ upper:'巽风',lower:'坤地',
+ judgment:'盥而不荐，有孚颙若。',image:'风行地上，观；先王以省方，观民设教。',
+ interp:'观察审视，风行地上，博观约取。当前宜冷静观察，洞察局势，以诚信待人，以德服众。',
+ fortune:{overall:4,love:3,career:4,wealth:3},
+ advice:'多观察，少行动。洞察大势，积累信息，等待最佳时机。'},
+{id:21,char:'䷔',name:'噬嗑',full:'火雷噬嗑',nature:'凶',lines:[1,0,1,0,0,1],
+ upper:'离火',lower:'震雷',
+ judgment:'亨，利用狱。',image:'雷电噬嗑，先王以明罚敕法。',
+ interp:'强力突破，雷火交加。面临阻碍和障碍，需要果断采取措施，以力断阻。适合解决难题，处置纠纷。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'果断处置，以强力清除障碍。但需以公正为准则，不可滥用手段。'},
+{id:22,char:'䷕',name:'贲',full:'山火贲',nature:'吉',lines:[1,0,0,1,0,1],
+ upper:'艮山',lower:'离火',
+ judgment:'亨，小利有攸往。',image:'山下有火，贲；君子以明庶政，无敢折狱。',
+ interp:'文采焕然，山下有火，光华照耀。代表文化修养、形象塑造，适合注重外在美化和内涵提升。',
+ fortune:{overall:4,love:5,career:3,wealth:3},
+ advice:'注重形象与内涵的统一。文质彬彬，以美好的外在表现内在的光华。'},
+{id:23,char:'䷖',name:'剥',full:'山地剥',nature:'凶',lines:[1,0,0,0,0,0],
+ upper:'艮山',lower:'坤地',
+ judgment:'不利有攸往。',image:'山附于地，剥；上以厚下安宅。',
+ interp:'剥落消退，山附于地，形势不利。运势处于衰退阶段，切勿强行推进，宜保全实力，静待转机。',
+ fortune:{overall:1,love:2,career:2,wealth:2},
+ advice:'守势为主，不可强行冒进。以厚实基础保全自身，等待运势回升。'},
+{id:24,char:'䷗',name:'复',full:'地雷复',nature:'大吉',lines:[0,0,0,0,0,1],
+ upper:'坤地',lower:'震雷',
+ judgment:'亨，出入无疾，朋来无咎。',image:'雷在地中，复；先王以至日闭关，商旅不行，后不省方。',
+ interp:'阳气回复，一阳来复，万象更新。代表事物的回归与重生，好运正在回归，是转机的开始。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'曙光在望，振作精神。守正待时，让正能量逐渐积聚，勿操之过急。'},
+{id:25,char:'䷘',name:'无妄',full:'天雷无妄',nature:'吉',lines:[1,1,1,0,0,1],
+ upper:'乾天',lower:'震雷',
+ judgment:'元亨，利贞，其匪正有眚，不利有攸往。',image:'天下雷行，物与无妄；先王以茂对时，育万物。',
+ interp:'天真无妄，顺天而行，不存妄念。以至诚之心行事，自然吉祥。凡事无私心，方能得自然之助。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'以诚为本，不存妄想。顺其自然，不刻意强求，自有天命。'},
+{id:26,char:'䷙',name:'大畜',full:'山天大畜',nature:'大吉',lines:[1,0,0,1,1,1],
+ upper:'艮山',lower:'乾天',
+ judgment:'利贞，不家食，吉，利涉大川。',image:'天在山中，大畜；君子以多识前言往行，以畜其德。',
+ interp:'大量积蓄，天藏山中，潜力巨大。代表积累知识、财富和经验，潜力正在大量积聚，厚积薄发。',
+ fortune:{overall:4,love:4,career:5,wealth:5},
+ advice:'继续积累，广博学习。实力雄厚才能大展宏图，不可急于求成。'},
+{id:27,char:'䷚',name:'颐',full:'山雷颐',nature:'中',lines:[1,0,0,0,0,1],
+ upper:'艮山',lower:'震雷',
+ judgment:'贞吉，观颐，自求口实。',image:'山下有雷，颐；君子以慎言语，节饮食。',
+ interp:'颐养之道，山雷相应，如张口而颐。代表滋养、修身与健康，提示关注饮食健康，注重修养身心。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'注重健康养生，慎言节食。专注修炼自身，勿贪求外物。'},
+{id:28,char:'䷛',name:'大过',full:'泽风大过',nature:'凶',lines:[0,1,1,1,1,0],
+ upper:'兑泽',lower:'巽风',
+ judgment:'栋桡，利有攸往，亨。',image:'泽灭木，大过；君子以独立不惧，遁世无闷。',
+ interp:'过度承压，栋梁弯曲，象征超过承受极限。当前压力过大，如大梁将折，需减轻负担，寻求突破。',
+ fortune:{overall:2,love:3,career:2,wealth:2},
+ advice:'减轻过重负担，寻找突破点。大胆行动，否则局面难以持续。'},
+{id:29,char:'䷜',name:'坎',full:'坎为水',nature:'凶',lines:[0,1,0,0,1,0],
+ upper:'坎水',lower:'坎水',
+ judgment:'有孚，维心亨，行有尚。',image:'水洊至，习坎；君子以常德行，习教事。',
+ interp:'重重险阻，水流连绵，坎坷不断。象征困境与挑战，但水流到底终会找到出口，坚守信念方能化险。',
+ fortune:{overall:2,love:2,career:2,wealth:2},
+ advice:'坚守诚信，勇往直前。险中有机，凭借智慧和毅力终能走出困境。'},
+{id:30,char:'䷝',name:'离',full:'离为火',nature:'吉',lines:[1,0,1,1,0,1],
+ upper:'离火',lower:'离火',
+ judgment:'利贞，亨，畜牝牛，吉。',image:'明两作，离；大人以继明照于四方。',
+ interp:'光明灿烂，双火相叠，光耀四方。代表才华横溢、光明前途，适合展示才能，文艺创作，以光明引领方向。',
+ fortune:{overall:4,love:4,career:5,wealth:4},
+ advice:'展现才华，以智慧照亮前路。保持热情与明亮，柔中带刚。'},
+{id:31,char:'䷞',name:'咸',full:'泽山咸',nature:'大吉',lines:[0,1,1,1,0,0],
+ upper:'兑泽',lower:'艮山',
+ judgment:'亨，利贞，取女吉。',image:'山上有泽，咸；君子以虚受人。',
+ interp:'感应交合，泽水滋润高山，柔感刚应。代表男女相感、心灵相通，是感情运势极佳之卦，缘分深厚。',
+ fortune:{overall:5,love:5,career:4,wealth:4},
+ advice:'敞开心扉，以虚心感受外界。感情方面有大好机缘，把握相遇。'},
+{id:32,char:'䷟',name:'恒',full:'雷风恒',nature:'吉',lines:[0,0,1,1,1,0],
+ upper:'震雷',lower:'巽风',
+ judgment:'亨，无咎，利贞，利有攸往。',image:'雷风恒，君子以立不易方。',
+ interp:'持久恒常，雷风相随，恒久不变。代表坚持与耐力，强调恒心与毅力的重要性，坚守正道长久受益。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'坚持恒心，守正不变。长期主义方能获得持续成功，切勿三心二意。'},
+{id:33,char:'䷠',name:'遁',full:'天山遁',nature:'中',lines:[1,1,1,1,0,0],
+ upper:'乾天',lower:'艮山',
+ judgment:'亨，小利贞。',image:'天下有山，遁；君子以远小人，不恶而严。',
+ interp:'以退为进，天高山低，退隐避世。当前宜主动退让，远离是非，保存实力，以退为进之时机。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'识时务者为俊杰，适时退守。远离是非小人，保全实力待机而动。'},
+{id:34,char:'䷡',name:'大壮',full:'雷天大壮',nature:'中吉',lines:[0,0,1,1,1,1],
+ upper:'震雷',lower:'乾天',
+ judgment:'利贞。',image:'雷在天上，大壮；君子以非礼弗履。',
+ interp:'阳刚鼎盛，雷声震天，气势雄壮。代表力量充沛，但需防止恃强而骄，以礼制约，方能持续壮大。',
+ fortune:{overall:4,love:3,career:4,wealth:4},
+ advice:'虽力量充沛，仍需以礼自束。以正确方式施展才能，切勿蛮干。'},
+{id:35,char:'䷢',name:'晋',full:'火地晋',nature:'吉',lines:[1,0,1,0,0,0],
+ upper:'离火',lower:'坤地',
+ judgment:'康侯用锡马蕃庶，昼日三接。',image:'明出地上，晋；君子以自昭明德。',
+ interp:'光明上升，旭日东升，光明普照。代表仕途亨通，事业晋升，处于上升通道，积极进取有丰厚回报。',
+ fortune:{overall:5,love:4,career:5,wealth:4},
+ advice:'当下是晋升的大好时机，积极表现。展示自身才能与德行，必有所成。'},
+{id:36,char:'䷣',name:'明夷',full:'地火明夷',nature:'凶',lines:[0,0,0,1,0,1],
+ upper:'坤地',lower:'离火',
+ judgment:'利艰贞。',image:'明入地中，明夷；君子以莅众，用晦而明。',
+ interp:'光明受损，日沉地中，黑暗压制光明。当前环境压抑，韬光养晦是上策，以柔顺忍耐，内心保持光明。',
+ fortune:{overall:2,love:3,career:2,wealth:2},
+ advice:'韬光养晦，内心保持坚定。在逆境中修炼，待时机转好再发力。'},
+{id:37,char:'䷤',name:'家人',full:'风火家人',nature:'吉',lines:[1,1,0,1,0,1],
+ upper:'巽风',lower:'离火',
+ judgment:'利女贞。',image:'风自火出，家人；君子以言有物而行有恒。',
+ interp:'家庭和睦，风从火出，家庭温暖。代表家庭关系、团队凝聚，强调各尽其责、家庭和谐的重要性。',
+ fortune:{overall:4,love:5,career:4,wealth:4},
+ advice:'重视家庭与团队，各尽其责。言行一致，维护和谐关系。'},
+{id:38,char:'䷥',name:'睽',full:'火泽睽',nature:'凶',lines:[1,0,1,0,1,1],
+ upper:'离火',lower:'兑泽',
+ judgment:'小事吉。',image:'上火下泽，睽；君子以同而异。',
+ interp:'相违对立，火泽相悖，方向相反。代表矛盾与分歧，人际关系紧张，但同中有异，求同存异可化解。',
+ fortune:{overall:2,love:2,career:3,wealth:3},
+ advice:'寻求共同点，化解分歧。在对立中寻找统一，以求同存异化解矛盾。'},
+{id:39,char:'䷦',name:'蹇',full:'水山蹇',nature:'凶',lines:[0,1,0,1,0,0],
+ upper:'坎水',lower:'艮山',
+ judgment:'利西南，不利东北；利见大人，贞吉。',image:'山上有水，蹇；君子以反身修德。',
+ interp:'行路艰难，水阻山隔，步履维艰。代表重重障碍，前进困难。此时需转向寻求助力，或向内修炼。',
+ fortune:{overall:2,love:2,career:2,wealth:2},
+ advice:'遇阻当回头，另辟蹊径。寻求贵人相助，以反身修德积蓄力量。'},
+{id:40,char:'䷧',name:'解',full:'雷水解',nature:'大吉',lines:[0,0,1,0,1,0],
+ upper:'震雷',lower:'坎水',
+ judgment:'利西南，无所往，其来复吉；有攸往，夙吉。',image:'雷雨作，解；君子以赦过宥罪。',
+ interp:'解脱困境，春雷一声，坚冰消融。代表困难化解，大好时机来临，之前积压的问题将得到解决。',
+ fortune:{overall:5,love:4,career:5,wealth:4},
+ advice:'积极行动，化解困局。宽恕既往，轻装前行，时机大好。'},
+{id:41,char:'䷨',name:'损',full:'山泽损',nature:'中',lines:[1,0,0,0,1,1],
+ upper:'艮山',lower:'兑泽',
+ judgment:'有孚，元吉，无咎，可贞，利有攸往，曷之用，二簋可用享。',image:'山下有泽，损；君子以惩忿窒欲。',
+ interp:'损减克制，减少下充益上。代表需要牺牲或付出，通过减少某些方面来充实另一方面，有舍有得。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'有舍才有得，适当牺牲小利换大局。克制欲望，化负为正。'},
+{id:42,char:'䷩',name:'益',full:'风雷益',nature:'大吉',lines:[1,1,0,0,0,1],
+ upper:'巽风',lower:'震雷',
+ judgment:'利有攸往，利涉大川。',image:'风雷，益；君子以见善则迁，有过则改。',
+ interp:'增益兴旺，风雷激励，蓬勃生长。代表各方面正在增益成长，适合进取扩展，有利于投资和发展。',
+ fortune:{overall:5,love:4,career:5,wealth:5},
+ advice:'积极扩展，增益进取。见善则学，有错必改，如虎添翼。'},
+{id:43,char:'䷪',name:'夬',full:'泽天夬',nature:'中吉',lines:[0,1,1,1,1,1],
+ upper:'兑泽',lower:'乾天',
+ judgment:'扬于王庭，孚号有厉，告自邑，不利即戎，利有攸往。',image:'泽上于天，夬；君子以施禄及下，居德则忌。',
+ interp:'决断力行，泽水高于天，即将决口。代表果断决策的时机，需公开立场，以正义之名消除危险。',
+ fortune:{overall:4,love:3,career:4,wealth:4},
+ advice:'果断决策，公开表明立场。正面面对问题，不可优柔寡断。'},
+{id:44,char:'䷫',name:'姤',full:'天风姤',nature:'中',lines:[1,1,1,1,1,0],
+ upper:'乾天',lower:'巽风',
+ judgment:'女壮，勿用取女。',image:'天下有风，姤；后以施命诰四方。',
+ interp:'邂逅相遇，天风相遇，偶然之会。代表意外相遇或机缘巧合，也提示需防范不良诱惑或突发情况。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'把握意外的相遇和机缘，但需辨别真伪。防范诱惑，保持清醒判断。'},
+{id:45,char:'䷬',name:'萃',full:'泽地萃',nature:'吉',lines:[0,1,1,0,0,0],
+ upper:'兑泽',lower:'坤地',
+ judgment:'亨，王假有庙，利见大人，亨，利贞，用大牲吉，利有攸往。',image:'泽上于地，萃；君子以除戎器，戒不虞。',
+ interp:'聚集汇合，泽水聚于地上，众流归一。代表力量与人脉的汇聚，适合召集团队，整合资源，共谋大事。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'整合资源，汇聚人才。此时宜聚合力量，凝聚人心，备不虞之事。'},
+{id:46,char:'䷭',name:'升',full:'地风升',nature:'大吉',lines:[0,0,0,1,1,0],
+ upper:'坤地',lower:'巽风',
+ judgment:'元亨，用见大人，勿恤，南征吉。',image:'地中生木，升；君子以顺德，积小以高大。',
+ interp:'逐步上升，大地中树木向上生长，积累推进。代表稳步向上，通过努力积累不断晋升，前途一片光明。',
+ fortune:{overall:5,love:4,career:5,wealth:4},
+ advice:'循序渐进，坚持向上。积累小成绩，终能成就大业，不要急于求成。'},
+{id:47,char:'䷮',name:'困',full:'泽水困',nature:'凶',lines:[0,1,1,0,1,0],
+ upper:'兑泽',lower:'坎水',
+ judgment:'亨，贞，大人吉，无咎，有言不信。',image:'泽无水，困；君子以致命遂志。',
+ interp:'困境压迫，泽中无水，困厄处境。当前处于艰难困境，力不从心，但君子在困中仍坚守志向，必能转危。',
+ fortune:{overall:1,love:2,career:2,wealth:1},
+ advice:'困境中坚守本志，以不屈精神应对。寻求真正的贵人，等待转机。'},
+{id:48,char:'䷯',name:'井',full:'水风井',nature:'中吉',lines:[0,1,0,1,1,0],
+ upper:'坎水',lower:'巽风',
+ judgment:'改邑不改井，无丧无得，往来井井。汔至亦未繘井，羸其瓶，凶。',image:'木上有水，井；君子以劳民劝相。',
+ interp:'深井养人，以稳定资源供给万民。代表持久的价值与能力，无论环境如何变化，内在价值不变。',
+ fortune:{overall:3,love:4,career:4,wealth:3},
+ advice:'修炼内功，提升自身价值。保持内心稳定，持续为他人提供价值。'},
+{id:49,char:'䷰',name:'革',full:'泽火革',nature:'吉',lines:[0,1,1,1,0,1],
+ upper:'兑泽',lower:'离火',
+ judgment:'已日乃孚，元亨，利贞，悔亡。',image:'泽中有火，革；君子以治历明时。',
+ interp:'变革更新，水火相争，旧秩序被打破。代表改革与变革，顺应时代变化，革故鼎新，适时而变。',
+ fortune:{overall:4,love:3,career:4,wealth:4},
+ advice:'顺应变化，积极推动改革。革除旧弊，与时俱进，大有可为。'},
+{id:50,char:'䷱',name:'鼎',full:'火风鼎',nature:'大吉',lines:[1,0,1,1,1,0],
+ upper:'离火',lower:'巽风',
+ judgment:'元吉，亨。',image:'木上有火，鼎；君子以正位凝命。',
+ interp:'鼎新革旧，木上燃火，鼎熟烹饪。代表崭新局面，事业稳固，正在培育和成就重要的成果。',
+ fortune:{overall:5,love:4,career:5,wealth:5},
+ advice:'稳固基础，精心培育成果。此时是建立新秩序、开创新局面的最佳时机。'},
+{id:51,char:'䷲',name:'震',full:'震为雷',nature:'中',lines:[0,0,1,0,0,1],
+ upper:'震雷',lower:'震雷',
+ judgment:'亨，震来虩虩，笑言哑哑，震惊百里，不丧匕鬯。',image:'洊雷，震；君子以恐惧修省。',
+ interp:'震动惊醒，雷声震天，猝然而至。代表突然的震动或惊吓，也意味着觉醒与反省，以惊恐修身。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'以惊恐为鉴，修身反省。遇到震动不要慌乱，保持镇定，方能处变不惊。'},
+{id:52,char:'䷳',name:'艮',full:'艮为山',nature:'中',lines:[1,0,0,1,0,0],
+ upper:'艮山',lower:'艮山',
+ judgment:'艮其背，不获其身，行其庭，不见其人，无咎。',image:'兼山，艮；君子以思不出其位。',
+ interp:'止而不动，山岳稳重，知止而止。代表静止、沉思与节制，强调适时停止，不要过分扩张或追求。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'知止而止，思虑清晰。适时停下来反思，不要盲目追求，以静制动。'},
+{id:53,char:'䷴',name:'渐',full:'风山渐',nature:'吉',lines:[1,1,0,1,0,0],
+ upper:'巽风',lower:'艮山',
+ judgment:'女归吉，利贞。',image:'山上有木，渐；君子以居贤德善俗。',
+ interp:'循序渐进，如山上树木缓慢生长。代表稳步前进，凡事按步骤来，不急不躁，终有大成。',
+ fortune:{overall:4,love:5,career:4,wealth:4},
+ advice:'循序渐进，步步为营。切勿急功近利，水到渠成自然好结果。'},
+{id:54,char:'䷵',name:'归妹',full:'雷泽归妹',nature:'凶',lines:[0,0,1,0,1,1],
+ upper:'震雷',lower:'兑泽',
+ judgment:'征凶，无攸利。',image:'泽上有雷，归妹；君子以永终知敝。',
+ interp:'归嫁之妹，雷泽交感，冲动莽撞。代表非正式或不合适的关系，行事欠缺考量，结果或不理想。',
+ fortune:{overall:2,love:2,career:2,wealth:2},
+ advice:'冷静考量，不可冲动莽撞。凡事三思而行，避免因急躁而铸成大错。'},
+{id:55,char:'䷶',name:'丰',full:'雷火丰',nature:'吉',lines:[0,0,1,1,0,1],
+ upper:'震雷',lower:'离火',
+ judgment:'亨，王假之，勿忧，宜日中。',image:'雷电皆至，丰；君子以折狱致刑。',
+ interp:'丰盛鼎盛，雷电光明，盛极一时。代表丰收与鼎盛，但需防止物极必反，在鼎盛时期未雨绸缪。',
+ fortune:{overall:4,love:4,career:4,wealth:5},
+ advice:'把握鼎盛时期，但需防患未然。在丰收之时为将来储备，不可肆意挥霍。'},
+{id:56,char:'䷷',name:'旅',full:'火山旅',nature:'凶',lines:[1,0,1,1,0,0],
+ upper:'离火',lower:'艮山',
+ judgment:'小亨，旅贞吉。',image:'山上有火，旅；君子以明慎用刑，而不留狱。',
+ interp:'旅途漂泊，火在山上，飘忽不定。代表处于漂泊或过渡状态，人生旅途中的驿站，需谨慎小心。',
+ fortune:{overall:2,love:2,career:3,wealth:3},
+ advice:'谨慎行事，脚踏实地。漂泊中寻求稳定，广结善缘，保持灵活应变。'},
+{id:57,char:'䷸',name:'巽',full:'巽为风',nature:'吉',lines:[1,1,0,1,1,0],
+ upper:'巽风',lower:'巽风',
+ judgment:'小亨，利有攸往，利见大人。',image:'随风，巽；君子以申命行事。',
+ interp:'顺风而入，风行无处不至，柔顺渗透。代表以柔克刚，逐步渗透影响，以柔和方式推进事务。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'以柔克刚，顺势而为。以温和方式处事，逐步渗透影响，比强硬推进更有效。'},
+{id:58,char:'䷹',name:'兑',full:'兑为泽',nature:'吉',lines:[0,1,1,0,1,1],
+ upper:'兑泽',lower:'兑泽',
+ judgment:'亨，利贞。',image:'丽泽，兑；君子以朋友讲习。',
+ interp:'喜悦交流，双泽相连，喜悦互通。代表愉悦的交流与合作，人际关系融洽，适合社交、合作与学习。',
+ fortune:{overall:4,love:5,career:4,wealth:4},
+ advice:'保持愉悦开放的心态，广交益友。以喜悦之心处事，感染他人。'},
+{id:59,char:'䷺',name:'涣',full:'风水涣',nature:'吉',lines:[1,1,0,0,1,0],
+ upper:'巽风',lower:'坎水',
+ judgment:'亨，王假有庙，利涉大川，利贞。',image:'风行水上，涣；先王以享于帝，立庙。',
+ interp:'涣散消融，风行水上，冰雪消融。代表障碍消除，凝固的事物开始流动，适合化解积怨，推进交流。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'化解隔阂，促进交流。此时是消除积怨、融合分裂局面的好时机。'},
+{id:60,char:'䷻',name:'节',full:'水泽节',nature:'中吉',lines:[0,1,0,0,1,1],
+ upper:'坎水',lower:'兑泽',
+ judgment:'亨，苦节不可贞。',image:'泽上有水，节；君子以制数度，议德行。',
+ interp:'适度节制，泽水有限，需要节制。代表适度控制与规范，凡事适度方能持久，过犹不及。',
+ fortune:{overall:3,love:3,career:4,wealth:4},
+ advice:'凡事适度，遵守规则。制定合理目标，量力而行，持续稳健发展。'},
+{id:61,char:'䷼',name:'中孚',full:'风泽中孚',nature:'大吉',lines:[1,1,0,0,1,1],
+ upper:'巽风',lower:'兑泽',
+ judgment:'豚鱼吉，利涉大川，利贞。',image:'泽上有风，中孚；君子以议狱缓死。',
+ interp:'内心诚信，风泽相感，以诚感物。代表内心真诚，以诚信赢得他人信任，有如风感水动，无往不利。',
+ fortune:{overall:5,love:5,career:5,wealth:4},
+ advice:'以诚信为本，真诚待人。内外一致，以真心感动天地，自有吉祥。'},
+{id:62,char:'䷽',name:'小过',full:'雷山小过',nature:'凶',lines:[0,0,1,1,0,0],
+ upper:'震雷',lower:'艮山',
+ judgment:'亨，利贞，可小事，不可大事，飞鸟遗之音，不宜上，宜下，大吉。',image:'山上有雷，小过；君子以行过乎恭，丧过乎哀，用过乎俭。',
+ interp:'小有过失，飞鸟高飞太过。代表稍微超过了应有的度，凡事需谨慎，宜做小事，不宜大举。',
+ fortune:{overall:3,love:3,career:3,wealth:3},
+ advice:'谨慎行事，不可过度。适合处理小事，大事暂缓，以退为进，顺势而行。'},
+{id:63,char:'䷾',name:'既济',full:'水火既济',nature:'中吉',lines:[0,1,0,1,0,1],
+ upper:'坎水',lower:'离火',
+ judgment:'亨，小利贞，初吉终乱。',image:'水在火上，既济；君子以思患而预防之。',
+ interp:'已经完成，水火既成，大功告成。代表阶段性目标已达成，处于成功后的状态，需防止掉以轻心。',
+ fortune:{overall:4,love:4,career:4,wealth:4},
+ advice:'成功之后更需谨慎。不可自满，预防将来的问题，未雨绸缪。'},
+{id:64,char:'䷿',name:'未济',full:'火水未济',nature:'中',lines:[1,0,1,0,1,0],
+ upper:'离火',lower:'坎水',
+ judgment:'亨，小狐汔济，濡其尾，无攸利。',image:'火在水上，未济；君子以慎辨物居方。',
+ interp:'尚未完成，火在水上，无法相济。代表事情尚在进行中，终点还未到达，鼓励继续努力，前途光明。',
+ fortune:{overall:3,love:3,career:4,wealth:3},
+ advice:'继续努力，终点未到。保持谨慎，一步步稳步前进，终会完成。'},
+];
+
+// =============================================
+// STATE
+// =============================================
+const state = {
+  currentHexagram: null,
+  currentQuestion: '',
+  currentAI: '',
+  currentDate: '',
+  settings: {},
+};
+
+// =============================================
+// STORAGE
+// =============================================
+const storage = {
+  get(key, def = null){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }catch(e){ return def; } },
+  set(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} },
+};
+
+// =============================================
+// SETTINGS
+// =============================================
+function loadSettings(){
+  const s = storage.get('settings', {
+    provider: 'none', apikey: '', baseurl: '', model: '', style: 'balanced'
+  });
+  state.settings = s;
+  document.getElementById('setting-provider').value = s.provider || 'none';
+  document.getElementById('setting-apikey').value = s.apikey || '';
+  document.getElementById('setting-baseurl').value = s.baseurl || '';
+  document.getElementById('setting-model').value = s.model || '';
+  document.getElementById('setting-style').value = s.style || 'balanced';
+  toggleProviderFields();
+}
+function saveSettings(){
+  const s = {
+    provider: document.getElementById('setting-provider').value,
+    apikey: document.getElementById('setting-apikey').value.trim(),
+    baseurl: document.getElementById('setting-baseurl').value.trim(),
+    model: document.getElementById('setting-model').value.trim(),
+    style: document.getElementById('setting-style').value,
+  };
+  storage.set('settings', s);
+  state.settings = s;
+  showToast('✅ 设置已保存');
+}
+function toggleProviderFields(){
+  const prov = document.getElementById('setting-provider').value;
+  document.getElementById('setting-apikey-wrap').style.display = prov === 'none' ? 'none' : '';
+  document.getElementById('setting-baseurl-wrap').style.display = prov === 'custom' ? '' : 'none';
+}
+document.getElementById('setting-provider').addEventListener('change', toggleProviderFields);
+
+// =============================================
+// NAVIGATION
+// =============================================
+function navTo(page){
+  if(page === 'history') renderHistory();
+  showPage(page);
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+}
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(name === 'home' || name === 'result' || name === 'settings'){
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.page === name);
+    });
+  }
+}
+function showSettings(){
+  navTo('settings');
+}
+
+// =============================================
+// DIVINATION
+// =============================================
+const PHASES = [
+  '天地初开，阴阳运转...',
+  '感应天机，探寻卦象...',
+  '六爻成形，命运浮现...',
+];
+
+function startDivination(){
+  const question = document.getElementById('question-input').value.trim();
+  state.currentQuestion = question;
+  
+  // Show overlay
+  const overlay = document.getElementById('divine-overlay');
+  overlay.classList.add('active');
+  
+  // Animate phases
+  let phase = 0;
+  const textEl = document.getElementById('divine-overlay-text');
+  const subEl = document.getElementById('divine-overlay-sub');
+  subEl.textContent = question || '静心感应，等待天机';
+  textEl.textContent = PHASES[0];
+  
+  const interval = setInterval(() => {
+    phase++;
+    if(phase < PHASES.length) {
+      textEl.textContent = PHASES[phase];
+    }
+  }, 800);
+
+  // Spawn coins
+  spawnCoins();
+  
+  setTimeout(() => {
+    clearInterval(interval);
+    
+    // Pick random hexagram
+    const idx = Math.floor(Math.random() * 64);
+    const hexa = HEXAGRAMS[idx];
+    state.currentHexagram = hexa;
+    state.currentDate = new Date().toLocaleString('zh-CN');
+    state.currentAI = '';
+    
+    // Show hexagram reveal
+    overlay.innerHTML = `
+      <div class="divine-smoke"></div>
+      <div class="divine-hexagram-reveal" style="animation-delay:0.1s">${hexa.char}</div>
+      <div style="font-size:22px;color:var(--gold);letter-spacing:4px;margin-top:8px;opacity:0;animation:revealPop 0.5s 0.4s forwards">${hexa.name}</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:4px;opacity:0;animation:revealPop 0.5s 0.7s forwards;letter-spacing:2px">${hexa.full}</div>
+    `;
+    
+    setTimeout(() => {
+      overlay.classList.remove('active');
+      renderResult(hexa);
+      showPage('result');
+      // Async AI call
+      callAI(hexa, question);
+    }, 1800);
+  }, 2500);
+}
+
+function spawnCoins(){
+  const wrap = document.createElement('div');
+  wrap.className = 'coins-wrap';
+  wrap.style.display = 'block';
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  for(let i=0; i<6; i++){
+    const coin = document.createElement('div');
+    coin.className = 'coin';
+    coin.textContent = '☯';
+    const angle = (i / 6) * Math.PI * 2;
+    const r1 = 80 + Math.random()*40;
+    const r2 = 150 + Math.random()*80;
+    const r3 = 250 + Math.random()*100;
+    coin.style.cssText = `
+      left:${cx}px;top:${cy}px;
+      --tx1:${Math.cos(angle)*r1-20}px;--ty1:${Math.sin(angle)*r1-20}px;
+      --tx2:${Math.cos(angle)*r2-20}px;--ty2:${Math.sin(angle)*r2-20}px;
+      --tx3:${Math.cos(angle)*r3-20}px;--ty3:${Math.sin(angle)*r3-20}px;
+      animation-delay:${i*0.1}s;
+    `;
+    wrap.appendChild(coin);
+  }
+  document.body.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 2000);
+}
+
+// =============================================
+// RENDER RESULT
+// =============================================
+function renderResult(h){
+  document.getElementById('result-title').textContent = h.full;
+  document.getElementById('result-date').textContent = state.currentDate;
+  
+  const natureClass = {
+    '大吉':'nature-daji','吉':'nature-ji','中吉':'nature-ji',
+    '中':'nature-zhong','凶':'nature-xiong','小吉':'nature-ji',
+    '中凶':'nature-zhong','大凶':'nature-xiong'    '中凶':'nature-zhong','大凶':'nature-xiong'
+  }[h.nature] || 'nature-zhong';
+  
+  // Build lines HTML
+  let linesHtml = '';
+  for(let i=5;i>=0;i--){
+    if(h.lines[i]===1){
+      linesHtml += `<div class="hexa-line"><div class="line-yang"></div></div>`;
+    } else {
+      linesHtml += `<div class="hexa-line"><div class="line-yin-l"></div><div class="line-yin-r"></div></div>`;
+    }
+  }
+
+  // Fortune stars
+  function stars(n){ return '★'.repeat(n) + '☆'.repeat(5-n); }
+  
+  const questionHtml = state.currentQuestion ? `
+    <div class="info-card">
+      <div class="info-card-title">所问之事</div>
+      <div class="info-card-text" style="font-size:16px;color:var(--gold)">${state.currentQuestion}</div>
+    </div>
+  ` : '';
+
+  document.getElementById('result-body').innerHTML = `
+    <div class="hexagram-card">
+      <span class="hexa-char">${h.char}</span>
+      <div class="hexa-name">${h.name}</div>
+      <div class="hexa-full">${h.full}</div>
+      <span class="hexa-nature ${natureClass}">${h.nature}</span>
+      <div class="hexa-lines">${linesHtml}</div>
+      <div class="hexa-trigrams">
+        <span>上卦：${h.upper}</span>
+        <span>下卦：${h.lower}</span>
+      </div>
+    </div>
+
+    ${questionHtml}
+
+    <div class="info-card">
+      <div class="info-card-title">卦辞</div>
+      <div class="info-card-text classical">${h.judgment}</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-title">象传</div>
+      <div class="info-card-text classical">${h.image}</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-title">卦意解读</div>
+      <div class="info-card-text">${h.interp}</div>
+    </div>
+
+    <div class="fortune-grid">
+      <div class="fortune-item">
+        <div class="fortune-label">综合运势</div>
+        <div class="fortune-stars">${stars(h.fortune.overall)}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-label">感情运势</div>
+        <div class="fortune-stars">${stars(h.fortune.love)}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-label">事业运势</div>
+        <div class="fortune-stars">${stars(h.fortune.career)}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-label">财富运势</div>
+        <div class="fortune-stars">${stars(h.fortune.wealth)}</div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-title">行动建议</div>
+      <div class="info-card-text">${h.advice}</div>
+    </div>
+
+    <div class="ai-card" id="ai-section">
+      <div class="ai-title">
+        <span class="ai-dot"></span>
+        AI 深度解读
+      </div>
+      <div id="ai-content">
+        <div class="ai-loading">
+          <div class="spinner"></div>
+          <span>正在请求 AI 解读...</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  `;
+}
+
+// =============================================
+// AI API CALL
+// =============================================
+async function callAI(h, question){
+  const s = state.settings;
+  
+  // Build prompt
+  const styleMap = {
+    balanced: '请从工作事业、感情生活、财富运势三方面综合解读',
+    career: '请重点从事业发展、职场机遇方面解读',
+    love: '请重点从感情、人际关系方面解读',
+    wealth: '请重点从财富、投资、经济方面解读'
+  };
+  const styleHint = styleMap[s.style] || styleMap.balanced;
+  
+  const prompt = `你是一位精通易经的玄学大师，擅长以现代视角解读古老智慧。
+  
+用户抽到了：${h.full}（${h.name}卦）
+卦辞：${h.judgment}
+用户所问之事：${question || '（未指定，请综合解读）'}
+
+请结合这支卦象，${styleHint}，给出生动有趣、实用的现代生活指引。要求：
+1. 语言生动，融合古典与现代，有点玄学氛围感
+2. 结合具体建议，不要太抽象
+3. 200-300字左右
+4. 最后用一句话总结今日运势关键词`;
+
+  const aiSection = document.getElementById('ai-content');
+  
+  // If no provider, use built-in
+  if(!s.provider || s.provider === 'none' || !s.apikey){
+    const builtIn = generateBuiltInInterpretation(h, question, s.style);
+    state.currentAI = builtIn;
+    if(aiSection) {
+      aiSection.innerHTML = `<div class="ai-text">${builtIn}</div>`;
+    }
+    return;
+  }
+
+  // Determine endpoint
+  let url, headers, body;
+  const model = s.model || (s.provider === 'deepseek' ? 'deepseek-chat' : 'gpt-3.5-turbo');
+  
+  if(s.provider === 'deepseek'){
+    url = 'https://api.deepseek.com/v1/chat/completions';
+  } else if(s.provider === 'openai'){
+    url = 'https://api.openai.com/v1/chat/completions';
+  } else {
+    url = (s.baseurl || '').replace(/\/$/, '') + '/chat/completions';
+  }
+  
+  headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${s.apikey}`,
+  };
+  body = JSON.stringify({
+    model,
+    messages: [{ role: 'user', content: prompt }],
+    max_tokens: 600,
+    temperature: 0.85,
+    stream: true,
+  });
+
+  try {
+    const res = await fetch(url, { method: 'POST', headers, body });
+    if(!res.ok){
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+    
+    // Stream handling
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let fullText = '';
+    if(aiSection) aiSection.innerHTML = `<div class="ai-text" id="ai-stream"></div>`;
+    const streamEl = document.getElementById('ai-stream');
+    
+    while(true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      const chunk = dec.decode(value);
+      const lines = chunk.split('\n').filter(l => l.trim());
+      for(const line of lines){
+        if(!line.startsWith('data:')) continue;
+        const d = line.slice(5).trim();
+        if(d === '[DONE]') break;
+        try{
+          const j = JSON.parse(d);
+          const delta = j.choices?.[0]?.delta?.content || '';
+          fullText += delta;
+          if(streamEl) streamEl.textContent = fullText;
+        }catch(e){}
+      }
+    }
+    state.currentAI = fullText;
+    if(streamEl) streamEl.textContent = fullText;
+    
+  } catch(e) {
+    console.error('AI error', e);
+    const fallback = generateBuiltInInterpretation(h, question, s.style);
+    state.currentAI = fallback;
+    if(aiSection) aiSection.innerHTML = `
+      <div style="font-size:12px;color:var(--red);font-family:sans-serif;margin-bottom:8px">⚠️ AI接口请求失败: ${e.message}，已使用内置解读</div>
+      <div class="ai-text">${fallback}</div>
+    `;
+  }
+}
+
+function generateBuiltInInterpretation(h, question, style){
+  const stylePrefix = {
+    career: '【事业运势】',
+    love: '【感情运势】',
+    wealth: '【财富运势】',
+    balanced: '【综合运势】'
+  }[style] || '【综合运势】';
+
+  const questionPart = question ? `\n\n关于你所问之事「${question}」：` : '';
+  
+  const baseTexts = {
+    5: '✨ 运势极旺，天时地利人和，正是大展身手之时。',
+    4: '🌟 运势良好，积极进取，把握当下机遇。',
+    3: '☯️ 运势平稳，稳中求进，谨慎行事为上。',
+    2: '🌙 运势欠佳，宜守不宜攻，保全实力待机而动。',
+    1: '🌑 运势低迷，静观其变，蓄势待发之时。'
+  };
+  
+  const overall = h.fortune.overall;
+  const base = baseTexts[overall] || baseTexts[3];
+  
+  return `${stylePrefix}${questionPart}
+
+${h.full}，象征${h.interp}
+
+${base}
+
+${h.advice}
+
+💫 今日关键词：「${h.name}」——${h.full.replace(h.name, '').trim()}，顺应天道，把握时机。`;
+}
+
+// =============================================
+// SAVE TO HISTORY
+// =============================================
+let isSaved = false;
+function saveToHistory(){
+  if(!state.currentHexagram) return;
+  const history = storage.get('history', []);
+  const entry = {
+    id: Date.now(),
+    date: state.currentDate,
+    question: state.currentQuestion,
+    hexagram: state.currentHexagram,
+    ai: state.currentAI,
+  };
+  history.unshift(entry);
+  if(history.length > 50) history.splice(50);
+  storage.set('history', history);
+  isSaved = true;
+  showToast('✅ 已保存到历史记录');
+}
+
+// Auto save after result is shown
+function autoSave(){
+  setTimeout(() => {
+    if(state.currentHexagram && !isSaved){
+      saveToHistory();
+      isSaved = true;
+    }
+  }, 3000);
+}
+
+// =============================================
+// HISTORY
+// =============================================
+function renderHistory(){
+  const list = document.getElementById('history-list');
+  const history = storage.get('history', []);
+  
+  if(!history.length){
+    list.innerHTML = `
+      <div class="history-empty">
+        <div class="icon">📜</div>
+        <p>暂无占卜记录</p>
+        <p style="font-size:12px;margin-top:4px">去占卜一支签吧</p>
+      </div>
+    `;
+    list.style.display = 'flex';
+    list.style.flexDirection = 'column';
+    return;
+  }
+  
+  list.style.display = 'block';
+  const natureClass = {
+    '大吉':'nature-daji','吉':'nature-ji','中吉':'nature-ji',
+    '中':'nature-zhong','凶':'nature-xiong'
+  };
+  
+  list.innerHTML = history.map(e => {
+    const h = e.hexagram;
+    const nc = natureClass[h.nature] || 'nature-zhong';
+    return `
+      <div class="history-item" onclick="viewHistory(${e.id})">
+        <span class="history-char">${h.char}</span>
+        <div class="history-info">
+          <div class="history-name">${h.full}</div>
+          ${e.question ? `<div class="history-question">「${e.question}」</div>` : ''}
+          <div class="history-date">${e.date}</div>
+        </div>
+        <span class="history-nature-badge ${nc}">${h.nature}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function viewHistory(id){
+  const history = storage.get('history', []);
+  const entry = history.find(e => e.id === id);
+  if(!entry) return;
+  state.currentHexagram = entry.hexagram;
+  state.currentQuestion = entry.question;
+  state.currentAI = entry.ai;
+  state.currentDate = entry.date;
+  renderResult(entry.hexagram);
+  // Show saved AI
+  if(entry.ai){
+    setTimeout(() => {
+      const aiContent = document.getElementById('ai-content');
+      if(aiContent) aiContent.innerHTML = `<div class="ai-text">${entry.ai}</div>`;
+    }, 100);
+  }
+  isSaved = true;
+  showPage('result');
+}
+
+function clearHistory(){
+  if(!confirm('确认清空所有占卜记录？')) return;
+  storage.set('history', []);
+  renderHistory();
+  showToast('🗑️ 历史记录已清空');
+}
+
+// =============================================
+// SHARE POSTER
+// =============================================
+function openShareModal(){
+  if(!state.currentHexagram) return;
+  drawPoster();
+  document.getElementById('share-modal').classList.add('active');
+}
+function closeShareModal(){
+  document.getElementById('share-modal').classList.remove('active');
+}
+
+function drawPoster(){
+  const canvas = document.getElementById('share-canvas');
+  const W = 600, H = 900;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const h = state.currentHexagram;
+  
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#1a1a2e');
+  bg.addColorStop(0.4, '#16213e');
+  bg.addColorStop(1, '#0f3460');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Grid lines (cyber effect)
+  ctx.strokeStyle = 'rgba(255,215,0,0.05)';
+  ctx.lineWidth = 1;
+  for(let i=0; i<W; i+=40){ ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,H); ctx.stroke(); }
+  for(let i=0; i<H; i+=40){ ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(W,i); ctx.stroke(); }
+  
+  // Top border glow
+  const topGlow = ctx.createLinearGradient(0, 0, W, 0);
+  topGlow.addColorStop(0, 'transparent');
+  topGlow.addColorStop(0.5, '#ffd700');
+  topGlow.addColorStop(1, 'transparent');
+  ctx.strokeStyle = topGlow;
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(W, 0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(W, H); ctx.stroke();
+  
+  // App title
+  ctx.font = 'bold 20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,215,0,0.6)';
+  ctx.fillText('AI 玄学小助手 · 易经占卜', W/2, 40);
+  
+  // Date
+  ctx.font = '14px sans-serif';
+  ctx.fillStyle = 'rgba(240,230,211,0.4)';
+  ctx.fillText(state.currentDate, W/2, 65);
+  
+  // Question
+  if(state.currentQuestion){
+    ctx.font = '16px serif';
+    ctx.fillStyle = 'rgba(240,230,211,0.8)';
+    ctx.fillText(`所问：「${state.currentQuestion}」`, W/2, 95);
+  }
+  
+  // Hexagram character (big)
+  ctx.font = '180px serif';
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(255,215,0,0.6)';
+  ctx.shadowBlur = 40;
+  ctx.fillStyle = '#ffd700';
+  ctx.fillText(h.char, W/2, 310);
+  ctx.shadowBlur = 0;
+  
+  // Name
+  ctx.font = 'bold 36px serif';
+  ctx.fillStyle = '#ffd700';
+  ctx.letterSpacing = '8px';
+  ctx.fillText(h.name, W/2, 375);
+  
+  // Full name
+  ctx.font = '20px serif';
+  ctx.fillStyle = 'rgba(240,230,211,0.7)';
+  ctx.fillText(h.full, W/2, 410);
+  
+  // Nature badge
+  const natureColors = {
+    '大吉':['rgba(255,215,0,0.2)','#ffd700'],
+    '吉':['rgba(100,200,100,0.2)','#64c864'],
+    '中吉':['rgba(100,200,100,0.2)','#64c864'],
+    '中':['rgba(100,150,255,0.2)','#6496ff'],
+    '凶':['rgba(233,69,96,0.2)','#e94560'],
+  };
+  const [bgc, tc] = natureColors[h.nature] || natureColors['中'];
+  const bW = 100, bH = 36, bX = (W-bW)/2, bY = 425;
+  ctx.fillStyle = bgc;
+  ctx.beginPath();
+  ctx.roundRect(bX, bY, bW, bH, 18);
+  ctx.fill();
+  ctx.strokeStyle = tc;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(bX, bY, bW, bH, 18);
+  ctx.stroke();
+  ctx.font = '18px serif';
+  ctx.fillStyle = tc;
+  ctx.textAlign = 'center';
+  ctx.fillText(h.nature, W/2, bY + 25);
+  
+  // Divider
+  const divGrad = ctx.createLinearGradient(80, 0, W-80, 0);
+  divGrad.addColorStop(0, 'transparent');
+  divGrad.addColorStop(0.5, 'rgba(255,215,0,0.4)');
+  divGrad.addColorStop(1, 'transparent');
+  ctx.strokeStyle = divGrad;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(80, 480); ctx.lineTo(W-80, 480); ctx.stroke();
+  
+  // Hexagram lines
+  const lineY = 500;
+  for(let i=5; i>=0; i--){
+    const y = lineY + (5-i) * 28;
+    if(h.lines[i] === 1){
+      ctx.fillStyle = '#ffd700';
+      ctx.shadowColor = 'rgba(255,215,0,0.5)';
+      ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.roundRect(W/2-80, y, 160, 10, 5); ctx.fill();
+      ctx.shadowBlur = 0;
+    } else {
+      ctx.fillStyle = '#ffd700';
+      ctx.shadowColor = 'rgba(255,215,0,0.5)';
+      ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.roundRect(W/2-80, y, 68, 10, 5); ctx.fill();
+      ctx.beginPath(); ctx.roundRect(W/2+12, y, 68, 10, 5); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+  
+  // Interpretation
+  const interpY = 680;
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  ctx.beginPath(); ctx.roundRect(40, interpY - 20, W-80, 160, 12); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,215,0,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.roundRect(40, interpY - 20, W-80, 160, 12); ctx.stroke();
+  
+  ctx.font = '13px serif';
+  ctx.fillStyle = 'rgba(240,230,211,0.8)';
+  ctx.textAlign = 'center';
+  const advice = h.advice;
+  const maxW = W - 100;
+  wrapText(ctx, advice, W/2, interpY + 10, maxW, 22);
+  
+  // AI text (if available)
+  if(state.currentAI){
+    const firstLine = state.currentAI.split('\n').find(l => l.trim()) || '';
+    ctx.font = '12px sans-serif';
+    ctx.fillStyle = 'rgba(100,150,255,0.7)';
+    ctx.textAlign = 'center';
+    ctx.fillText('✦ AI 解读', W/2, interpY + 90);
+    ctx.font = '12px serif';
+    ctx.fillStyle = 'rgba(240,230,211,0.6)';
+    wrapText(ctx, firstLine.slice(0, 60), W/2, interpY + 115, maxW, 18);
+  }
+  
+  // Footer
+  ctx.font = '13px sans-serif';
+  ctx.fillStyle = 'rgba(255,215,0,0.4)';
+  ctx.textAlign = 'center';
+  ctx.fillText('☯ 仅供娱乐参考，感悟在心', W/2, H - 25);
+  
+  // Scale canvas for display
+  canvas.style.width = '100%';
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineH){
+  const chars = text.split('');
+  let line = '';
+  let cy = y;
+  for(const c of chars){
+    const test = line + c;
+    if(ctx.measureText(test).width > maxWidth && line){
+      ctx.fillText(line, x, cy);
+      line = c;
+      cy += lineH;
+    } else {
+      line = test;
+    }
+  }
+  if(line) ctx.fillText(line, x, cy);
+}
+
+function downloadPoster(){
+  const canvas = document.getElementById('share-canvas');
+  const link = document.createElement('a');
+  link.download = `占卜结果_${state.currentHexagram?.name || ''}_${Date.now()}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('📱 图片已保存');
+}
+
+// =============================================
+// TOAST
+// =============================================
+function showToast(msg, duration=2000){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// =============================================
+// BACKGROUND CANVAS (starfield + hexagram)
+// =============================================
+function initBgCanvas(){
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  const stars = [];
+  const floatingChars = [];
+  
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  
+  // Stars
+  for(let i=0;i<120;i++){
+    stars.push({
+      x: Math.random(), y: Math.random(),
+      r: Math.random()*1.5+0.3,
+      a: Math.random(),
+      s: Math.random()*0.005+0.002
+    });
+  }
+  
+  // Floating trigram chars
+  const trigramChars = ['☰','☱','☲','☳','☴','☵','☶','☷'];
+  for(let i=0;i<8;i++){
+    floatingChars.push({
+      char: trigramChars[i],
+      x: Math.random(), y: Math.random(),
+      vy: (Math.random()-0.5)*0.0002,
+      vx: (Math.random()-0.5)*0.0001,
+      a: Math.random()*0.08+0.03,
+      size: Math.random()*16+10
+    });
+  }
+  
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    
+    // Stars
+    for(const s of stars){
+      s.a += s.s;
+      const alpha = (Math.sin(s.a)+1)/2 * 0.6 + 0.1;
+      ctx.beginPath();
+      ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,240,200,${alpha})`;
+      ctx.fill();
+    }
+    
+    // Floating chars
+    for(const fc of floatingChars){
+      fc.x += fc.vx;
+      fc.y += fc.vy;
+      if(fc.x < -0.1) fc.x = 1.1;
+      if(fc.x > 1.1) fc.x = -0.1;
+      if(fc.y < -0.1) fc.y = 1.1;
+      if(fc.y > 1.1) fc.y = -0.1;
+      ctx.font = `${fc.size}px serif`;
+      ctx.fillStyle = `rgba(255,215,0,${fc.a})`;
+      ctx.fillText(fc.char, fc.x*W, fc.y*H);
+    }
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// =============================================
+// SHAKE DETECTION
+// =============================================
+function initShake(){
+  let lastX=0,lastY=0,lastZ=0;
+  let lastShake=0;
+  window.addEventListener('devicemotion', e => {
+    const acc = e.accelerationIncludingGravity;
+    if(!acc) return;
+    const dx = Math.abs(acc.x - lastX);
+    const dy = Math.abs(acc.y - lastY);
+    const dz = Math.abs(acc.z - lastZ);
+    lastX=acc.x||0; lastY=acc.y||0; lastZ=acc.z||0;
+    if(dx+dy+dz > 35){
+      const now = Date.now();
+      if(now - lastShake > 2000){
+        lastShake = now;
+        const page = document.querySelector('.page.active');
+        if(page && page.id === 'page-home'){
+          startDivination();
+        }
+      }
+    }
+  });
+}
+
+// =============================================
+// INIT
+// =============================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  initBgCanvas();
+  initShake();
+  isSaved = false;
+});
+
+// Override startDivination to reset save state
+const _origStart = startDivination;
+// patch isSaved reset
+const origDivine = document.getElementById('divine-btn').onclick;
+document.getElementById('divine-btn').onclick = function(){
+  isSaved = false;
+  startDivination();
+};
+</script>
+</body>
+</html>

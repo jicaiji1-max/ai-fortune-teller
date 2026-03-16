@@ -133,12 +133,12 @@ struct CameraView: View {
                 VStack(spacing: 20) {
                     contentSection.padding(.horizontal)
                     if !isEditMode { mediaActionBar.padding(.horizontal) }
-                    locationSection
                     captionSection
+                    locationSection
                     TagSelectorView(selectedTags: $selectedTags).padding(.vertical, 4)
                     Spacer()
                 }
-                .padding(.top, 16)
+                .padding(.top, 6)
             }
             .scrollDismissesKeyboard(.interactively)
             .task {
