@@ -239,13 +239,12 @@ body{font-family:'STSong','SimSun','Source Han Serif CN','Noto Serif CJK SC',ser
     <div class="question-input-wrap">
       <input class="question-input" id="question-input" type="text" placeholder="可输入心中所问之事（选填）" maxlength="50">
     </div>
-    <div class="divine-btn" id="divine-btn">
+    <div class="divine-btn" id="divine-btn" onclick="isSaved=false;startDivination()">
       <div class="divine-btn-inner">
         <span class="divine-icon">𝄇</span>
         <span class="divine-text">问卦</span>
       </div>
     </div>
-    <script>document.getElementById('divine-btn').onclick = function(){isSaved=false;startDivination();};</script>
     <p class="divine-hint">点击 或 摇晃手机 开始占卜</p>
   </div>
 
