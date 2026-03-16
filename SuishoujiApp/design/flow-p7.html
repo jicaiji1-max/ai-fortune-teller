@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>P7 - 删除确认弹窗</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: #f5f5f5; padding: 20px; }
+        .page-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .page-header { padding: 16px 20px; background: #f8f8f8; border-bottom: 1px solid #e5e5e5; font-weight: 600; font-size: 16px; }
+        .page-content { padding: 20px; }
+        .mockup { background: white; border: 1px solid #e5e5e5; border-radius: 10px; padding: 30px 20px; margin-bottom: 16px; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-size: 15px; font-weight: 500; }
+        .btn-cancel { background: #e5e5e5; color: #1c1c1c; }
+        .btn-delete { background: #ff3b30; color: white; }
+        .interactions { background: #fafafa; border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+        .interactions h4 { font-size: 14px; color: #8e8e93; margin-bottom: 10px; }
+        .interaction-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border: 1px solid #e5e5e5; }
+        .arrow { color: #007aff; font-weight: 600; }
+        .target { color: #007aff; font-weight: 500; }
+        .flow-section { background: linear-gradient(135deg, #ff3b30, #ff6b6b); border-radius: 10px; padding: 14px; }
+        .flow-section h4 { color: white; font-size: 14px; margin-bottom: 12px; }
+        .flow-step { display: flex; align-items: center; gap: 6px; padding: 8px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-bottom: 6px; font-size: 13px; color: white; }
+    </style>
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-header">🗑️ P7 - 删除确认弹窗</div>
+        <div class="page-content">
+            <div class="mockup">
+                <div style="text-align:center;">
+                    <div style="font-size:18px;font-weight:600;margin-bottom:8px;color:#1c1c1c;">确认删除？</div>
+                    <div style="font-size:14px;color:#8e8e93;margin-bottom:24px;">删除后无法恢复，确定要删除这条记录吗？</div>
+                    <div style="display:flex;gap:12px;">
+                        <button class="btn btn-cancel" style="flex:1">取消</button>
+                        <button class="btn btn-delete" style="flex:1">删除</button>
+                    </div>
+                </div>
+            </div>
+            <div class="interactions">
+                <h4>交互跳转：</h4>
+                <div class="interaction-item"><span>点击"删除"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                <div class="interaction-item"><span>点击"取消"</span><span class="arrow">→</span><span class="target">P1</span></div>
+            </div>
+            <div class="flow-section">
+                <h4>🗑️ 流程 5：删除笔记</h4>
+                <div class="flow-step"><span>P1 首页 (长按/删除)</span><span class="arrow">→</span><span>P7 删除确认</span></div>
+                <div class="flow-step"><span>P7</span><span class="arrow">→</span><span>P1 首页 (已移除)</span></div>
+                <div style="font-size:12px;opacity:0.9;margin-top:8px;">✅ 删除后：卡片从列表移除，下方笔记自动上移</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

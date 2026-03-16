@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随手记 App 架构图</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 40px;
+        }
+        .diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .box {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .app { background: #dae8fc; border: 2px solid #6c8ebf; grid-column: span 3; }
+        .model { background: #fff2cc; border: 2px solid #d6b656; grid-column: span 3; }
+        .content { background: #d5e8d4; border: 2px solid #82b366; grid-column: span 3; }
+        .button { background: #f8cecc; border: 2px solid #b85450; }
+        .sheet { background: #f8cecc; border: 2px solid #b85450; }
+        .row { background: #e1d5e7; border: 2px solid #9673a6; grid-column: span 3; }
+        .delete { background: #ffe6cc; border: 2px solid #d79b00; }
+        .confirm { background: #ffcdcd; border: 2px solid #ff0000; }
+        .note { background: #fff2cc; border: 2px solid #d6b656; }
+        .arrow {
+            text-align: center;
+            font-size: 24px;
+            color: #666;
+            grid-column: span 3;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 3px solid #eee;
+        }
+        .stat {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 8px;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 随手记 App 架构图</h1>
+        
+        <div class="diagram">
+            <div class="box app">🚀 SuishoujiApp (App 入口)</div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="box model">💾 ModelContainer (SwiftData 数据持久化)</div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="box content">🏠 ContentView (主界面)</div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="box button">📷 拍照<br><small>Action</small></div>
+            <div class="box button">✏️ 写字<br><small>Action</small></div>
+            <div class="box button">📋 笔记列表<br><small>NoteRow</small></div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="box sheet">📸 CameraView<br><small>拍照界面</small></div>
+            <div class="box sheet">📝 TextEditorView<br><small>文字编辑</small></div>
+            <div class="box delete">🗑️ 删除功能<br><small>按钮/长按/左滑</small></div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="box confirm">❓ 确认对话框<br><small>Alert - 此操作无法撤销</small></div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="box note">📄 Note 模型<br><small>id, timestamp, type, text, photoData</small></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">252</div>
+                <div class="stat-label">测试用例总数</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">通过率</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">3 种</div>
+                <div class="stat-label">删除方式</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">8 个</div>
+                <div class="stat-label">测试文件</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #dae8fc; border: 2px solid #6c8ebf;"></div>
+                <span>App 入口</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #fff2cc; border: 2px solid #d6b656;"></div>
+                <span>数据模型</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #d5e8d4; border: 2px solid #82b366;"></div>
+                <span>UI 组件</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f8cecc; border: 2px solid #b85450;"></div>
+                <span>Sheet 视图</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffe6cc; border: 2px solid #d79b00;"></div>
+                <span>删除功能</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffcdcd; border: 2px solid #ff0000;"></div>
+                <span>确认操作</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

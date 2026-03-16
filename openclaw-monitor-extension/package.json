@@ -1,0 +1,29 @@
+{
+  "name": "openclaw-monitor-extension",
+  "version": "1.1.1",
+  "description": "OpenClaw Agent Monitor Chrome Extension",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "start-api": "node openclaw-sessions-api.js"
+  },
+  "keywords": ["openclaw", "monitoring", "chrome-extension"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/tests/"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, sans-serif;
+  background: #f2f2f7;
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+  justify-content: center;
+}
+
+.phone {
+  width: 390px;
+  background: white;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  border: 8px solid #1a1a1a;
+}
+
+.status-bar {
+  background: white;
+  padding: 14px 20px 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nav-bar {
+  background: white;
+  padding: 8px 20px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 0.5px solid rgba(0,0,0,0.1);
+}
+
+.nav-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* 搜索框 */
+.search-bar {
+  margin: 10px 16px;
+  background: #f2f2f7;
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8e8e93;
+  font-size: 15px;
+}
+
+.search-icon { font-size: 14px; }
+
+/* 标签栏 */
+.tags-scroll {
+  padding: 8px 16px 10px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tag {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  white-space: nowrap;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.tag.active {
+  background: linear-gradient(135deg, #3358E0, #8B35D4);
+  color: white;
+}
+
+.tag.normal {
+  background: #f2f2f7;
+  color: #3c3c43;
+}
+
+.tag.add {
+  background: #f2f2f7;
+  color: #8B35D4;
+  border: 1.5px dashed #8B35D4;
+}
+
+/* 分组标题 */
+.section-header {
+  padding: 12px 16px 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3358E0;
+}
+
+.section-line {
+  flex: 1;
+  height: 0.5px;
+  background: rgba(0,0,0,0.08);
+}
+
+/* 笔记卡片 */
+.note-card {
+  margin: 0 16px 8px;
+  background: #f9f9fb;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.note-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e8eaf8, #d4d8f5);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.note-content { flex: 1; }
+.note-text { font-size: 14px; color: #1c1c1e; line-height: 1.4; margin-bottom: 6px; }
+.note-meta { font-size: 12px; color: #8e8e93; display: flex; gap: 6px; align-items: center; }
+
+.note-tag-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(139, 53, 212, 0.1);
+  color: #8B35D4;
+  font-weight: 500;
+}
+
+/* 搜索结果状态 */
+.search-result-note .note-text em {
+  background: rgba(255, 200, 0, 0.3);
+  font-style: normal;
+  border-radius: 3px;
+}
+
+.label { 
+  font-size: 11px; 
+  color: #8e8e93;
+  text-align: center;
+  padding: 6px;
+  font-weight: 500;
+}
+</style>
+</head>
+<body>
+
+<!-- 屏幕1：主页（带标签） -->
+<div>
+<div class="label">主页（标签 + 搜索）</div>
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+  <div class="nav-bar">
+    <div class="nav-title">随手记</div>
+    <div style="display:flex;gap:12px;color:#8B35D4;font-size:18px">
+      <span>≡</span>
+    </div>
+  </div>
+
+  <!-- 搜索框 -->
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <span>搜索笔记…</span>
+  </div>
+
+  <!-- 标签栏 -->
+  <div class="tags-scroll">
+    <div class="tag active">全部</div>
+    <div class="tag normal">📌 工作</div>
+    <div class="tag normal">🌿 生活</div>
+    <div class="tag normal">✈️ 旅行</div>
+    <div class="tag normal">🍜 美食</div>
+    <div class="tag add">＋ 新标签</div>
+  </div>
+
+  <!-- 笔记列表 -->
+  <div class="section-header">
+    <span class="section-title">今天</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-thumb">🌸</div>
+    <div class="note-content">
+      <div class="note-text">北京的春天真的来了，玉兰花开了</div>
+      <div class="note-meta">
+        <span>📷 14:32</span>
+        <span>• 3张图片</span>
+        <span class="note-tag-badge">🌿 生活</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-thumb">✏️</div>
+    <div class="note-content">
+      <div class="note-text">今天的会议讨论了Q2的产品路线图</div>
+      <div class="note-meta">
+        <span>✏️ 10:15</span>
+        <span class="note-tag-badge">📌 工作</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-title">昨天</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-thumb">🍜</div>
+    <div class="note-content">
+      <div class="note-text">三里屯的新店，麻辣牛肉面绝了</div>
+      <div class="note-meta">
+        <span>📷 19:20</span>
+        <span>• 📍 三里屯</span>
+        <span class="note-tag-badge">🍜 美食</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 屏幕2：搜索状态 -->
+<div>
+<div class="label">搜索结果</div>
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+  <div class="nav-bar">
+    <div class="nav-title">随手记</div>
+  </div>
+
+  <div class="search-bar" style="background:#eeeef8; border: 1.5px solid #3358E0;">
+    <span class="search-icon">🔍</span>
+    <span style="color:#1c1c1e;">玉兰</span>
+    <span style="margin-left:auto;color:#8B35D4;font-size:14px">取消</span>
+  </div>
+
+  <div style="padding:6px 16px 4px;font-size:13px;color:#8e8e93;">找到 2 条结果</div>
+
+  <div class="note-card search-result-note">
+    <div class="note-thumb">🌸</div>
+    <div class="note-content">
+      <div class="note-text">北京的春天真的来了，<em>玉兰</em>花开了</div>
+      <div class="note-meta">
+        <span>📷 今天 14:32</span>
+        <span class="note-tag-badge">🌿 生活</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-card search-result-note">
+    <div class="note-thumb">🌸</div>
+    <div class="note-content">
+      <div class="note-text">颐和园的<em>玉兰</em>，每年都来看一次</div>
+      <div class="note-meta">
+        <span>📷 3月10日</span>
+        <span>• 📍 颐和园</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 屏幕3：标签管理 -->
+<div>
+<div class="label">标签管理页</div>
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+  <div class="nav-bar">
+    <div style="color:#8B35D4;font-size:14px">‹ 返回</div>
+    <div class="nav-title">管理标签</div>
+    <div style="color:#8B35D4;font-size:14px;font-weight:600">完成</div>
+  </div>
+
+  <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+
+    <div style="font-size:13px;color:#8e8e93;padding:0 4px 4px;font-weight:500">默认标签</div>
+
+    <div style="background:#f9f9fb;border-radius:14px;overflow:hidden">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid rgba(0,0,0,0.08)">
+        <span style="font-size:20px">📌</span>
+        <span style="flex:1;font-size:15px">工作</span>
+        <span style="color:#c7c7cc;font-size:18px">⠿</span>
+      </div>
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid rgba(0,0,0,0.08)">
+        <span style="font-size:20px">🌿</span>
+        <span style="flex:1;font-size:15px">生活</span>
+        <span style="color:#c7c7cc;font-size:18px">⠿</span>
+      </div>
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid rgba(0,0,0,0.08)">
+        <span style="font-size:20px">✈️</span>
+        <span style="flex:1;font-size:15px">旅行</span>
+        <span style="color:#c7c7cc;font-size:18px">⠿</span>
+      </div>
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:20px">🍜</span>
+        <span style="flex:1;font-size:15px">美食</span>
+        <span style="color:#c7c7cc;font-size:18px">⠿</span>
+      </div>
+    </div>
+
+    <div style="font-size:13px;color:#8e8e93;padding:8px 4px 4px;font-weight:500">我的标签</div>
+
+    <div style="background:#f9f9fb;border-radius:14px;overflow:hidden">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid rgba(0,0,0,0.08)">
+        <span style="font-size:20px">📖</span>
+        <span style="flex:1;font-size:15px">读书</span>
+        <span style="color:#ff3b30;font-size:18px">🗑</span>
+      </div>
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:20px">🏃</span>
+        <span style="flex:1;font-size:15px">运动</span>
+        <span style="color:#ff3b30;font-size:18px">🗑</span>
+      </div>
+    </div>
+
+    <button style="margin-top:8px;width:100%;padding:14px;background:linear-gradient(135deg,#3358E0,#8B35D4);color:white;border:none;border-radius:14px;font-size:16px;font-weight:600">
+      ＋ 创建新标签
+    </button>
+
+  </div>
+</div>
+</div>
+
+</body>
+</html>

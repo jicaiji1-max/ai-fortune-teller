@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>流程 1：拍照上传单张图片</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: #f5f5f5; padding: 30px 20px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 22px; font-weight: 600; color: #1c1c1c; margin-bottom: 10px; }
+        .flow-path { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .flow-box { padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: white; background: #007aff; }
+        .arrow { color: #8e8e93; font-size: 16px; }
+        .screenshots { display: flex; flex-direction: column; gap: 15px; max-width: 500px; margin: 0 auto; }
+        .screenshot-item { display: flex; align-items: center; gap: 15px; }
+        .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: white; background: #007aff; flex-shrink: 0; }
+        .step-card { flex: 1; background: white; border-radius: 12px; padding: 18px; border: 1px solid #e5e5e5; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .step-title { font-size: 16px; font-weight: 600; color: #1c1c1c; }
+        .step-desc { font-size: 14px; color: #8e8e93; margin-bottom: 12px; }
+        .mockup { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 10px; padding: 16px; }
+        .btn { display: inline-block; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-align: center; }
+        .btn-camera { background: #007aff; color: white; }
+        .btn-cancel { background: #e5e5e5; color: #1c1c1c; }
+        .btn-save { background: #007aff; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📷 流程 1：拍照上传单张图片</h1>
+        <div class="flow-path">
+            <div class="flow-box">P1 首页</div><span class="arrow">→</span>
+            <div class="flow-box">P2 拍照选择</div><span class="arrow">→</span>
+            <div class="flow-box" style="background:#8e8e93;">P3 相机</div><span class="arrow">→</span>
+            <div class="flow-box">P2 预览</div><span class="arrow">→</span>
+            <div class="flow-box">P1 首页</div>
+        </div>
+    </div>
+    <div class="screenshots">
+        <div class="screenshot-item">
+            <div class="step-num">1</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P1 - 首页</span></div>
+                <div class="step-desc">点击"拍照"按钮开始流程</div>
+                <div class="mockup">
+                    <div style="display:flex;gap:12px;">
+                        <span class="btn btn-camera" style="flex:1;">📷 拍照</span>
+                        <span class="btn" style="flex:1;background:#34c759;color:white;">✏️ 写字</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num">2</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P2 - 拍照选择页</span></div>
+                <div class="step-desc">点击"拍照"按钮调用相机</div>
+                <div class="mockup">
+                    <span class="btn btn-camera" style="width:100%;">📷 拍照</span>
+                </div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num" style="background:#8e8e93;">3</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P3 - 系统相机</span></div>
+                <div class="step-desc">拍照后自动返回 P2</div>
+                <div class="mockup" style="background:#000;height:120px;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;">📸</div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num">4</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P2 - 预览 + 添加说明</span></div>
+                <div class="step-desc">预览照片，可添加说明，点击保存</div>
+                <div class="mockup">
+                    <div style="background:#e5e5e5;height:80px;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;color:#8e8e93;font-size:30px;">🖼️</div>
+                    <div style="background:#f5f5f5;padding:12px;border-radius:8px;margin-bottom:12px;font-size:13px;color:#666;">添加说明（可选）</div>
+                    <div style="display:flex;gap:8px;">
+                        <span class="btn btn-cancel" style="flex:1;">取消</span>
+                        <span class="btn btn-save" style="flex:1;">保存</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num">5</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P1 - 首页 (展示新笔记)</span></div>
+                <div class="step-desc">笔记已添加到列表顶部</div>
+                <div class="mockup">
+                    <div style="background:#e5e5e5;height:80px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8e8e93;font-size:30px;">🖼️ 新笔记</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

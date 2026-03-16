@@ -1,0 +1,238 @@
+<mxGraphModel dx="1426" dy="739" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1800" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    
+    <!-- 标题 -->
+    <mxCell id="title" value="随手记 App - 编辑功能完整用户动线图" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="800" y="20" width="600" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 开始 -->
+    <mxCell id="start" value="开始" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;fontSize=14;fontColor=#ffffff;" parent="1" vertex="1">
+      <mxGeometry x="970" y="80" width="60" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 主界面 -->
+    <mxCell id="mainView" value="ContentView&lt;br&gt;(主界面)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" parent="1" vertex="1">
+      <mxGeometry x="940" y="170" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 决策：用户操作 -->
+    <mxCell id="userChoice" value="用户操作？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" parent="1" vertex="1">
+      <mxGeometry x="950" y="260" width="100" height="100" as="geometry"/>
+    </mxCell>
+
+    <!-- 分支标签 -->
+    <mxCell id="editLabel" value="点击笔记&lt;br&gt;(编辑)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="960" y="390" width="80" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 笔记列表 -->
+    <mxCell id="noteList" value="笔记列表&lt;br&gt;(NoteRow)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="940" y="450" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 图片数量显示 -->
+    <mxCell id="photoCount" value="📊 图片数量显示&lt;br&gt;角标 🖼️ 3 + 文字&quot;• 3 张图片&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1100" y="450" width="180" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 点击笔记 -->
+    <mxCell id="clickNote" value="👆 点击笔记" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="940" y="540" width="120" height="45" as="geometry"/>
+    </mxCell>
+
+    <!-- 编辑模式 -->
+    <mxCell id="editMode" value="✏️ 编辑模式&lt;br&gt;(CameraView/TextEditorView)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="940" y="610" width="180" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 决策：笔记类型 -->
+    <mxCell id="noteType" value="笔记类型？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" parent="1" vertex="1">
+      <mxGeometry x="955" y="700" width="150" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- 文字笔记 -->
+    <mxCell id="textNote" value="📝 文字笔记&lt;br&gt;(TextEditorView)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1150" y="710" width="140" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 图片/混合笔记 -->
+    <mxCell id="photoNote" value="📸 图片/混合笔记&lt;br&gt;(CameraView)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="750" y="710" width="140" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 加载所有图片 -->
+    <mxCell id="loadPhotos" value="✅ 加载所有图片&lt;br&gt;(主图 + 附加图片)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="750" y="800" width="140" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 多图预览 -->
+    <mxCell id="multiPreview" value="📸 多图预览&lt;br&gt;(横向滚动)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="750" y="870" width="140" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 图片数量提示 -->
+    <mxCell id="photoHint" value="📝 数量提示&lt;br&gt;(&quot;已选择 X 张图片&quot;)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="750" y="940" width="140" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 操作按钮组 -->
+    <mxCell id="buttonGroup" value="操作选项" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="950" y="800" width="100" height="30" as="geometry"/>
+    </mxCell>
+
+    <!-- 拍照按钮 -->
+    <mxCell id="cameraBtn" value="📷 拍照&lt;br&gt;(追加模式)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdcd;strokeColor=#ff0000;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="920" y="850" width="120" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 添加图片按钮 -->
+    <mxCell id="addPhotoBtn" value="🖼️ 添加图片&lt;br&gt;(追加模式)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="920" y="920" width="120" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 系统相机 -->
+    <mxCell id="systemCamera" value="📸 系统相机" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdcd;strokeColor=#ff0000;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1100" y="850" width="120" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 相册选择 -->
+    <mxCell id="photoLibrary" value="🖼️ 相册选择" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1100" y="920" width="120" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 追加图片 -->
+    <mxCell id="appendPhoto" value="✅ 追加图片&lt;br&gt;(不清空旧数据)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1100" y="1000" width="140" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 文字编辑 -->
+    <mxCell id="textEdit" value="✏️ 文字编辑&lt;br&gt;(修改说明)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1150" y="800" width="140" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 保存/取消 -->
+    <mxCell id="saveCancel" value="💾 保存 / ❌ 取消" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="940" y="1080" width="180" height="45" as="geometry"/>
+    </mxCell>
+
+    <!-- 决策：保存？ -->
+    <mxCell id="saveChoice" value="保存？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" parent="1" vertex="1">
+      <mxGeometry x="955" y="1150" width="150" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- 取消 -->
+    <mxCell id="cancel" value="取消" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="780" y="1170" width="60" height="30" as="geometry"/>
+    </mxCell>
+
+    <!-- 保存 -->
+    <mxCell id="doSave" value="保存" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="1160" y="1170" width="60" height="30" as="geometry"/>
+    </mxCell>
+
+    <!-- 返回列表 -->
+    <mxCell id="backToList1" value="返回列表" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="780" y="1240" width="100" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 执行保存 -->
+    <mxCell id="executeSave" value="modelContext.save&lt;br&gt;(更新笔记)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1120" y="1240" width="140" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 更新列表显示 -->
+    <mxCell id="updateList" value="📋 更新列表显示&lt;br&gt;(角标 + 文字说明)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1120" y="1320" width="140" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 连接线 -->
+    <mxCell id="edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=14;" parent="1" source="start" target="mainView" edge="1"/>
+    <mxCell id="edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=14;" parent="1" source="mainView" target="userChoice" edge="1"/>
+    <mxCell id="edge3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="userChoice" target="noteList" edge="1"/>
+    <mxCell id="edge4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="noteList" target="photoCount" edge="1"/>
+    <mxCell id="edge5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="noteList" target="clickNote" edge="1"/>
+    <mxCell id="edge6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="clickNote" target="editMode" edge="1"/>
+    <mxCell id="edge7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=13;" parent="1" source="editMode" target="noteType" edge="1"/>
+    <mxCell id="edge8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="noteType" target="textNote" edge="1"/>
+    <mxCell id="edge9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="noteType" target="photoNote" edge="1"/>
+    <mxCell id="edge10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="photoNote" target="loadPhotos" edge="1"/>
+    <mxCell id="edge11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="loadPhotos" target="multiPreview" edge="1"/>
+    <mxCell id="edge12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="multiPreview" target="photoHint" edge="1"/>
+    <mxCell id="edge13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="photoHint" target="cameraBtn" edge="1"/>
+    <mxCell id="edge14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="cameraBtn" target="systemCamera" edge="1"/>
+    <mxCell id="edge15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="addPhotoBtn" target="photoLibrary" edge="1"/>
+    <mxCell id="edge16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="systemCamera" target="appendPhoto" edge="1"/>
+    <mxCell id="edge17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="photoLibrary" target="appendPhoto" edge="1"/>
+    <mxCell id="edge18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="textNote" target="textEdit" edge="1"/>
+    <mxCell id="edge19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="appendPhoto" target="saveCancel" edge="1"/>
+    <mxCell id="edge20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="textEdit" target="saveCancel" edge="1"/>
+    <mxCell id="edge21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=14;" parent="1" source="saveCancel" target="saveChoice" edge="1"/>
+    <mxCell id="edge22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=0;entryY=1;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="saveChoice" target="backToList1" edge="1"/>
+    <mxCell id="edge23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=1;entryY=1;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="saveChoice" target="executeSave" edge="1"/>
+    <mxCell id="edge24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="executeSave" target="updateList" edge="1"/>
+    <mxCell id="edge25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=1;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="updateList" target="backToList1" edge="1"/>
+    <mxCell id="edge26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="backToList1" target="mainView" edge="1"/>
+
+    <!-- 图例 -->
+    <mxCell id="legend" value="图例" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="1450" y="100" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend1" value="开始/结束" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;fontSize=11;fontColor=#ffffff;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="140" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend2" value="界面" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1510" y="140" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend3" value="决策" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="190" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend4" value="编辑界面" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1510" y="190" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend5" value="拍照方式" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdcd;strokeColor=#ff0000;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="240" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend6" value="追加模式" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1550" y="240" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend7" value="图片数量" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="290" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend8" value="列表/编辑" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1550" y="290" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <!-- 关键修复点 -->
+    <mxCell id="fixPoint" value="🔧 关键修复点" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="1450" y="350" width="120" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="fix1" value="1. isAppendingInEditMode 标记" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="390" width="180" height="35" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="fix2" value="2. 编辑模式不清空旧数据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="435" width="180" height="35" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="fix3" value="3. 拍照追加到 selectedImageData" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="480" width="180" height="35" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="fix4" value="4. 按钮文字&quot;添加图片&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+      <mxGeometry x="1450" y="525" width="180" height="35" as="geometry"/>
+    </mxCell>
+
+  </root>
+</mxGraphModel>

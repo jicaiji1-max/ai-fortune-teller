@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随手记 App - 完整用户动线图 (下)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; background: #f5f5f5; padding: 30px 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 28px; font-weight: 600; color: #1c1c1c; margin-bottom: 8px; }
+        .header p { font-size: 14px; color: #8e8e93; }
+        .flowchart { display: flex; flex-direction: column; align-items: center; gap: 30px; max-width: 400px; margin: 0 auto; }
+        .page-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); width: 100%; }
+        .page-header { padding: 16px 20px; background: #f8f8f8; border-bottom: 1px solid #e5e5e5; font-weight: 600; font-size: 16px; color: #1c1c1c; }
+        .page-content { padding: 20px; }
+        .mockup { background: #f5f5f5; border: 1px solid #e5e5e5; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+        .mockup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e5e5; }
+        .mockup-title { font-weight: 600; font-size: 17px; color: #1c1c1c; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-size: 15px; font-weight: 500; cursor: pointer; }
+        .btn-cancel { background: #e5e5e5; color: #1c1c1c; }
+        .btn-save { background: #007aff; color: white; }
+        .btn-delete { background: #ff3b30; color: white; }
+        .btn-text { background: #34c759; color: white; }
+        .interactions { background: #fafafa; border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+        .interactions h4 { font-size: 14px; color: #8e8e93; margin-bottom: 10px; font-weight: 500; }
+        .interaction-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: white; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border: 1px solid #e5e5e5; }
+        .arrow { color: #007aff; font-weight: 600; }
+        .target { color: #007aff; font-weight: 500; }
+        .flow-section { border-radius: 10px; padding: 14px; margin-top: 10px; }
+        .flow-section h4 { color: white; font-size: 14px; margin-bottom: 12px; font-weight: 600; }
+        .flow-step { display: flex; align-items: center; gap: 6px; padding: 8px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-bottom: 6px; font-size: 13px; color: white; }
+        .flow-step .arrow { color: white; opacity: 0.8; }
+        .section-title { font-size: 18px; font-weight: 600; color: #1c1c1c; text-align: center; margin: 20px 0 15px; padding-top: 20px; border-top: 2px solid #e5e5e5; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📱 随手记 App - 完整用户动线图 (下)</h1>
+        <p>P5-P9 + 核心流程</p>
+    </div>
+    <div class="flowchart">
+        <div class="page-card">
+            <div class="page-header">✏️ P5 - 文字编辑页</div>
+            <div class="page-content">
+                <div class="mockup" style="background: white; min-height: 240px;">
+                    <div class="mockup-header">
+                        <span class="mockup-title">写字</span>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-cancel" style="padding:6px 14px;font-size:14px;">取消</button>
+                            <button class="btn btn-text" style="padding:6px 14px;font-size:14px;">保存</button>
+                        </div>
+                    </div>
+                    <div style="background:white;border:1px solid #e5e5e5;border-radius:8px;padding:14px;min-height:140px;color:#1c1c1c;font-size:14px;line-height:1.6;">在这里输入文字内容...<br><br>支持多行输入，最多 500 字</div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>输入文字</span><span class="arrow">→</span><span class="target">当前页</span></div>
+                    <div class="interaction-item"><span>点击"保存"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"(无内容)</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"(有内容)</span><span class="arrow">→</span><span class="target">P8</span></div>
+                </div>
+                <div class="flow-section" style="background: linear-gradient(135deg, #34c759, #30d158);">
+                    <h4>✏️ 流程 3：新建纯文字笔记</h4>
+                    <div class="flow-step"><span>P1 首页</span><span class="arrow">→</span><span>P5 文字编辑</span></div>
+                    <div class="flow-step"><span>P5</span><span class="arrow">→</span><span>P1 首页 (文字卡片)</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="section-title">🖼️ 编辑与删除流程</div>
+        <div class="page-card">
+            <div class="page-header">🖼️ P6 - 图片编辑页</div>
+            <div class="page-content">
+                <div class="mockup" style="background: white;">
+                    <div class="mockup-header">
+                        <span class="mockup-title">编辑</span>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-cancel" style="padding:6px 14px;font-size:14px;">取消</button>
+                            <button class="btn btn-save" style="padding:6px 14px;font-size:14px;">保存</button>
+                        </div>
+                    </div>
+                    <div style="position:relative;">
+                        <div style="background:#f5f5f5;height:120px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8e8e93;font-size:40px;border:2px dashed #e5e5e5;">🖼️</div>
+                        <div style="position:absolute;bottom:10px;right:10px;width:36px;height:36px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.1);font-size:18px;">🔄</div>
+                    </div>
+                    <div style="margin-top:14px;padding:12px;background:#f5f5f5;border-radius:8px;">
+                        <div style="font-size:12px;color:#8e8e93;margin-bottom:4px;">添加说明（可选）</div>
+                        <div style="font-size:14px;color:#1c1c1c;">已有的文字说明...</div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>点击"更换图片"</span><span class="arrow">→</span><span class="target">P4</span></div>
+                    <div class="interaction-item"><span>修改说明</span><span class="arrow">→</span><span class="target">当前页</span></div>
+                    <div class="interaction-item"><span>点击"保存"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                </div>
+                <div class="flow-section" style="background: linear-gradient(135deg, #5ac8fa, #64d2ff);">
+                    <h4>📋 流程 4：上传后编辑</h4>
+                    <div class="flow-step"><span>P1 首页 (卡片)</span><span class="arrow">→</span><span>P6 图片编辑</span></div>
+                    <div class="flow-step"><span>P6</span><span class="arrow">→</span><span>P4 相册 (换图)</span></div>
+                    <div class="flow-step"><span>P4</span><span class="arrow">→</span><span>P6 编辑 (新图)</span></div>
+                    <div class="flow-step"><span>P6</span><span class="arrow">→</span><span>P1 首页 (更新)</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="page-card">
+            <div class="page-header">🗑️ P7 - 删除确认弹窗</div>
+            <div class="page-content">
+                <div class="mockup" style="background: white;">
+                    <div style="text-align:center;padding:20px 10px;">
+                        <div style="font-size:17px;font-weight:600;margin-bottom:8px;color:#1c1c1c;">确认删除？</div>
+                        <div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">删除后无法恢复，确定要删除这条记录吗？</div>
+                        <div style="display:flex;gap:10px;">
+                            <button class="btn btn-cancel" style="flex:1">取消</button>
+                            <button class="btn btn-delete" style="flex:1">删除</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>点击"删除"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                </div>
+                <div class="flow-section" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
+                    <h4>🗑️ 流程 5：删除笔记</h4>
+                    <div class="flow-step"><span>P1 首页 (长按/删除)</span><span class="arrow">→</span><span>P7 删除确认</span></div>
+                    <div class="flow-step"><span>P7</span><span class="arrow">→</span><span>P1 首页 (已移除)</span></div>
+                    <div style="font-size:12px;opacity:0.9;margin-top:8px;">✅ 删除后：卡片从列表移除，下方笔记自动上移</div>
+                </div>
+            </div>
+        </div>
+        <div class="page-card">
+            <div class="page-header">🚫 P8 - 放弃确认弹窗</div>
+            <div class="page-content">
+                <div class="mockup" style="background: white;">
+                    <div style="text-align:center;padding:20px 10px;">
+                        <div style="font-size:17px;font-weight:600;margin-bottom:8px;color:#1c1c1c;">放弃更改？</div>
+                        <div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">您输入的内容将会丢失</div>
+                        <div style="display:flex;gap:10px;">
+                            <button class="btn btn-delete" style="flex:1">放弃</button>
+                            <button class="btn btn-cancel" style="flex:1">继续编辑</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>点击"放弃"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"继续编辑"</span><span class="arrow">→</span><span class="target">当前页</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="page-card">
+            <div class="page-header">📋 P9 - 上下文菜单</div>
+            <div class="page-content">
+                <div class="mockup" style="background: white;">
+                    <div style="background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+                        <div style="padding:14px;border-bottom:1px solid #e5e5e5;font-size:14px;color:#1c1c1c;">📥 保存到相册</div>
+                        <div style="padding:14px;font-size:14px;color:#ff3b30;">✕ 取消</div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>保存到相册</span><span class="arrow">→</span><span class="target">权限请求→P1</span></div>
+                    <div class="interaction-item"><span>点击取消</span><span class="arrow">→</span><span class="target">P1</span></div>
+                </div>
+                <div class="flow-section" style="background: linear-gradient(135deg, #ff9500, #ffab40);">
+                    <h4>📥 流程 6：保存到相册</h4>
+                    <div class="flow-step"><span>P1 首页 (长按)</span><span class="arrow">→</span><span>P9 上下文菜单</span></div>
+                    <div class="flow-step"><span>P9</span><span class="arrow">→</span><span>📱 系统权限请求</span></div>
+                    <div class="flow-step"><span>权限</span><span class="arrow">→</span><span>P1 首页 (保存成功)</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

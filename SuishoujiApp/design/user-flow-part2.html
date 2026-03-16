@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随手记 App - 用户动线图 (下)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 { font-size: 42px; margin-bottom: 15px; font-weight: 700; }
+        .header p { font-size: 20px; opacity: 0.95; }
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            max-width: 500px;
+            margin: 0 auto 50px;
+        }
+        .page-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 60px rgba(0,0,0,0.25);
+            width: 100%;
+        }
+        .page-header {
+            padding: 24px;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        .page-header.editor { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .page-header.alert { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .page-content { padding: 25px; }
+        .mockup {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .mockup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ddd;
+        }
+        .mockup-title { font-weight: 700; font-size: 18px; }
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .interactions h4 { font-size: 18px; color: #555; margin-bottom: 12px; font-weight: 700; }
+        .interaction-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .arrow { color: #667eea; font-weight: bold; }
+        .target { color: #667eea; font-weight: 600; }
+        .flow-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 15px 60px rgba(0,0,0,0.25);
+        }
+        .flow-section h2 { text-align: center; margin-bottom: 25px; color: #333; font-size: 24px; }
+        .flow-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+        .flow-box {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+        }
+        .flow-arrow { color: #667eea; font-size: 20px; font-weight: bold; }
+        .flow-label { text-align: center; color: #666; font-size: 14px; margin-top: -10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📱 随手记 App - 用户动线图 (下)</h1>
+        <p>P6-P9 + 核心流程</p>
+    </div>
+    
+    <div class="flowchart">
+        <div class="page-card">
+            <div class="page-header editor">🖼️ P6 - 图片编辑页</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <span class="mockup-title">编辑</span>
+                        <div><button class="btn" style="background:#ddd">取消</button><button class="btn" style="background:#43e97b;color:white">保存</button></div>
+                    </div>
+                    <div style="position:relative;">
+                        <div style="background:#eee;height:120px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">当前图片</div>
+                        <div style="position:absolute;bottom:10px;right:10px;width:35px;height:35px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2);">🔄</div>
+                    </div>
+                    <div style="margin-top:15px;padding:10px;background:white;border-radius:8px;">
+                        <div style="font-size:12px;color:#999;">添加说明</div>
+                        <div style="margin-top:5px;font-size:14px;">已有的文字说明...</div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>点击"更换图片"</span><span class="arrow">→</span><span class="target">P4</span></div>
+                    <div class="interaction-item"><span>修改说明</span><span class="arrow">→</span><span class="target">当前页</span></div>
+                    <div class="interaction-item"><span>点击"保存"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-card">
+            <div class="page-header alert">🗑️ P7 - 删除确认弹窗</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div style="text-align:center;margin-bottom:20px;">
+                        <div style="font-size:18px;font-weight:600;margin-bottom:8px;">确认删除？</div>
+                        <div style="font-size:13px;color:#666;">删除后无法恢复</div>
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn" style="flex:1;background:#ddd">取消</button>
+                        <button class="btn" style="flex:1;background:#ff4444;color:white">删除</button>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>点击"删除"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-card">
+            <div class="page-header alert">🚫 P8 - 放弃确认弹窗</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div style="text-align:center;margin-bottom:20px;">
+                        <div style="font-size:18px;font-weight:600;margin-bottom:8px;">放弃更改？</div>
+                        <div style="font-size:13px;color:#666;">输入的内容将会丢失</div>
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn" style="flex:1;background:#ff4444;color:white">放弃</button>
+                        <button class="btn" style="flex:1;background:#ddd">继续编辑</button>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>点击"放弃"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"继续编辑"</span><span class="arrow">→</span><span class="target">当前页</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-card">
+            <div class="page-header alert">📋 P9 - 上下文菜单</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div style="background:white;border-radius:12px;padding:10px;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+                        <div style="padding:12px;border-bottom:1px solid #eee;font-size:14px;">📥 保存到相册</div>
+                        <div style="padding:12px;font-size:14px;color:#999;">✕ 取消</div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>保存到相册</span><span class="arrow">→</span><span class="target">请求权限→P1</span></div>
+                    <div class="interaction-item"><span>点击取消</span><span class="arrow">→</span><span class="target">P1</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flow-section">
+        <h2>🔄 核心用户流程</h2>
+        
+        <div style="margin-bottom:30px;">
+            <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:10px 15px;border-radius:8px;margin-bottom:15px;font-weight:600;">📷 流程 1：拍照上传单张图片</div>
+            <div class="flow-row">
+                <div class="flow-box" style="background:#667eea">P1 首页</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#f093fb">P2 拍照选择</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#4facfe">P3 相机</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#f093fb">P2 预览 + 说明</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#667eea">P1 首页 (展示)</div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom:30px;">
+            <div style="background:linear-gradient(135deg,#f093fb,#f5576c);color:white;padding:10px 15px;border-radius:8px;margin-bottom:15px;font-weight:600;">🖼️ 流程 2：从相册选择多张图片 (1-9 张)</div>
+            <div class="flow-row">
+                <div class="flow-box" style="background:#667eea">P1 首页</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#f093fb">P2 拍照选择</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#4facfe">P4 相册 (多选)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#f093fb">P2 预览 (9 张)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#667eea">P1 首页 (9 张连发)</div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom:30px;">
+            <div style="background:linear-gradient(135deg,#4facfe,#00f2fe);color:white;padding:10px 15px;border-radius:8px;margin-bottom:15px;font-weight:600;">📋 流程 3：上传后展示与编辑</div>
+            <div class="flow-row">
+                <div class="flow-box" style="background:#667eea">P1 首页 (卡片)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#43e97b">P6 图片编辑</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#4facfe">P4 相册 (换图)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#43e97b">P6 编辑 (新图)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#667eea">P1 首页 (更新)</div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom:30px;">
+            <div style="background:linear-gradient(135deg,#43e97b,#38f9d7);color:white;padding:10px 15px;border-radius:8px;margin-bottom:15px;font-weight:600;">✏️ 流程 4：新建纯文字笔记</div>
+            <div class="flow-row">
+                <div class="flow-box" style="background:#667eea">P1 首页</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#43e97b">P5 文字编辑</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#fa709a">P8 放弃确认 (可选)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#667eea">P1 首页 (文字卡片)</div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom:30px;">
+            <div style="background:linear-gradient(135deg,#fa709a,#fee140);color:white;padding:10px 15px;border-radius:8px;margin-bottom:15px;font-weight:600;">🗑️ 流程 5：删除笔记</div>
+            <div class="flow-row">
+                <div class="flow-box" style="background:#667eea">P1 首页 (长按/点击删除)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#fa709a">P7 删除确认</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#667eea">P1 首页 (已移除)</div>
+            </div>
+            <div style="text-align:center;margin-top:10px;font-size:13px;color:#666;">✅ 删除后：卡片从列表中移除，下方笔记自动上移填补空位</div>
+        </div>
+        
+        <div style="margin-bottom:30px;">
+            <div style="background:linear-gradient(135deg,#fee140,#fa709a);color:white;padding:10px 15px;border-radius:8px;margin-bottom:15px;font-weight:600;">📥 流程 6：保存到相册</div>
+            <div class="flow-row">
+                <div class="flow-box" style="background:#667eea">P1 首页 (长按)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#fa709a">P9 上下文菜单</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#4facfe">📱 系统权限请求</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box" style="background:#667eea">P1 首页 (保存成功提示)</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

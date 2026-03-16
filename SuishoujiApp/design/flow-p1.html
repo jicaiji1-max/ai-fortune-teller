@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P1 - 首页</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: #f5f5f5; padding: 20px; }
+        .page-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .page-header { padding: 16px 20px; background: #f8f8f8; border-bottom: 1px solid #e5e5e5; font-weight: 600; font-size: 16px; }
+        .page-content { padding: 20px; }
+        .mockup { background: white; border: 1px solid #e5e5e5; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+        .mockup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e5e5; }
+        .mockup-title { font-weight: 600; font-size: 17px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-size: 15px; font-weight: 500; }
+        .btn-camera { background: #007aff; color: white; }
+        .btn-text { background: #34c759; color: white; }
+        .time-label { font-size: 13px; color: #8e8e93; margin-bottom: 10px; }
+        .note-card { background: white; border-radius: 10px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 10px; }
+        .note-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .note-time { font-size: 12px; color: #8e8e93; }
+        .note-image { background: #f5f5f5; height: 80px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #8e8e93; font-size: 30px; }
+        .note-text { font-size: 14px; color: #1c1c1c; }
+        .interactions { background: #fafafa; border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+        .interactions h4 { font-size: 14px; color: #8e8e93; margin-bottom: 10px; }
+        .interaction-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border: 1px solid #e5e5e5; }
+        .arrow { color: #007aff; font-weight: 600; }
+        .target { color: #007aff; font-weight: 500; }
+        .flow-section { background: linear-gradient(135deg, #007aff, #5ac8fa); border-radius: 10px; padding: 14px; }
+        .flow-section h4 { color: white; font-size: 14px; margin-bottom: 12px; }
+        .flow-step { display: flex; align-items: center; gap: 6px; padding: 8px; background: rgba(255,255,255,0.2); border-radius: 6px; margin-bottom: 6px; font-size: 13px; color: white; }
+    </style>
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-header">🏠 P1 - 首页 (ContentView)</div>
+        <div class="page-content">
+            <div class="mockup">
+                <div class="mockup-header"><span class="mockup-title">随手记</span></div>
+                <div style="display:flex;gap:12px;margin-bottom:20px;">
+                    <button class="btn btn-camera" style="flex:1;">📷 拍照</button>
+                    <button class="btn btn-text" style="flex:1;">✏️ 写字</button>
+                </div>
+                <div class="time-label">昨天</div>
+                <div class="note-card">
+                    <div class="note-header">
+                        <span class="note-time">3 月 11 日 08:48</span>
+                        <span style="font-size:18px;opacity:0.6;">🗑️</span>
+                    </div>
+                    <div class="note-image">🖼️</div>
+                    <div class="note-text">今天好忙呀...</div>
+                </div>
+            </div>
+            <div class="interactions">
+                <h4>交互跳转：</h4>
+                <div class="interaction-item"><span>1️⃣ 点击"拍照"</span><span class="arrow">→</span><span class="target">P2</span></div>
+                <div class="interaction-item"><span>2️⃣ 点击"写字"</span><span class="arrow">→</span><span class="target">P5</span></div>
+                <div class="interaction-item"><span>3️⃣ 点击笔记</span><span class="arrow">→</span><span class="target">P6</span></div>
+                <div class="interaction-item"><span>4️⃣ 点击删除</span><span class="arrow">→</span><span class="target">P7</span></div>
+                <div class="interaction-item"><span>5️⃣ 长按笔记</span><span class="arrow">→</span><span class="target">P9</span></div>
+            </div>
+            <div class="flow-section">
+                <h4>📷 流程 1：拍照上传单张</h4>
+                <div class="flow-step"><span>P1 首页</span><span class="arrow">→</span><span>P2 拍照选择</span></div>
+                <div class="flow-step"><span>P2</span><span class="arrow">→</span><span>P3 相机</span></div>
+                <div class="flow-step"><span>P3</span><span class="arrow">→</span><span>P2 预览 + 说明</span></div>
+                <div class="flow-step"><span>P2</span><span class="arrow">→</span><span>P1 首页 (展示)</span></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

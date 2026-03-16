@@ -1,0 +1,257 @@
+<mxGraphModel dx="1426" dy="739" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    
+    <!-- 标题 -->
+    <mxCell id="title" value="随手记 App 架构流程图" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="600" y="20" width="400" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- App 入口 -->
+    <mxCell id="app" value="SuishoujiApp&lt;br&gt;(App 入口)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" parent="1" vertex="1">
+      <mxGeometry x="700" y="80" width="200" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- ModelContainer -->
+    <mxCell id="modelContainer" value="ModelContainer&lt;br&gt;(SwiftData)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" parent="1" vertex="1">
+      <mxGeometry x="700" y="170" width="200" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- ContentView -->
+    <mxCell id="contentView" value="ContentView&lt;br&gt;(主界面)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" parent="1" vertex="1">
+      <mxGeometry x="700" y="260" width="200" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- 分组标题 -->
+    <mxCell id="groupTitle" value="UI 组件层" style="text;html=1;strokeColor=#82b366;fillColor=#d5e8d4;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="100" y="350" width="300" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- ActionButton 拍照 -->
+    <mxCell id="cameraButton" value="ActionButton&lt;br&gt;(拍照)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="150" y="410" width="120" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- ActionButton 写字 -->
+    <mxCell id="textButton" value="ActionButton&lt;br&gt;(写字)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="300" y="410" width="120" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- NoteRow 组件 -->
+    <mxCell id="noteRow" value="NoteRow&lt;br&gt;(笔记列表项)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="150" y="490" width="270" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 删除功能组 -->
+    <mxCell id="deleteGroup" value="删除功能" style="text;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="100" y="570" width="300" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 删除按钮 -->
+    <mxCell id="deleteButton" value="删除按钮&lt;br&gt;(右上角)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="120" y="630" width="100" height="45" as="geometry"/>
+    </mxCell>
+
+    <!-- 长按删除 -->
+    <mxCell id="longPress" value="长按删除&lt;br&gt;(手势)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="235" y="630" width="100" height="45" as="geometry"/>
+    </mxCell>
+
+    <!-- 左滑删除 -->
+    <mxCell id="swipeDelete" value="左滑删除&lt;br&gt;(swipeActions)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="350" y="630" width="100" height="45" as="geometry"/>
+    </mxCell>
+
+    <!-- 确认对话框 -->
+    <mxCell id="confirmDialog" value="确认对话框&lt;br&gt;(Alert)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdcd;strokeColor=#ff0000;fontSize=12;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="235" y="710" width="100" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 数据模型组 -->
+    <mxCell id="dataGroup" value="数据模型层" style="text;html=1;strokeColor=#6c8ebf;fillColor=#dae8fc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="950" y="350" width="300" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- Note 模型 -->
+    <mxCell id="noteModel" value="Note&lt;br&gt;(@Model)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="1000" y="410" width="200" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- Note 字段 -->
+    <mxCell id="noteFields" value="• id: UUID&lt;br&gt;• timestamp: Date&lt;br&gt;• type: NoteType&lt;br&gt;• text: String&lt;br&gt;• photoData: Data?&lt;br&gt;• additionalPhotoData: [Data]?" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=top;whiteSpace=wrap;rounded=1;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1000" y="480" width="200" height="110" as="geometry"/>
+    </mxCell>
+
+    <!-- NoteType 枚举 -->
+    <mxCell id="noteType" value="NoteType&lt;br&gt;(enum)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="1000" y="610" width="200" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- NoteType 值 -->
+    <mxCell id="noteTypeValues" value="• text&lt;br&gt;• photo&lt;br&gt;• mixed" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=left;verticalAlign=top;whiteSpace=wrap;rounded=1;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1000" y="670" width="200" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- Sheet 视图组 -->
+    <mxCell id="sheetGroup" value="Sheet 视图层" style="text;html=1;strokeColor=#82b366;fillColor=#d5e8d4;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="450" y="350" width="200" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- CameraView -->
+    <mxCell id="cameraView" value="CameraView&lt;br&gt;(拍照界面)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="470" y="410" width="160" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- TextEditorView -->
+    <mxCell id="textView" value="TextEditorView&lt;br&gt;(文字编辑)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="470" y="490" width="160" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- 数据流标题 -->
+    <mxCell id="dataFlowTitle" value="数据流向" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="700" y="800" width="200" height="30" as="geometry"/>
+    </mxCell>
+
+    <!-- 创建流程 -->
+    <mxCell id="createFlow" value="创建笔记" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="550" y="850" width="150" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 保存流程 -->
+    <mxCell id="saveFlow" value="保存 (modelContext.insert)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="750" y="850" width="180" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 持久化 -->
+    <mxCell id="persistFlow" value="SwiftData 持久化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="980" y="850" width="150" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 删除流程 -->
+    <mxCell id="deleteFlow" value="删除 (modelContext.delete)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdcd;strokeColor=#ff0000;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="550" y="920" width="180" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 编辑流程 -->
+    <mxCell id="editFlow" value="编辑笔记" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="780" y="920" width="150" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 更新流程 -->
+    <mxCell id="updateFlow" value="更新 (note.text = ...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" parent="1" vertex="1">
+      <mxGeometry x="980" y="920" width="150" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- 连接线 -->
+    <!-- App → ModelContainer -->
+    <mxCell id="edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=14;" parent="1" source="app" target="modelContainer" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- ModelContainer → ContentView -->
+    <mxCell id="edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=14;" parent="1" source="modelContainer" target="contentView" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- ContentView → ActionButtons -->
+    <mxCell id="edge3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="contentView" target="cameraButton" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="edge4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="contentView" target="textButton" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- ContentView → NoteRow -->
+    <mxCell id="edge5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="contentView" target="noteRow" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- ContentView → CameraView -->
+    <mxCell id="edge6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="contentView" target="cameraView" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- ContentView → TextEditorView -->
+    <mxCell id="edge7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="contentView" target="textView" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- NoteRow → 删除功能 -->
+    <mxCell id="edge8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="noteRow" target="deleteGroup" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- 删除方式 → 确认对话框 -->
+    <mxCell id="edge9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="deleteButton" target="confirmDialog" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="edge10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="longPress" target="confirmDialog" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="edge11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=11;" parent="1" source="swipeDelete" target="confirmDialog" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- ContentView → Note 模型 -->
+    <mxCell id="edge12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="contentView" target="noteModel" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- NoteRow → Note 模型 -->
+    <mxCell id="edge13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="noteRow" target="noteModel" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Note 模型 → NoteType -->
+    <mxCell id="edge14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="noteModel" target="noteType" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- 数据流连接 -->
+    <mxCell id="edge15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="createFlow" target="saveFlow" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="edge16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="saveFlow" target="persistFlow" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="edge17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="deleteFlow" target="editFlow" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="edge18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;fontSize=12;" parent="1" source="editFlow" target="updateFlow" edge="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- 图例 -->
+    <mxCell id="legend" value="图例" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" parent="1" vertex="1">
+      <mxGeometry x="1300" y="100" width="80" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend1" value="App 入口" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1300" y="140" width="100" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend2" value="数据模型" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1300" y="180" width="100" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend3" value="UI 组件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1300" y="220" width="100" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend4" value="Sheet 视图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1300" y="260" width="100" height="30" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend5" value="删除功能" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" parent="1" vertex="1">
+      <mxGeometry x="1300" y="300" width="100" height="30" as="geometry"/>
+    </mxCell>
+
+  </root>
+</mxGraphModel>

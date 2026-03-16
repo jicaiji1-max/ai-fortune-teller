@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>随手记 App - 5 大核心用户流程</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: #f5f5f5; padding: 30px 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 24px; font-weight: 600; color: #1c1c1c; margin-bottom: 8px; }
+        .header p { font-size: 14px; color: #8e8e93; }
+        .flow-section { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .flow-header { padding: 16px 20px; border-bottom: 1px solid #e5e5e5; }
+        .flow-title { font-size: 18px; font-weight: 600; color: #1c1c1c; margin-bottom: 8px; }
+        .flow-path { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .flow-box { padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; color: white; }
+        .arrow { color: #8e8e93; font-size: 14px; }
+        .flow-content { padding: 20px; }
+        .screenshots { display: flex; flex-direction: column; gap: 15px; }
+        .screenshot-item { display: flex; align-items: center; gap: 15px; }
+        .step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: white; flex-shrink: 0; }
+        .step-card { flex: 1; background: #fafafa; border-radius: 10px; padding: 15px; border: 1px solid #e5e5e5; }
+        .step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .step-title { font-size: 15px; font-weight: 600; color: #1c1c1c; }
+        .step-desc { font-size: 13px; color: #8e8e93; margin-bottom: 10px; }
+        .mockup { background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px; }
+        .btn { display: inline-block; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+        .btn-camera { background: #007aff; color: white; }
+        .btn-text { background: #34c759; color: white; }
+        .btn-cancel { background: #e5e5e5; color: #1c1c1c; }
+        .btn-save { background: #007aff; color: white; }
+        .btn-delete { background: #ff3b30; color: white; }
+        .blue { background: #007aff; }
+        .green { background: #34c759; }
+        .red { background: #ff3b30; }
+        .orange { background: #ff9500; }
+        .purple { background: #5e5ce6; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📱 随手记 App - 5 大核心用户流程</h1>
+        <p>每个流程包含的页面截图</p>
+    </div>
+
+    <!-- 流程 1 -->
+    <div class="flow-section">
+        <div class="flow-header" style="background: linear-gradient(135deg, #007aff, #5ac8fa);">
+            <div class="flow-title" style="color: white;">📷 流程 1：拍照上传单张图片</div>
+            <div class="flow-path" style="margin-top: 10px;">
+                <div class="flow-box blue">P1 首页</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box blue">P2 拍照选择</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box" style="background:#8e8e93;color:white;">P3 相机</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box blue">P2 预览</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box blue">P1 首页</div>
+            </div>
+        </div>
+        <div class="flow-content">
+            <div class="screenshots">
+                <div class="screenshot-item">
+                    <div class="step-num blue">1</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页</span></div>
+                        <div class="step-desc">点击"拍照"按钮开始流程</div>
+                        <div class="mockup">
+                            <div style="display:flex;gap:10px;">
+                                <span class="btn btn-camera">📷 拍照</span>
+                                <span class="btn btn-text">✏️ 写字</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num blue">2</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P2 - 拍照选择页</span></div>
+                        <div class="step-desc">点击"拍照"按钮调用相机</div>
+                        <div class="mockup">
+                            <span class="btn btn-camera" style="width:100%;">📷 拍照</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num" style="background:#8e8e93;">3</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P3 - 系统相机</span></div>
+                        <div class="step-desc">拍照后自动返回 P2</div>
+                        <div class="mockup" style="background:#000;height:100px;display:flex;align-items:center;justify-content:center;color:white;">📸</div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num blue">4</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P2 - 预览 + 添加说明</span></div>
+                        <div class="step-desc">预览照片，可添加说明，点击保存</div>
+                        <div class="mockup">
+                            <div style="background:#f5f5f5;height:60px;border-radius:6px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;color:#8e8e93;">🖼️ 预览</div>
+                            <div style="display:flex;gap:8px;">
+                                <span class="btn btn-cancel" style="flex:1;">取消</span>
+                                <span class="btn btn-save" style="flex:1;">保存</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num blue">5</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页 (展示新笔记)</span></div>
+                        <div class="step-desc">笔记已添加到列表顶部</div>
+                        <div class="mockup">
+                            <div style="background:#f5f5f5;height:60px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#8e8e93;">🖼️ 新笔记卡片</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 流程 2 -->
+    <div class="flow-section">
+        <div class="flow-header" style="background: linear-gradient(135deg, #34c759, #30d158);">
+            <div class="flow-title" style="color: white;">🖼️ 流程 2：从相册选择多张图片 (1-9 张)</div>
+            <div class="flow-path" style="margin-top: 10px;">
+                <div class="flow-box green">P1 首页</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box green">P2 拍照选择</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box" style="background:#8e8e93;color:white;">P4 相册</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box green">P2 预览 (9 张)</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box green">P1 首页</div>
+            </div>
+        </div>
+        <div class="flow-content">
+            <div class="screenshots">
+                <div class="screenshot-item">
+                    <div class="step-num green">1</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页</span></div>
+                        <div class="step-desc">点击"拍照"按钮</div>
+                        <div class="mockup"><span class="btn btn-camera">📷 拍照</span></div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num green">2</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P2 - 拍照选择页</span></div>
+                        <div class="step-desc">点击"从相册选择"</div>
+                        <div class="mockup"><span class="btn btn-cancel" style="width:100%;">🖼️ 从相册选择（可多选）</span></div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num" style="background:#8e8e93;">3</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P4 - 系统相册</span></div>
+                        <div class="step-desc">选择 1-9 张照片</div>
+                        <div class="mockup">
+                            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+                                <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                                <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                                <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                                <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                                <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                                <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num green">4</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P2 - 预览 (9 张)</span></div>
+                        <div class="step-desc">确认无误后点击保存</div>
+                        <div class="mockup"><span class="btn btn-save" style="width:100%;">保存 (9 张)</span></div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num green">5</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页 (9 张连发)</span></div>
+                        <div class="step-desc">9 张照片已添加到列表</div>
+                        <div class="mockup"><div style="color:#8e8e93;font-size:13px;">🖼️×9 新笔记卡片</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 流程 3 -->
+    <div class="flow-section">
+        <div class="flow-header" style="background: linear-gradient(135deg, #34c759, #30d158);">
+            <div class="flow-title" style="color: white;">✏️ 流程 3：新建纯文字笔记</div>
+            <div class="flow-path" style="margin-top: 10px;">
+                <div class="flow-box green">P1 首页</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box green">P5 文字编辑</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box green">P1 首页</div>
+            </div>
+        </div>
+        <div class="flow-content">
+            <div class="screenshots">
+                <div class="screenshot-item">
+                    <div class="step-num green">1</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页</span></div>
+                        <div class="step-desc">点击"写字"按钮</div>
+                        <div class="mockup"><span class="btn btn-text">✏️ 写字</span></div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num green">2</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P5 - 文字编辑页</span></div>
+                        <div class="step-desc">输入文字内容，点击保存</div>
+                        <div class="mockup">
+                            <div style="background:#f5f5f5;height:60px;border-radius:6px;margin-bottom:10px;padding:10px;font-size:13px;color:#666;">在这里输入文字内容...</div>
+                            <div style="display:flex;gap:8px;">
+                                <span class="btn btn-cancel" style="flex:1;">取消</span>
+                                <span class="btn btn-text" style="flex:1;">保存</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num green">3</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页 (文字卡片)</span></div>
+                        <div class="step-desc">文字笔记已添加</div>
+                        <div class="mockup"><div style="color:#8e8e93;font-size:13px;">📝 文字笔记卡片</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 流程 4 -->
+    <div class="flow-section">
+        <div class="flow-header" style="background: linear-gradient(135deg, #5ac8fa, #64d2ff);">
+            <div class="flow-title" style="color: white;">📋 流程 4：编辑已有笔记</div>
+            <div class="flow-path" style="margin-top: 10px;">
+                <div class="flow-box" style="background:#5ac8fa;color:white;">P1 首页</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box" style="background:#5ac8fa;color:white;">P6 图片编辑</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box" style="background:#8e8e93;color:white;">P4 相册</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box" style="background:#5ac8fa;color:white;">P6 编辑</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box" style="background:#5ac8fa;color:white;">P1 首页</div>
+            </div>
+        </div>
+        <div class="flow-content">
+            <div class="screenshots">
+                <div class="screenshot-item">
+                    <div class="step-num" style="background:#5ac8fa;">1</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页</span></div>
+                        <div class="step-desc">点击已有笔记卡片</div>
+                        <div class="mockup"><div style="color:#8e8e93;font-size:13px;">🖼️ 笔记卡片 (点击)</div></div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num" style="background:#5ac8fa;">2</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P6 - 图片编辑页</span></div>
+                        <div class="step-desc">可更换图片或修改说明</div>
+                        <div class="mockup">
+                            <div style="background:#f5f5f5;height:60px;border-radius:6px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;color:#8e8e93;position:relative;">
+                                🖼️
+                                <div style="position:absolute;bottom:5px;right:5px;width:24px;height:24px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;">🔄</div>
+                            </div>
+                            <div style="display:flex;gap:8px;">
+                                <span class="btn btn-cancel" style="flex:1;">取消</span>
+                                <span class="btn btn-save" style="flex:1;">保存</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num" style="background:#8e8e93;">3</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P4 - 系统相册 (换图)</span></div>
+                        <div class="step-desc">选择新图片 (限 1 张)</div>
+                        <div class="mockup"><div style="color:#8e8e93;font-size:13px;">🖼️ 相册选择</div></div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num" style="background:#5ac8fa;">4</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P6 - 编辑 (新图)</span></div>
+                        <div class="step-desc">确认新图片，点击保存</div>
+                        <div class="mockup"><span class="btn btn-save" style="width:100%;">保存</span></div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num" style="background:#5ac8fa;">5</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页 (已更新)</span></div>
+                        <div class="step-desc">笔记已更新</div>
+                        <div class="mockup"><div style="color:#8e8e93;font-size:13px;">🖼️ 更新后的笔记</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 流程 5 -->
+    <div class="flow-section">
+        <div class="flow-header" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">
+            <div class="flow-title" style="color: white;">🗑️ 流程 5：删除笔记</div>
+            <div class="flow-path" style="margin-top: 10px;">
+                <div class="flow-box red">P1 首页</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box red">P7 删除确认</div><span class="arrow" style="color:white;">→</span>
+                <div class="flow-box red">P1 首页</div>
+            </div>
+        </div>
+        <div class="flow-content">
+            <div class="screenshots">
+                <div class="screenshot-item">
+                    <div class="step-num red">1</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页</span></div>
+                        <div class="step-desc">长按笔记或点击删除按钮</div>
+                        <div class="mockup">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-size:13px;color:#666;">笔记卡片</span>
+                                <span style="font-size:18px;">🗑️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num red">2</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P7 - 删除确认弹窗</span></div>
+                        <div class="step-desc">确认是否删除</div>
+                        <div class="mockup">
+                            <div style="text-align:center;padding:15px;">
+                                <div style="font-size:15px;font-weight:600;margin-bottom:5px;">确认删除？</div>
+                                <div style="font-size:12px;color:#8e8e93;margin-bottom:15px;">删除后无法恢复</div>
+                                <div style="display:flex;gap:8px;">
+                                    <span class="btn btn-cancel" style="flex:1;font-size:12px;">取消</span>
+                                    <span class="btn btn-delete" style="flex:1;font-size:12px;">删除</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="step-num red">3</div>
+                    <div class="step-card">
+                        <div class="step-header"><span class="step-title">P1 - 首页 (已移除)</span></div>
+                        <div class="step-desc">笔记已删除，下方笔记自动上移</div>
+                        <div class="mockup"><div style="color:#8e8e93;font-size:13px;">✅ 笔记已移除</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

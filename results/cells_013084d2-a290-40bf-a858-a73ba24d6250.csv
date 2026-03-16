@@ -1,0 +1,26 @@
+ID,类型,面积,圆度,中心 X,中心 Y
+1,red_blood_cell,53.5,0.70,50,1064
+2,red_blood_cell,66.5,0.61,1563,1017
+3,red_blood_cell,106.5,0.54,1539,947
+4,red_blood_cell,208.5,0.67,8,875
+5,red_blood_cell,50.0,0.63,685,792
+6,red_blood_cell,70.5,0.50,572,791
+7,white_blood_cell,2134.0,0.77,804,809
+8,red_blood_cell,78.5,0.65,610,711
+9,red_blood_cell,149.0,0.54,769,581
+10,red_blood_cell,96.5,0.60,637,480
+11,red_blood_cell,593.0,0.53,602,455
+12,red_blood_cell,98.0,0.55,661,187
+13,red_blood_cell,61.5,0.84,564,110
+14,red_blood_cell,258.0,0.62,1382,79
+15,red_blood_cell,238.0,0.67,1596,15
+16,red_blood_cell,133.0,0.86,1474,16
+17,red_blood_cell,109.0,0.64,1410,14
+18,red_blood_cell,143.0,0.62,1255,17
+19,red_blood_cell,200.0,0.51,486,15
+20,red_blood_cell,155.5,0.63,217,15
+21,red_blood_cell,156.0,0.83,1509,15
+22,red_blood_cell,111.0,0.69,1443,15
+23,red_blood_cell,165.0,0.91,1291,15
+24,red_blood_cell,240.0,0.86,1329,16
+25,red_blood_cell,117.5,0.68,27,16

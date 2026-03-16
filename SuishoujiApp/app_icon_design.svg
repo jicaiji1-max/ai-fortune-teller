@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 - 渐变蓝色 -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7CB9E8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 圆角矩形背景 -->
+  <rect width="1024" height="1024" rx="180" fill="url(#bg)"/>
+  
+  <!-- 笔记本图标 -->
+  <g transform="translate(312, 280)">
+    <!-- 笔记本本体 -->
+    <rect x="0" y="0" width="400" height="480" rx="20" fill="white" opacity="0.95"/>
+    
+    <!-- 笔记本线条 -->
+    <line x1="80" y1="120" x2="320" y2="120" stroke="#4A90E2" stroke-width="8" stroke-linecap="round"/>
+    <line x1="80" y1="200" x2="320" y2="200" stroke="#4A90E2" stroke-width="8" stroke-linecap="round"/>
+    <line x1="80" y1="280" x2="250" y2="280" stroke="#4A90E2" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- 相机图标（小） -->
+    <g transform="translate(260, 340)">
+      <rect x="0" y="10" width="80" height="60" rx="12" fill="#4A90E2"/>
+      <circle cx="40" cy="40" r="18" fill="white"/>
+      <circle cx="40" cy="40" r="10" fill="#4A90E2"/>
+      <rect x="30" y="0" width="20" height="10" rx="4" fill="#4A90E2"/>
+    </g>
+  </g>
+</svg>

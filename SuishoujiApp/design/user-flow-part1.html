@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随手记 App - 用户动线图 (上)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 { font-size: 42px; margin-bottom: 15px; font-weight: 700; }
+        .header p { font-size: 20px; opacity: 0.95; }
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .page-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 60px rgba(0,0,0,0.25);
+            width: 100%;
+        }
+        .page-header {
+            padding: 24px;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        .page-header.home { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .page-header.select { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .page-header.camera { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .page-content { padding: 25px; }
+        .mockup {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .mockup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ddd;
+        }
+        .mockup-title { font-weight: 700; font-size: 18px; }
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .btn-camera { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .btn-text { background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; }
+        .interactions h4 { font-size: 18px; color: #555; margin-bottom: 12px; font-weight: 700; }
+        .interaction-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .arrow { color: #667eea; font-weight: bold; }
+        .target { color: #667eea; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📱 随手记 App - 用户动线图 (上)</h1>
+        <p>P1-P5 核心页面</p>
+    </div>
+    
+    <div class="flowchart">
+        <div class="page-card">
+            <div class="page-header home">🏠 P1 - 首页</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div class="mockup-header"><span class="mockup-title">随手记</span></div>
+                    <div style="display:flex;gap:10px;margin-bottom:20px;">
+                        <button class="btn btn-camera" style="flex:1">📷 拍照</button>
+                        <button class="btn btn-text" style="flex:1">✏️ 写字</button>
+                    </div>
+                    <div style="background:white;border-radius:8px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                            <span>📷</span><span style="color:#999;font-size:12px;">今天 12:30</span>
+                        </div>
+                        <div style="background:#eee;height:80px;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#999;">图片预览</div>
+                        <div style="color:#666;font-size:14px;">这是今天的记录...</div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>1️⃣ 点击"拍照"</span><span class="arrow">→</span><span class="target">P2</span></div>
+                    <div class="interaction-item"><span>2️⃣ 点击"写字"</span><span class="arrow">→</span><span class="target">P5</span></div>
+                    <div class="interaction-item"><span>3️⃣ 点击笔记</span><span class="arrow">→</span><span class="target">P6</span></div>
+                    <div class="interaction-item"><span>4️⃣ 点击删除</span><span class="arrow">→</span><span class="target">P7</span></div>
+                    <div class="interaction-item"><span>5️⃣ 长按笔记</span><span class="arrow">→</span><span class="target">P9</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-card">
+            <div class="page-header select">📷 P2 - 拍照选择页</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <span class="mockup-title">拍照</span>
+                        <div><button class="btn" style="background:#ddd">取消</button><button class="btn" style="background:#667eea;color:white">保存</button></div>
+                    </div>
+                    <div style="background:#eee;height:120px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;margin-bottom:15px;">图片预览</div>
+                    <button class="btn btn-camera" style="width:100%;margin-bottom:10px">📷 拍照</button>
+                    <button class="btn" style="width:100%;background:#f0f0f0">🖼️ 从相册选择</button>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>A. 点击"拍照"</span><span class="arrow">→</span><span class="target">P3</span></div>
+                    <div class="interaction-item"><span>B. 从相册选择</span><span class="arrow">→</span><span class="target">P4</span></div>
+                    <div class="interaction-item"><span>C. 点击"保存"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>D. 点击"取消"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-card">
+            <div class="page-header camera">📸 P3 - 系统相机</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div style="background:#333;height:200px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;">📸</div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>拍照成功</span><span class="arrow">→</span><span class="target">P2</span></div>
+                    <div class="interaction-item"><span>点击取消</span><span class="arrow">→</span><span class="target">P2</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-card">
+            <div class="page-header camera">🖼️ P4 - 系统相册</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+                        <div style="background:#eee;aspect-ratio:1;border-radius:4px"></div>
+                        <div style="background:#eee;aspect-ratio:1;border-radius:4px"></div>
+                        <div style="background:#eee;aspect-ratio:1;border-radius:4px"></div>
+                        <div style="background:#eee;aspect-ratio:1;border-radius:4px"></div>
+                        <div style="background:#eee;aspect-ratio:1;border-radius:4px"></div>
+                        <div style="background:#eee;aspect-ratio:1;border-radius:4px"></div>
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>选择 1-9 张</span><span class="arrow">→</span><span class="target">P2</span></div>
+                    <div class="interaction-item"><span>点击取消</span><span class="arrow">→</span><span class="target">P2</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-card">
+            <div class="page-header editor">✏️ P5 - 文字编辑页</div>
+            <div class="page-content">
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <span class="mockup-title">写字</span>
+                        <div><button class="btn" style="background:#ddd">取消</button><button class="btn" style="background:#43e97b;color:white">保存</button></div>
+                    </div>
+                    <div style="background:white;border:1px solid #ddd;border-radius:8px;padding:15px;min-height:150px;color:#666;">
+                        在这里输入文字内容...<br><br>支持多行输入，最多 500 字
+                    </div>
+                </div>
+                <div class="interactions">
+                    <h4>交互跳转：</h4>
+                    <div class="interaction-item"><span>输入文字</span><span class="arrow">→</span><span class="target">当前页</span></div>
+                    <div class="interaction-item"><span>点击"保存"</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"(无内容)</span><span class="arrow">→</span><span class="target">P1</span></div>
+                    <div class="interaction-item"><span>点击"取消"(有内容)</span><span class="arrow">→</span><span class="target">P8</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>流程 4.1：编辑单张图片笔记</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: #f5f5f5; padding: 30px 20px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 22px; font-weight: 600; color: #1c1c1c; margin-bottom: 10px; }
+        .flow-path { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .flow-box { padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: white; background: #5ac8fa; }
+        .arrow { color: #8e8e93; font-size: 16px; }
+        .screenshots { display: flex; flex-direction: column; gap: 15px; max-width: 500px; margin: 0 auto; }
+        .screenshot-item { display: flex; align-items: center; gap: 15px; }
+        .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: white; background: #5ac8fa; flex-shrink: 0; }
+        .step-card { flex: 1; background: white; border-radius: 12px; padding: 18px; border: 1px solid #e5e5e5; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .step-title { font-size: 16px; font-weight: 600; color: #1c1c1c; }
+        .step-desc { font-size: 14px; color: #8e8e93; margin-bottom: 12px; }
+        .mockup { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 10px; padding: 16px; }
+        .btn { display: inline-block; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-align: center; }
+        .btn-save { background: #007aff; color: white; }
+        .btn-cancel { background: #e5e5e5; color: #1c1c1c; }
+        .tag { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-right: 6px; }
+        .tag-img { background: #5ac8fa; color: white; }
+        .tag-text { background: #34c759; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 流程 4.1：编辑单张图片笔记</h1>
+        <div class="flow-path">
+            <div class="flow-box">P1 首页</div><span class="arrow">→</span>
+            <div class="flow-box">P6 图片编辑</div><span class="arrow">→</span>
+            <div class="flow-box" style="background:#8e8e93;">P4 相册</div><span class="arrow">→</span>
+            <div class="flow-box">P6 编辑</div><span class="arrow">→</span>
+            <div class="flow-box">P1 首页</div>
+        </div>
+    </div>
+    <div class="screenshots">
+        <div class="screenshot-item">
+            <div class="step-num">1</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P1 - 首页</span></div>
+                <div class="step-desc">点击单张图片笔记卡片</div>
+                <div class="mockup">
+                    <div style="background:white;border:1px solid #e5e5e5;border-radius:8px;padding:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <span style="font-size:12px;color:#8e8e93;">昨天</span>
+                            <span class="tag tag-img">🖼️ 单图</span>
+                        </div>
+                        <div style="background:#f5f5f5;height:80px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#8e8e93;">🖼️</div>
+                        <div style="font-size:13px;color:#666;margin-top:8px;">这是今天的记录...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num">2</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P6 - 图片编辑页</span></div>
+                <div class="step-desc">可以更换图片或修改文字说明</div>
+                <div class="mockup">
+                    <div style="position:relative;margin-bottom:12px;">
+                        <div style="background:#f5f5f5;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#8e8e93;font-size:40px;">🖼️</div>
+                        <div style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">🔄</div>
+                    </div>
+                    <div style="background:white;border:1px solid #e5e5e5;border-radius:6px;padding:10px;margin-bottom:12px;font-size:13px;color:#666;">这是今天的记录...</div>
+                    <div style="display:flex;gap:8px;">
+                        <span class="btn btn-cancel" style="flex:1;">取消</span>
+                        <span class="btn btn-save" style="flex:1;">保存</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num" style="background:#8e8e93;">3</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P4 - 系统相册 (换图)</span></div>
+                <div class="step-desc">选择新图片替换 (限 1 张)</div>
+                <div class="mockup">
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+                        <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                        <div style="background:#5ac8fa;aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;">✓</div>
+                        <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                        <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                        <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                        <div style="background:#e5e5e5;aspect-ratio:1;border-radius:4px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num">4</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P6 - 编辑 (新图)</span></div>
+                <div class="step-desc">确认新图片，可继续修改文字</div>
+                <div class="mockup">
+                    <div style="background:#5ac8fa;height:80px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;margin-bottom:12px;">🖼️</div>
+                    <span class="btn btn-save" style="width:100%;">保存</span>
+                </div>
+            </div>
+        </div>
+        <div class="screenshot-item">
+            <div class="step-num">5</div>
+            <div class="step-card">
+                <div class="step-header"><span class="step-title">P1 - 首页 (已更新)</span></div>
+                <div class="step-desc">笔记已更新</div>
+                <div class="mockup">
+                    <div style="text-align:center;padding:15px;color:#5ac8fa;font-size:14px;">
+                        ✅ 笔记已更新<br>
+                        <span style="color:#8e8e93;font-size:13px;">图片和文字已保存</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

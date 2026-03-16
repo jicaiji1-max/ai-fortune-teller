@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>P3 - 系统相机</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: #f5f5f5; padding: 20px; }
+        .page-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .page-header { padding: 16px 20px; background: #f8f8f8; border-bottom: 1px solid #e5e5e5; font-weight: 600; font-size: 16px; }
+        .page-content { padding: 20px; }
+        .mockup { background: #000; border-radius: 10px; padding: 40px; margin-bottom: 16px; min-height: 280px; display: flex; align-items: center; justify-content: center; color: white; font-size: 60px; }
+        .interactions { background: #fafafa; border-radius: 8px; padding: 12px; }
+        .interactions h4 { font-size: 14px; color: #8e8e93; margin-bottom: 10px; }
+        .interaction-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border: 1px solid #e5e5e5; }
+        .arrow { color: #007aff; font-weight: 600; }
+        .target { color: #007aff; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-header">📸 P3 - 系统相机</div>
+        <div class="page-content">
+            <div class="mockup">📸</div>
+            <div class="interactions">
+                <h4>交互跳转：</h4>
+                <div class="interaction-item"><span>拍照成功</span><span class="arrow">→</span><span class="target">P2</span></div>
+                <div class="interaction-item"><span>点击取消</span><span class="arrow">→</span><span class="target">P2</span></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

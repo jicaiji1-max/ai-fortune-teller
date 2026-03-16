@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1000" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <!-- 背景 -->
+  <rect width="1400" height="1000" fill="white"/>
+  
+  <!-- 标题 -->
+  <text x="700" y="50" text-anchor="middle" font-size="32" font-weight="bold" fill="#333">📱 随手记 App 架构图</text>
+  
+  <!-- App 入口 -->
+  <rect x="450" y="80" width="500" height="60" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="700" y="115" text-anchor="middle" font-size="16" fill="#333">SuishoujiApp (App 入口)</text>
+  
+  <!-- 箭头 -->
+  <text x="700" y="165" text-anchor="middle" font-size="24" fill="#666">⬇️</text>
+  
+  <!-- ModelContainer -->
+  <rect x="450" y="180" width="500" height="60" rx="10" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="700" y="215" text-anchor="middle" font-size="16" fill="#333">ModelContainer (SwiftData)</text>
+  
+  <!-- 箭头 -->
+  <text x="700" y="265" text-anchor="middle" font-size="24" fill="#666">⬇️</text>
+  
+  <!-- ContentView -->
+  <rect x="450" y="280" width="500" height="60" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="700" y="315" text-anchor="middle" font-size="16" fill="#333">ContentView (主界面)</text>
+  
+  <!-- 箭头 -->
+  <text x="700" y="365" text-anchor="middle" font-size="24" fill="#666">⬇️</text>
+  
+  <!-- 三个按钮 -->
+  <rect x="200" y="380" width="250" height="60" rx="10" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="325" y="405" text-anchor="middle" font-size="16" fill="#333">📷 拍照</text>
+  <text x="325" y="425" text-anchor="middle" font-size="12" fill="#666">Action</text>
+  
+  <rect x="575" y="380" width="250" height="60" rx="10" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="700" y="405" text-anchor="middle" font-size="16" fill="#333">✏️ 写字</text>
+  <text x="700" y="425" text-anchor="middle" font-size="12" fill="#666">Action</text>
+  
+  <rect x="950" y="380" width="250" height="60" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="1075" y="405" text-anchor="middle" font-size="16" fill="#333">📋 笔记列表</text>
+  <text x="1075" y="425" text-anchor="middle" font-size="12" fill="#666">NoteRow</text>
+  
+  <!-- 箭头 -->
+  <text x="700" y="475" text-anchor="middle" font-size="24" fill="#666">⬇️</text>
+  
+  <!-- Sheet 视图 -->
+  <rect x="200" y="490" width="250" height="60" rx="10" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="325" y="525" text-anchor="middle" font-size="16" fill="#333">CameraView</text>
+  
+  <rect x="575" y="490" width="250" height="60" rx="10" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="700" y="525" text-anchor="middle" font-size="16" fill="#333">TextEditorView</text>
+  
+  <rect x="950" y="490" width="250" height="60" rx="10" fill="#ffe6cc" stroke="#d79b00" stroke-width="2"/>
+  <text x="1075" y="515" text-anchor="middle" font-size="14" fill="#333">🗑️ 删除功能</text>
+  <text x="1075" y="535" text-anchor="middle" font-size="12" fill="#666">按钮/长按/左滑</text>
+  
+  <!-- 箭头 -->
+  <text x="700" y="585" text-anchor="middle" font-size="24" fill="#666">⬇️</text>
+  
+  <!-- 确认对话框 -->
+  <rect x="450" y="600" width="500" height="60" rx="10" fill="#ffcdcd" stroke="#ff0000" stroke-width="2"/>
+  <text x="700" y="625" text-anchor="middle" font-size="16" fill="#333">❓ 确认对话框</text>
+  <text x="700" y="645" text-anchor="middle" font-size="12" fill="#666">此操作无法撤销</text>
+  
+  <!-- 箭头 -->
+  <text x="700" y="695" text-anchor="middle" font-size="24" fill="#666">⬇️</text>
+  
+  <!-- Note 模型 -->
+  <rect x="450" y="710" width="500" height="60" rx="10" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="700" y="745" text-anchor="middle" font-size="16" fill="#333">📄 Note 模型</text>
+  
+  <!-- 统计信息 -->
+  <rect x="50" y="800" width="1300" height="150" rx="10" fill="#f8f9fa" stroke="#ddd" stroke-width="2"/>
+  <text x="700" y="835" text-anchor="middle" font-size="18" font-weight="bold" fill="#333">📊 测试统计</text>
+  
+  <text x="200" y="880" text-anchor="middle" font-size="36" font-weight="bold" fill="#667eea">252</text>
+  <text x="200" y="910" text-anchor="middle" font-size="14" fill="#666">测试用例</text>
+  
+  <text x="460" y="880" text-anchor="middle" font-size="36" font-weight="bold" fill="#667eea">100%</text>
+  <text x="460" y="910" text-anchor="middle" font-size="14" fill="#666">通过率</text>
+  
+  <text x="720" y="880" text-anchor="middle" font-size="36" font-weight="bold" fill="#667eea">3 种</text>
+  <text x="720" y="910" text-anchor="middle" font-size="14" fill="#666">删除方式</text>
+  
+  <text x="980" y="880" text-anchor="middle" font-size="36" font-weight="bold" fill="#667eea">8 个</text>
+  <text x="980" y="910" text-anchor="middle" font-size="14" fill="#666">测试文件</text>
+  
+  <text x="1240" y="880" text-anchor="middle" font-size="36" font-weight="bold" fill="#667eea">20+</text>
+  <text x="1240" y="910" text-anchor="middle" font-size="14" fill="#666">集成测试</text>
+  
+  <!-- 图例 -->
+  <text x="700" y="975" text-anchor="middle" font-size="12" fill="#999">App 入口 | 数据模型 | UI 组件 | Sheet 视图 | 删除功能 | 确认操作</text>
+</svg>
