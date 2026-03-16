@@ -239,7 +239,7 @@ body{font-family:'STSong','SimSun','Source Han Serif CN','Noto Serif CJK SC',ser
     <div class="question-input-wrap">
       <input class="question-input" id="question-input" type="text" placeholder="可输入心中所问之事（选填）" maxlength="50">
     </div>
-    <div class="divine-btn" id="divine-btn" onclick="startDivination()">
+    <div class="divine-btn" id="divine-btn" onclick="isSaved=false;startDivination()">
       <div class="divine-btn-inner">
         <span class="divine-icon">𝄇</span>
         <span class="divine-text">问卦</span>
@@ -1603,13 +1603,15 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // Override startDivination to reset save state
-const _origStart = startDivination;
-// patch isSaved reset
-const origDivine = document.getElementById('divine-btn').onclick;
-document.getElementById('divine-btn').onclick = function(){
-  isSaved = false;
-  startDivination();
-};
+window.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('divine-btn');
+  if(btn){
+    btn.addEventListener('click', function(e){
+      isSaved = false;
+      startDivination();
+    });
+  }
+});
 </script>
 </body>
 </html>
