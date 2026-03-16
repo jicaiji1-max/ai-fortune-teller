@@ -121,14 +121,20 @@ struct NoteRow: View {
                 }
             }
             .onTapGesture {
-                if hasVideo {
-                    preview.presentVideos(note.videoURLs)
-                } else {
-                    var imgs: [Data] = []
-                    if let d = note.photoData { imgs.append(d) }
-                    imgs += note.additionalPhotoData ?? []
-                    preview.presentPhotos(data: imgs)
+                // 合并图片+视频为混合列表，点哪个就从哪个开始
+                var mixedItems: [MediaPreviewItem] = []
+                var tapIndex = 0
+                if let d = note.photoData, let img = UIImage(data: d) { mixedItems.append(.photo(img)) }
+                for d in note.additionalPhotoData ?? [] {
+                    if let img = UIImage(data: d) { mixedItems.append(.photo(img)) }
                 }
+                if hasVideo {
+                    tapIndex = mixedItems.count  // 点的是第一张图，视频在后面
+                    for url in note.videoURLs { mixedItems.append(.video(url)) }
+                    // 如果点的是图片缩略图（有图），从图片开始
+                    tapIndex = 0
+                }
+                preview.present(items: mixedItems, index: tapIndex)
             }
         } else if hasVideo, let videoURL = note.videoURLs.first {
             ZStack(alignment: .bottomTrailing) {
@@ -143,7 +149,10 @@ struct NoteRow: View {
                 mediaBadgeView
             }
             .frame(width: 72, height: 72)
-            .onTapGesture { preview.presentVideos(note.videoURLs) }
+            .onTapGesture {
+                // 纯视频，直接打开视频列表
+                preview.presentVideos(note.videoURLs)
+            }
         }
     }
 

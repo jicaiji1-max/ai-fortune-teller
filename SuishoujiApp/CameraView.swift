@@ -178,6 +178,8 @@ struct CameraView: View {
                 }
             }
         }
+        // 预览显示时禁止 sheet 下滑关闭，避免照片下滑手势把整个编辑框关掉
+
         .sheet(isPresented: $showImagePicker) { ImagePicker(image: $inputImage) }
         .fullScreenCover(isPresented: $showVideoRecorder) {
             VideoRecorderView { url, duration, assetId in
@@ -236,26 +238,7 @@ struct CameraView: View {
             }
             inputImage = nil
         }
-        // 图片预览（sheet 原生支持下滑关闭）
-        // iOS 26 beta modal 黑屏：改用 overlay 直接叠在当前视图上，完全绕开 presentation
-        .overlay {
-            if showPhotoPreview {
-                PhotoViewerView(uiImages: previewUIImages, initialIndex: previewIndex) {
-                    showPhotoPreview = false
-                }
-                .ignoresSafeArea()
-                .transition(.opacity)
-            }
-        }
-        .overlay {
-            if showVideoPreview {
-                VideoPlayerView(videoURLs: previewVideoURLs, initialIndex: previewVideoIndex) {
-                    showVideoPreview = false
-                }
-                .ignoresSafeArea()
-                .transition(.opacity)
-            }
-        }
+        // 图片/视频预览通过 PreviewManager 直接 present 到 UIWindow 顶层
         // 视频剪辑
         .sheet(item: $videoToTrim) { req in
             VideoTrimmerView(sourceURL: req.url) { trimmedURL in
@@ -319,16 +302,19 @@ struct CameraView: View {
                                 content: { Image(uiImage: img).resizable().scaledToFill() },
                                 badge: nil,
                                 onTap: {
-                                    // 同步转成 UIImage（mediaItems 的 Data 在内存里，不需要 async）
-                                    let uiImgs = mediaItems.compactMap { item -> UIImage? in
-                                        if case .photo(_, _, let d) = item { return UIImage(data: d) } else { return nil }
+                                    // 构建混合列表：图片在前，视频在后
+                                    var mixed: [MediaPreviewItem] = []
+                                    var tapIndex = 0
+                                    for (i, mi) in mediaItems.enumerated() {
+                                        switch mi {
+                                        case .photo(_, _, let d):
+                                            if let img = UIImage(data: d) { mixed.append(.photo(img)) }
+                                        case .video(_, let u, _, _, _):
+                                            mixed.append(.video(u))
+                                        }
+                                        if i == idx { tapIndex = mixed.count - 1 }
                                     }
-                                    let photoIndex = mediaItems.prefix(idx + 1).filter {
-                                        if case .photo = $0 { return true } else { return false }
-                                    }.count - 1
-                                    previewUIImages = uiImgs
-                                    previewIndex = max(0, photoIndex)
-                                    showPhotoPreview = true
+                                    PreviewManager.shared.present(items: mixed, index: max(0, tapIndex))
                                 },
                                 onDelete: { mediaItems.remove(at: idx) }
                             )
@@ -357,13 +343,19 @@ struct CameraView: View {
                             badge: nil,
                             duration: dur,
                             onTap: {
-                                let allVideoURLs = mediaItems.compactMap { item -> URL? in
-                                    if case .video(_, let u, _, _, _) = item { return u } else { return nil }
+                                // 构建混合列表，从点击的视频开始
+                                var mixed: [MediaPreviewItem] = []
+                                var tapIndex = 0
+                                for (i, mi) in mediaItems.enumerated() {
+                                    switch mi {
+                                    case .photo(_, _, let d):
+                                        if let img = UIImage(data: d) { mixed.append(.photo(img)) }
+                                    case .video(_, let u, _, _, _):
+                                        mixed.append(.video(u))
+                                    }
+                                    if i == idx { tapIndex = mixed.count - 1 }
                                 }
-                                let vidIdx = mediaItems.prefix(idx + 1).filter { $0.isVideo }.count - 1
-                                previewVideoURLs = allVideoURLs
-                                previewVideoIndex = max(0, vidIdx)
-                                showVideoPreview = true
+                                PreviewManager.shared.present(items: mixed, index: max(0, tapIndex))
                             },
                             onDelete: { mediaItems.remove(at: idx) }
                         )
@@ -641,10 +633,18 @@ struct CameraView: View {
         var videoPaths: [String] = []
         var videoDurations: [Double] = []
         var videoAssetIds: [String] = []
+        let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         for item in mediaItems {
             if case .video(_, let url, _, let dur, let assetId) = item {
                 let stableURL = Self.stableCopy(from: url) ?? url
-                videoPaths.append(stableURL.path)
+                // 存相对路径（相对于 Documents），避免重装后绝对路径失效
+                let relativePath: String
+                if let docs = docsDir, stableURL.path.hasPrefix(docs.path) {
+                    relativePath = String(stableURL.path.dropFirst(docs.path.count + 1))
+                } else {
+                    relativePath = stableURL.path  // fallback 绝对路径
+                }
+                videoPaths.append(relativePath)
                 videoDurations.append(dur)
                 videoAssetIds.append(assetId ?? "")
             }
@@ -780,5 +780,36 @@ struct ImagePicker: UIViewControllerRepresentable {
             picker.dismiss(animated: true)
         }
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) { picker.dismiss(animated: true) }
+    }
+}
+
+// MARK: - 下滑关闭包装器（SwiftUI 层处理，不影响父视图）
+struct SwipeToDismissWrapper<Content: View>: View {
+    var onDismiss: () -> Void
+    @ViewBuilder var content: () -> Content
+
+    @State private var dragOffset: CGFloat = 0
+
+    var body: some View {
+        content()
+            .offset(y: max(0, dragOffset))
+            .opacity(1 - Double(max(0, dragOffset)) / 300)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        // 只响应主方向向下的拖拽
+                        if value.translation.height > 0 && abs(value.translation.height) > abs(value.translation.width) {
+                            dragOffset = value.translation.height
+                        }
+                    }
+                    .onEnded { value in
+                        if value.translation.height > 100 || value.predictedEndTranslation.height > 200 {
+                            withAnimation(.easeOut(duration: 0.18)) { dragOffset = 800 }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { onDismiss() }
+                        } else {
+                            withAnimation(.spring()) { dragOffset = 0 }
+                        }
+                    }
+            )
     }
 }

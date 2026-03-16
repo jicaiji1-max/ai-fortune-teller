@@ -65,11 +65,26 @@ final class Note: Identifiable {
 
     /// 所有视频的 URL（从 videoPaths 还原，兼容旧 videoData）
     var videoURLs: [URL] {
+        let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         var urls: [URL] = []
         if let paths = videoPaths {
-            urls = paths.compactMap { path in
-                let url = URL(fileURLWithPath: path)
-                return FileManager.default.fileExists(atPath: path) ? url : nil
+            urls = paths.compactMap { path -> URL? in
+                // 兼容旧的绝对路径：提取 Documents/ 之后的相对部分重新拼接
+                let url: URL
+                if path.hasPrefix("/") {
+                    // 旧绝对路径 → 提取相对部分
+                    if let docs = docsDir,
+                       let range = path.range(of: "/Documents/") {
+                        let rel = String(path[range.upperBound...])
+                        url = docs.appendingPathComponent(rel)
+                    } else {
+                        url = URL(fileURLWithPath: path)
+                    }
+                } else {
+                    // 新相对路径
+                    url = (docsDir ?? URL(fileURLWithPath: "")).appendingPathComponent(path)
+                }
+                return FileManager.default.fileExists(atPath: url.path) ? url : nil
             }
         }
         // 旧数据迁移：videoData 写临时文件

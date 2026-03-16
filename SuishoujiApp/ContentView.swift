@@ -14,7 +14,6 @@ struct ContentView: View {
     @State private var showTagManager = false
     @FocusState private var searchFocused: Bool
     @ObservedObject private var tagStore = TagStore.shared
-    @ObservedObject private var previewManager = PreviewManager.shared
 
     private var filteredNotes: [Note] {
         notes.filter { note in
@@ -39,8 +38,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        ZStack {
-         NavigationStack {
+        NavigationStack {
             ScrollView {
                 Color.clear.frame(height: 0)  // 占位，避免手势冲突
                 VStack(spacing: 20) {
@@ -258,23 +256,6 @@ struct ContentView: View {
                 }
             }
         } // NavigationStack 结束
-
-        // 全局预览 overlay（全屏，不受 NoteRow 尺寸限制）
-        if previewManager.showPhoto {
-            PhotoViewerView(uiImages: previewManager.photoImages, initialIndex: previewManager.photoIndex) {
-                previewManager.dismissPhoto()
-            }
-            .ignoresSafeArea()
-            .zIndex(999)
-        }
-        if previewManager.showVideo {
-            VideoPlayerView(videoURLs: previewManager.videoURLs, initialIndex: previewManager.videoIndex) {
-                previewManager.dismissVideo()
-            }
-            .ignoresSafeArea()
-            .zIndex(999)
-        }
-        } // ZStack 结束
     }
 
     // 性能优化：使用 static formatter

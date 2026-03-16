@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>随手记 App 代码架构图</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif;
+    padding: 32px;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #58a6ff;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8b949e;
+    font-size: 13px;
+    margin-bottom: 36px;
+  }
+
+  /* 分层容器 */
+  .layer {
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 16px 20px 20px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .layer-label {
+    position: absolute;
+    top: -11px;
+    left: 16px;
+    background: #0d1117;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .layer-app    { border-color: #388bfd44; }
+  .layer-app .layer-label    { color: #388bfd; }
+  .layer-view   { border-color: #3fb95044; }
+  .layer-view .layer-label   { color: #3fb950; }
+  .layer-media  { border-color: #a371f744; }
+  .layer-media .layer-label  { color: #a371f7; }
+  .layer-data   { border-color: #d29922aa; }
+  .layer-data .layer-label   { color: #d29922; }
+  .layer-flow   { border-color: #f7853644; }
+  .layer-flow .layer-label   { color: #f78536; }
+
+  /* 组件卡片 */
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+  .card {
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    border: 1px solid transparent;
+    min-width: 140px;
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .card-sub {
+    font-size: 11px;
+    color: #8b949e;
+    line-height: 1.5;
+  }
+  .card-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 20px;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* 颜色主题 */
+  .blue   { background: #0d2044; border-color: #388bfd66; }
+  .blue .card-title { color: #79c0ff; }
+  .green  { background: #0d2618; border-color: #3fb95066; }
+  .green .card-title { color: #56d364; }
+  .purple { background: #1c1244; border-color: #a371f766; }
+  .purple .card-title { color: #d2a8ff; }
+  .yellow { background: #211900; border-color: #d2992266; }
+  .yellow .card-title { color: #f0b429; }
+  .red    { background: #2a0d0d; border-color: #f8514966; }
+  .red .card-title { color: #ff7b72; }
+  .gray   { background: #161b22; border-color: #30363d; }
+  .gray .card-title { color: #c9d1d9; }
+
+  /* 箭头 */
+  .arrow-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    font-size: 12px;
+    color: #8b949e;
+    flex-wrap: wrap;
+  }
+  .arrow { color: #58a6ff; font-size: 16px; }
+  .flow-item {
+    background: #161b22;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #c9d1d9;
+  }
+  .flow-highlight { border-color: #388bfd55; color: #79c0ff; }
+
+  /* 技术注释 */
+  .note-box {
+    background: #161b22;
+    border-left: 3px solid #d29922;
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #8b949e;
+    margin-top: 10px;
+    line-height: 1.7;
+  }
+  .note-box strong { color: #f0b429; }
+
+  /* 图例 */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 28px;
+    font-size: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; color: #8b949e; }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* 数据流区域 */
+  .flow-block {
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    background: #161b22;
+    border-radius: 8px;
+    border: 1px solid #21262d;
+  }
+  .flow-label {
+    font-size: 11px;
+    color: #f78536;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .singleton-tag { background: #d29922; color: #000; }
+  .uikit-tag     { background: #388bfd; color: #fff; }
+  .swiftdata-tag { background: #3fb950; color: #000; }
+  .ios26-tag     { background: #f47067; color: #fff; }
+  .swift6-tag    { background: #a371f7; color: #fff; }
+
+  /* 分隔线 */
+  .divider {
+    text-align: center;
+    color: #388bfd;
+    font-size: 20px;
+    margin: 4px 0;
+    line-height: 1;
+  }
+</style>
+</head>
+<body>
+
+<h1>随手记 App · 代码架构图</h1>
+<div class="subtitle">iOS 26 beta · SwiftUI + UIKit + SwiftData · Swift 6</div>
+
+<!-- 图例 -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#1c3a6e"></div>入口 / 导航</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0d2618"></div>视图组件</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1c1244"></div>媒体组件</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#211900"></div>数据 / 状态</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2a0d0d"></div>UIKit 封装</div>
+  <div class="legend-item">
+    <span class="card-tag uikit-tag">UIKit</span> UIViewControllerRepresentable
+  </div>
+  <div class="legend-item">
+    <span class="card-tag ios26-tag">iOS26</span> 绕开 beta bug
+  </div>
+</div>
+
+<!-- 1. App 入口层 -->
+<div class="layer layer-app">
+  <div class="layer-label">App 入口</div>
+  <div class="row">
+    <div class="card blue" style="min-width:120px">
+      <div class="card-title">SuishoujiApp</div>
+      <div class="card-sub">@main 入口<br>SwiftData ModelContainer</div>
+    </div>
+    <div style="display:flex;align-items:center;color:#8b949e;font-size:18px">→</div>
+    <div class="card blue" style="min-width:120px">
+      <div class="card-title">SplashView</div>
+      <div class="card-sub">启动画面<br>品牌动画</div>
+    </div>
+    <div style="display:flex;align-items:center;color:#8b949e;font-size:18px">→</div>
+    <div class="card blue" style="min-width:220px">
+      <div class="card-title">ContentView ⭐</div>
+      <div class="card-sub">
+        笔记列表 · @Query 驱动<br>
+        顶层 ZStack overlay 挂载全局预览<br>
+        ObservedObject: TagStore · PreviewManager
+      </div>
+      <span class="card-tag ios26-tag">iOS26 fix</span>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 视图层 -->
+<div class="layer layer-view">
+  <div class="layer-label">视图层 Views</div>
+  <div class="row">
+
+    <div class="card green" style="min-width:200px; flex:2">
+      <div class="card-title">CameraView（新建 / 编辑笔记）</div>
+      <div class="card-sub">
+        NavigationStack + ScrollView<br>
+        9格媒体网格，支持拖拽排序<br>
+        onSave 回调 → ContentView → modelContext<br>
+        overlay: PhotoViewerView + VideoPlayerView
+      </div>
+      <div style="margin-top:8px">
+        <span class="card-tag ios26-tag">iOS26 overlay fix</span>
+      </div>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
+        <div class="card red" style="min-width:0; flex:1; padding:8px 10px">
+          <div class="card-title" style="font-size:11px">CustomPhotoPickerView</div>
+          <div class="card-sub">自绘相册网格<br>PHAsset API<br>预选序号徽标<br>图片+视频混选</div>
+          <span class="card-tag ios26-tag" style="font-size:9px">iOS26 NavStack fix</span>
+        </div>
+        <div class="card red" style="min-width:0; flex:1; padding:8px 10px">
+          <div class="card-title" style="font-size:11px">VideoRecorderView</div>
+          <div class="card-sub">AVFoundation<br>状态机录制<br>5秒限制<br>保存到相册</div>
+          <span class="card-tag uikit-tag" style="font-size:9px">UIKit</span>
+        </div>
+        <div class="card red" style="min-width:0; flex:1; padding:8px 10px">
+          <div class="card-title" style="font-size:11px">VideoTrimmerView</div>
+          <div class="card-sub">视频剪辑<br>超过5秒触发<br>AVAssetExportSession</div>
+          <span class="card-tag uikit-tag" style="font-size:9px">UIKit</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:160px">
+      <div class="card green">
+        <div class="card-title">NoteRow</div>
+        <div class="card-sub">
+          单条笔记卡片<br>
+          缩略图 72×72<br>
+          .task 异步加载 photoData<br>
+          点击 → PreviewManager
+        </div>
+        <span class="card-tag swift6-tag" style="font-size:9px">externalStorage fault</span>
+      </div>
+      <div class="card green">
+        <div class="card-title">TextEditorView</div>
+        <div class="card-sub">纯文字笔记<br>位置 / 标签</div>
+      </div>
+      <div class="card green">
+        <div class="card-title">TagManagerView</div>
+        <div class="card-sub">标签增删管理</div>
+      </div>
+      <div class="card green">
+        <div class="card-title">TagSelectorView</div>
+        <div class="card-sub">笔记内选标签</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 媒体组件层 -->
+<div class="layer layer-media">
+  <div class="layer-label">媒体组件</div>
+  <div class="row">
+    <div class="card purple" style="flex:2; min-width:240px">
+      <div class="card-title">PhotoViewerView <span class="card-tag uikit-tag">UIKit</span> <span class="card-tag ios26-tag">iOS26 fix</span></div>
+      <div class="card-sub">
+        UIViewControllerRepresentable<br>
+        └ PhotoPageViewController（UIPageViewController）<br>
+        &nbsp;&nbsp;└ ZoomableImageVC × N（UIScrollView）<br>
+        功能：多图翻页 · 双指缩放 · 双击放大 · 下滑关闭
+      </div>
+      <div class="note-box" style="margin-top:8px">
+        <strong>⚡ iOS 26 fix：</strong>SwiftUI TabView 第一页黑屏 → 完全重写为 UIPageViewController，绕开 SwiftUI 渲染管线
+      </div>
+    </div>
+    <div class="card purple" style="flex:1; min-width:160px">
+      <div class="card-title">VideoPlayerView</div>
+      <div class="card-sub">
+        AVKit VideoPlayer<br>
+        多视频 TabView 翻页<br>
+        onDismiss 回调<br>
+        SwipeToDismissWrapper 包装
+      </div>
+    </div>
+    <div class="card purple" style="flex:1; min-width:140px">
+      <div class="card-title">VideoThumbnailView</div>
+      <div class="card-sub">
+        异步取帧<br>
+        AVAssetImageGenerator<br>
+        DispatchQueue 后台
+      </div>
+    </div>
+    <div class="card purple" style="min-width:160px">
+      <div class="card-title">SwipeToDismissWrapper</div>
+      <div class="card-sub">
+        SwiftUI DragGesture<br>
+        包装 overlay 预览组件<br>
+        下滑 >100pt 触发关闭<br>
+        弹性动画 + 透明度渐变
+      </div>
+      <span class="card-tag ios26-tag">iOS26 fix</span>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 数据层 -->
+<div class="layer layer-data">
+  <div class="layer-label">数据 / 状态层</div>
+  <div class="row">
+    <div class="card yellow" style="flex:2; min-width:240px">
+      <div class="card-title">Note <span class="card-tag swiftdata-tag">SwiftData @Model</span></div>
+      <div class="card-sub" style="column-count:2; column-gap:16px">
+        id: UUID<br>
+        timestamp: Date<br>
+        type: NoteType<br>
+        text: String<br>
+        <span style="color:#56d364">@externalStorage</span> photoData<br>
+        <span style="color:#56d364">@externalStorage</span> additionalPhotoData<br>
+        assetIdentifiers: [String]?<br>
+        videoPaths: [String]?<br>
+        videoDurations: [Double]?<br>
+        videoAssetIds: [String]?<br>
+        locationName: String?<br>
+        tags: [String]?
+      </div>
+      <div style="margin-top:8px">
+        <code style="font-size:11px;color:#56d364">var videoURLs: [URL]</code>
+        <span class="card-sub"> 计算属性，fileExists 校验</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px">
+      <div class="card yellow">
+        <div class="card-title">TagStore <span class="card-tag" style="background:#d29922;color:#000">Singleton</span></div>
+        <div class="card-sub">
+          ObservableObject<br>
+          defaultTags（内置4个）<br>
+          customTags → UserDefaults<br>
+          allTags 计算属性
+        </div>
+      </div>
+      <div class="card yellow">
+        <div class="card-title">PreviewManager <span class="card-tag" style="background:#d29922;color:#000">Singleton</span></div>
+        <div class="card-sub">
+          ObservableObject · @MainActor<br>
+          showPhoto / showVideo<br>
+          photoImages: [UIImage]<br>
+          videoURLs: [URL]<br>
+          presentPhotos() / presentVideos()<br>
+          → ContentView 顶层 overlay
+        </div>
+        <span class="card-tag ios26-tag">iOS26 fix</span>
+      </div>
+    </div>
+    <div class="card gray" style="flex:1; min-width:140px">
+      <div class="card-title">NoteType enum</div>
+      <div class="card-sub">
+        .photo<br>
+        .video<br>
+        .mixed<br>
+        .text
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. 关键数据流 -->
+<div class="layer layer-flow">
+  <div class="layer-label">关键数据流</div>
+
+  <div class="flow-block">
+    <div class="flow-label">① 新建笔记</div>
+    <div class="arrow-row">
+      <span class="flow-item">ContentView</span><span class="arrow">→</span>
+      <span class="flow-item">CameraView</span><span class="arrow">→</span>
+      <span class="flow-item">onSave 回调</span><span class="arrow">→</span>
+      <span class="flow-item flow-highlight">Note(insert)</span><span class="arrow">→</span>
+      <span class="flow-item">modelContext.save()</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">② 编辑笔记 + 相册预选</div>
+    <div class="arrow-row">
+      <span class="flow-item">NoteRow 点击</span><span class="arrow">→</span>
+      <span class="flow-item">CameraView(existingNote)</span><span class="arrow">→</span>
+      <span class="flow-item flow-highlight">assetIdentifiers</span><span class="arrow">→</span>
+      <span class="flow-item">CustomPhotoPickerView</span><span class="arrow">→</span>
+      <span class="flow-item">preselectedIds 高亮序号</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">③ 列表图片预览（全屏）</div>
+    <div class="arrow-row">
+      <span class="flow-item">NoteRow tap</span><span class="arrow">→</span>
+      <span class="flow-item flow-highlight">PreviewManager.presentPhotos()</span><span class="arrow">→</span>
+      <span class="flow-item">ContentView overlay</span><span class="arrow">→</span>
+      <span class="flow-item">PhotoViewerView（全屏）</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">④ 编辑中预览</div>
+    <div class="arrow-row">
+      <span class="flow-item">CameraView 缩略图 tap</span><span class="arrow">→</span>
+      <span class="flow-item">showPhotoPreview = true</span><span class="arrow">→</span>
+      <span class="flow-item flow-highlight">SwipeToDismissWrapper overlay</span><span class="arrow">→</span>
+      <span class="flow-item">PhotoViewerView</span>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">⑤ 视频存储路径</div>
+    <div class="arrow-row">
+      <span class="flow-item">录制/相册选择</span><span class="arrow">→</span>
+      <span class="flow-item flow-highlight">stableCopy(Documents/Videos/)</span><span class="arrow">→</span>
+      <span class="flow-item">videoPaths 存绝对路径</span><span class="arrow">→</span>
+      <span class="flow-item">Note.videoURLs 计算属性还原</span>
+    </div>
+  </div>
+
+  <!-- iOS 26 + Swift 6 注意事项 -->
+  <div class="note-box" style="margin-top:12px">
+    <strong>⚡ iOS 26 beta 已知问题及绕过方案</strong><br>
+    • NavigationStack 在 sheet 里黑屏 → CustomPhotoPickerView 改用自绘 Header Bar<br>
+    • sheet-in-sheet / fullScreenCover 黑屏 → 改用顶层 ZStack overlay + PreviewManager<br>
+    • SwiftUI TabView 第一页黑屏 → PhotoViewerView 完全重写为 UIKit UIPageViewController<br><br>
+    <strong>⚡ Swift 6 并发注意事项</strong><br>
+    • PHImageManager / PHAssetResourceManager 回调在后台线程 → nonisolated + withCheckedContinuation 桥接<br>
+    • SwiftData externalStorage fault 异步 → NoteRow 用 .task + retry 加载 photoData<br>
+    • VideoRecorderView 状态机用 enum RecordState 避免竞争条件
+  </div>
+</div>
+
+<div style="text-align:center;color:#484f58;font-size:11px;margin-top:24px">
+  随手记 App · 架构图 · 2026-03-16 · 总文件数 ~20 Swift 文件
+</div>
+
+</body>
+</html>

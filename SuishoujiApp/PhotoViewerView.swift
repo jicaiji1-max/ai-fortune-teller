@@ -1,7 +1,8 @@
 import SwiftUI
 import UIKit
+import AVKit
 
-// MARK: - SwiftUI 包装器（overlay 调用入口）
+// MARK: - SwiftUI 包装器（纯图片场景保留兼容）
 
 struct PhotoViewerView: UIViewControllerRepresentable {
     let uiImages: [UIImage]
@@ -13,34 +14,36 @@ struct PhotoViewerView: UIViewControllerRepresentable {
         self.initialIndex = initialIndex
         self.onDismiss = onDismiss
     }
-
     init(uiImages: [UIImage], initialIndex: Int = 0, onDismiss: (() -> Void)? = nil) {
         self.uiImages = uiImages
         self.initialIndex = initialIndex
         self.onDismiss = onDismiss
     }
 
-    func makeUIViewController(context: Context) -> PhotoPageViewController {
-        PhotoPageViewController(images: uiImages, initialIndex: initialIndex, onDismiss: onDismiss)
+    func makeUIViewController(context: Context) -> GalleryViewController {
+        GalleryViewController(items: uiImages.map { .photo($0) }, initialIndex: initialIndex, onDismiss: onDismiss)
     }
-
-    func updateUIViewController(_ uiViewController: PhotoPageViewController, context: Context) {}
+    func updateUIViewController(_ vc: GalleryViewController, context: Context) {}
 }
 
-// MARK: - 主控制器（UIPageViewController 容器）
+// MARK: - 混合媒体画廊 VC（外层分页 ScrollView）
 
-class PhotoPageViewController: UIViewController {
-    private let images: [UIImage]
+class GalleryViewController: UIViewController {
+    private let items: [MediaPreviewItem]
     private var currentIndex: Int
     private let onDismiss: (() -> Void)?
 
-    private var pageVC: UIPageViewController!
+    private var pagingScrollView: UIScrollView!
+    private var pageCells: [UIView] = []         // ZoomScrollView 或 VideoCell
+    private var players: [Int: AVPlayer] = [:]   // 视频播放器缓存
     private var pageLabel: UILabel?
-    private var panStart: CGPoint = .zero
+    private var panDelegate: PanDelegate!
 
-    init(images: [UIImage], initialIndex: Int, onDismiss: (() -> Void)?) {
-        self.images = images
-        self.currentIndex = max(0, min(initialIndex, max(0, images.count - 1)))
+    private let pageGap: CGFloat = 20
+
+    init(items: [MediaPreviewItem], initialIndex: Int, onDismiss: (() -> Void)?) {
+        self.items = items
+        self.currentIndex = max(0, min(initialIndex, max(0, items.count - 1)))
         self.onDismiss = onDismiss
         super.init(nibName: nil, bundle: nil)
     }
@@ -49,40 +52,79 @@ class PhotoPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+        setupPagingScrollView()
+        setupPages()
+        setupUI()
+        setupPanGesture()
+    }
 
-        // UIPageViewController
-        pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        pageVC.dataSource = self
-        pageVC.delegate = self
-        addChild(pageVC)
-        view.addSubview(pageVC.view)
-        pageVC.view.frame = view.bounds
-        pageVC.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        pageVC.didMove(toParent: self)
-
-        if !images.isEmpty {
-            pageVC.setViewControllers([makeZoomVC(index: currentIndex)], direction: .forward, animated: false)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        layoutPages()
+        let x = pagingScrollView.bounds.width * CGFloat(currentIndex)
+        if abs(pagingScrollView.contentOffset.x - x) > 1 {
+            pagingScrollView.setContentOffset(CGPoint(x: x, y: 0), animated: false)
         }
+        // 播放当前视频
+        playVideo(at: currentIndex)
+    }
 
-        // 关闭按钮
-        let closeBtn = UIButton(type: .system)
-        let cfg = UIImage.SymbolConfiguration(pointSize: 28, weight: .regular)
-        closeBtn.setImage(UIImage(systemName: "xmark.circle.fill", withConfiguration: cfg), for: .normal)
-        closeBtn.tintColor = UIColor.white.withAlphaComponent(0.85)
-        closeBtn.addTarget(self, action: #selector(close), for: .touchUpInside)
-        view.addSubview(closeBtn)
-        closeBtn.translatesAutoresizingMaskIntoConstraints = false
+    private func setupPagingScrollView() {
+        let frame = CGRect(x: -pageGap / 2, y: 0,
+                           width: view.bounds.width + pageGap, height: view.bounds.height)
+        pagingScrollView = UIScrollView(frame: frame)
+        pagingScrollView.isPagingEnabled = true
+        pagingScrollView.showsHorizontalScrollIndicator = false
+        pagingScrollView.showsVerticalScrollIndicator = false
+        pagingScrollView.delegate = self
+        pagingScrollView.backgroundColor = .black
+        pagingScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(pagingScrollView)
+    }
+
+    private func setupPages() {
+        for item in items {
+            switch item {
+            case .photo(let img):
+                let zv = ZoomScrollView(image: img)
+                pagingScrollView.addSubview(zv)
+                pageCells.append(zv)
+            case .video:
+                let cell = VideoCell()
+                pagingScrollView.addSubview(cell)
+                pageCells.append(cell)
+            }
+        }
+    }
+
+    private func layoutPages() {
+        let w = pagingScrollView.bounds.width
+        let h = pagingScrollView.bounds.height
+        pagingScrollView.contentSize = CGSize(width: w * CGFloat(items.count), height: h)
+        for (i, cell) in pageCells.enumerated() {
+            cell.frame = CGRect(x: w * CGFloat(i) + pageGap / 2, y: 0,
+                                width: w - pageGap, height: h)
+            if let zv = cell as? ZoomScrollView { zv.resetZoom() }
+        }
+    }
+
+    private func setupUI() {
+        let btn = UIButton(type: .system)
+        let cfg = UIImage.SymbolConfiguration(pointSize: 28)
+        btn.setImage(UIImage(systemName: "xmark.circle.fill", withConfiguration: cfg), for: .normal)
+        btn.tintColor = .white.withAlphaComponent(0.85)
+        btn.addTarget(self, action: #selector(close), for: .touchUpInside)
+        view.addSubview(btn)
+        btn.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            closeBtn.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            closeBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            closeBtn.widthAnchor.constraint(equalToConstant: 44),
-            closeBtn.heightAnchor.constraint(equalToConstant: 44),
+            btn.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            btn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            btn.widthAnchor.constraint(equalToConstant: 44),
+            btn.heightAnchor.constraint(equalToConstant: 44),
         ])
-
-        // 页码
-        if images.count > 1 {
+        if items.count > 1 {
             let lbl = UILabel()
-            lbl.textColor = UIColor.white.withAlphaComponent(0.7)
+            lbl.textColor = .white.withAlphaComponent(0.7)
             lbl.font = .systemFont(ofSize: 13)
             lbl.textAlignment = .center
             view.addSubview(lbl)
@@ -94,133 +136,182 @@ class PhotoPageViewController: UIViewController {
             pageLabel = lbl
             updateLabel()
         }
+    }
 
-        // 下滑关闭手势
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        pan.delegate = self
+    private func setupPanGesture() {
+        let d = PanDelegate(vc: self)
+        panDelegate = d
+        let pan = UIPanGestureRecognizer(target: d, action: #selector(PanDelegate.handlePan(_:)))
+        pan.delegate = d
         view.addGestureRecognizer(pan)
     }
 
-    private func makeZoomVC(index: Int) -> ZoomableImageVC {
-        ZoomableImageVC(image: images[index], index: index)
-    }
-
     private func updateLabel() {
-        pageLabel?.text = "\(currentIndex + 1) / \(images.count)"
+        pageLabel?.text = "\(currentIndex + 1) / \(items.count)"
     }
 
-    @objc private func close() { onDismiss?() }
+    @objc private func close() {
+        pauseAllVideos()
+        dismiss(animated: true) { self.onDismiss?() }
+    }
 
-    @objc private func handlePan(_ pan: UIPanGestureRecognizer) {
-        let t = pan.translation(in: view)
-        let v = pan.velocity(in: view)
-        switch pan.state {
-        case .changed:
-            if t.y > 0 {
-                view.transform = CGAffineTransform(translationX: 0, y: t.y)
-                view.alpha = max(0.4, 1 - t.y / 250)
-            }
-        case .ended, .cancelled:
-            if t.y > 100 || v.y > 700 {
-                UIView.animate(withDuration: 0.18) {
-                    self.view.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
-                    self.view.alpha = 0
-                } completion: { _ in self.onDismiss?() }
-            } else {
-                UIView.animate(withDuration: 0.18) {
-                    self.view.transform = .identity
-                    self.view.alpha = 1
+    // MARK: - 视频播放
+
+    private func playVideo(at index: Int) {
+        guard index < items.count, case .video(let url) = items[index],
+              let cell = pageCells[safe: index] as? VideoCell else { return }
+        if players[index] == nil {
+            players[index] = AVPlayer(url: url)
+        }
+        cell.attach(player: players[index]!)
+        players[index]?.play()
+    }
+
+    private func pauseAllVideos() {
+        players.values.forEach { $0.pause() }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        pauseAllVideos()
+    }
+
+    // MARK: - 下滑 delegate
+
+    private class PanDelegate: NSObject, UIGestureRecognizerDelegate {
+        weak var vc: GalleryViewController?
+        init(vc: GalleryViewController) { self.vc = vc }
+
+        @objc func handlePan(_ pan: UIPanGestureRecognizer) {
+            guard let vc = vc else { return }
+            let t = pan.translation(in: vc.view)
+            let v = pan.velocity(in: vc.view)
+            guard t.y > 0 else { return }
+            switch pan.state {
+            case .changed:
+                vc.pagingScrollView.transform = CGAffineTransform(translationX: 0, y: t.y)
+                vc.view.alpha = max(0.4, 1 - t.y / 250)
+            case .ended, .cancelled:
+                if t.y > 100 || v.y > 700 {
+                    UIView.animate(withDuration: 0.18) {
+                        vc.pagingScrollView.transform = CGAffineTransform(translationX: 0, y: vc.view.bounds.height)
+                        vc.view.alpha = 0
+                    } completion: { _ in vc.close() }
+                } else {
+                    UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0) {
+                        vc.pagingScrollView.transform = .identity
+                        vc.view.alpha = 1
+                    }
                 }
+            default: break
             }
-        default: break
+        }
+
+        func gestureRecognizerShouldBegin(_ gr: UIGestureRecognizer) -> Bool {
+            guard let pan = gr as? UIPanGestureRecognizer, let vc = vc else { return true }
+            let curZoom = (vc.pageCells[safe: vc.currentIndex] as? ZoomScrollView)?.zoomScale ?? 1
+            guard curZoom <= 1.0 else { return false }
+            let vel = pan.velocity(in: vc.view)
+            return vel.y > 0 && abs(vel.y) > abs(vel.x) * 1.5
         }
     }
 }
 
-extension PhotoPageViewController: UIPageViewControllerDataSource {
-    func pageViewController(_ pvc: UIPageViewController, viewControllerBefore vc: UIViewController) -> UIViewController? {
-        guard let z = vc as? ZoomableImageVC, z.index > 0 else { return nil }
-        return makeZoomVC(index: z.index - 1)
-    }
-    func pageViewController(_ pvc: UIPageViewController, viewControllerAfter vc: UIViewController) -> UIViewController? {
-        guard let z = vc as? ZoomableImageVC, z.index < images.count - 1 else { return nil }
-        return makeZoomVC(index: z.index + 1)
-    }
-}
-
-extension PhotoPageViewController: UIPageViewControllerDelegate {
-    func pageViewController(_ pvc: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if completed, let z = pvc.viewControllers?.first as? ZoomableImageVC {
-            currentIndex = z.index
-            updateLabel()
+extension GalleryViewController: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let page = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
+        guard page != currentIndex else { return }
+        // 暂停上一页视频
+        if case .video = items[safe: currentIndex] ?? .photo(UIImage()) {
+            players[currentIndex]?.pause()
         }
+        currentIndex = page
+        updateLabel()
+        playVideo(at: currentIndex)
     }
 }
 
-extension PhotoPageViewController: UIGestureRecognizerDelegate {
-    // 只在向下滑且主方向是竖向时才接管手势
-    func gestureRecognizerShouldBegin(_ gr: UIGestureRecognizer) -> Bool {
-        guard let pan = gr as? UIPanGestureRecognizer else { return true }
-        let vel = pan.velocity(in: view)
-        return vel.y > 0 && abs(vel.y) > abs(vel.x) * 1.5
-    }
-}
+// MARK: - 图片缩放 ScrollView
 
-// MARK: - 单页可缩放图片 VC
+class ZoomScrollView: UIScrollView, UIScrollViewDelegate {
+    private let imageView: UIImageView
 
-class ZoomableImageVC: UIViewController, UIScrollViewDelegate {
-    let index: Int
-    private let image: UIImage
+    init(image: UIImage) {
+        imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        super.init(frame: .zero)
+        minimumZoomScale = 1.0
+        maximumZoomScale = 5.0
+        showsHorizontalScrollIndicator = false
+        showsVerticalScrollIndicator = false
+        isScrollEnabled = false
+        backgroundColor = .black
+        delegate = self
+        addSubview(imageView)
 
-    init(image: UIImage, index: Int) {
-        self.image = image
-        self.index = index
-        super.init(nibName: nil, bundle: nil)
+        let dt = UITapGestureRecognizer(target: self, action: #selector(doubleTapped(_:)))
+        dt.numberOfTapsRequired = 2
+        addGestureRecognizer(dt)
     }
     required init?(coder: NSCoder) { fatalError() }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .black
-
-        let sv = UIScrollView(frame: view.bounds)
-        sv.delegate = self
-        sv.minimumZoomScale = 1.0
-        sv.maximumZoomScale = 5.0
-        sv.showsHorizontalScrollIndicator = false
-        sv.showsVerticalScrollIndicator = false
-        sv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.addSubview(sv)
-
-        let iv = UIImageView(image: image)
-        iv.contentMode = .scaleAspectFit
-        iv.frame = sv.bounds
-        iv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        sv.addSubview(iv)
-
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(doubleTapped(_:)))
-        doubleTap.numberOfTapsRequired = 2
-        sv.addGestureRecognizer(doubleTap)
-
-        objc_setAssociatedObject(self, &Self.svKey, sv, .OBJC_ASSOCIATION_RETAIN)
-        objc_setAssociatedObject(self, &Self.ivKey, iv, .OBJC_ASSOCIATION_RETAIN)
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if zoomScale <= 1.0 { imageView.frame = bounds; contentSize = bounds.size }
     }
 
-    private static var svKey = 0
-    private static var ivKey = 0
-
-    private var scrollView: UIScrollView? { objc_getAssociatedObject(self, &Self.svKey) as? UIScrollView }
-    private var imageView: UIImageView? { objc_getAssociatedObject(self, &Self.ivKey) as? UIImageView }
+    func resetZoom() { setZoomScale(1.0, animated: false); isScrollEnabled = false }
 
     @objc private func doubleTapped(_ tap: UITapGestureRecognizer) {
-        guard let sv = scrollView, let iv = imageView else { return }
-        if sv.zoomScale > 1.0 {
-            sv.setZoomScale(1.0, animated: true)
+        if zoomScale > 1.0 {
+            setZoomScale(1.0, animated: true)
         } else {
-            let pt = tap.location(in: iv)
-            sv.zoom(to: CGRect(x: pt.x - 50, y: pt.y - 50, width: 100, height: 100), animated: true)
+            let pt = tap.location(in: imageView)
+            zoom(to: CGRect(x: pt.x - 50, y: pt.y - 50, width: 100, height: 100), animated: true)
         }
     }
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? { imageView }
+
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        isScrollEnabled = zoomScale > 1.0
+        let ox = max((bounds.width - contentSize.width) / 2, 0)
+        let oy = max((bounds.height - contentSize.height) / 2, 0)
+        imageView.frame = CGRect(x: ox, y: oy, width: contentSize.width, height: contentSize.height)
+    }
+
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        isScrollEnabled = scale > 1.0
+    }
+}
+
+// MARK: - 视频 Cell
+
+class VideoCell: UIView {
+    private var playerLayer: AVPlayerLayer?
+    private var playerVC: AVPlayerViewController?
+
+    func attach(player: AVPlayer) {
+        // 用 AVPlayerViewController embed
+        guard playerVC == nil else {
+            playerVC?.player = player
+            return
+        }
+        let vc = AVPlayerViewController()
+        vc.player = player
+        vc.showsPlaybackControls = true
+        vc.view.frame = bounds
+        vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        vc.view.backgroundColor = .black
+        addSubview(vc.view)
+        playerVC = vc
+    }
+}
+
+// MARK: - 安全下标
+
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
 }
