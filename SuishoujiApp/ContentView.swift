@@ -13,6 +13,8 @@ struct ContentView: View {
     @State private var selectedTag: String? = nil
     @State private var isSearching = false
     @State private var showTagManager = false
+    @State private var randomNote: Note? = nil
+    @State private var showEmptyToast = false
     @FocusState private var searchFocused: Bool
     @ObservedObject private var tagStore = TagStore.shared
 
@@ -160,6 +162,12 @@ struct ContentView: View {
                                     selectedTag = selectedTag == tag ? nil : tag
                                 }
                             }
+                            Button(action: { showTagManager = true }) {
+                                Image(systemName: "plus.circle")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(Color(red: 0.55, green: 0.22, blue: 0.83).opacity(0.8))
+                                    .padding(.horizontal, 4)
+                            }
                         }
                         .padding(.horizontal)
                     }
@@ -220,20 +228,47 @@ struct ContentView: View {
                 .padding(.bottom, 20)
             }
             .navigationTitle("随手记")
-            .scrollDismissesKeyboard(.immediately)
-            .task { restoreMissingVideos() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { showTagManager = true }) {
-                        Image(systemName: "tag")
-                            .foregroundStyle(Color(red: 0.55, green: 0.22, blue: 0.83))
+                    Button(action: {
+                        if notes.isEmpty {
+                            withAnimation { showEmptyToast = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation { showEmptyToast = false }
+                            }
+                        } else {
+                            randomNote = notes.randomElement()
+                        }
+                    }) {
+                        Image(systemName: "dice")
+                            .foregroundStyle(notes.isEmpty
+                                ? Color(.systemGray3)
+                                : Color(red: 0.55, green: 0.22, blue: 0.83))
                     }
                 }
             }
+            .sheet(item: $randomNote) { note in
+                RandomNoteView(note: note)
+            }
+            .scrollDismissesKeyboard(.immediately)
+            .task { restoreMissingVideos() }
+
             .sheet(isPresented: $showTagManager) {
                 TagManagerView()
             }
             .navigationBarTitleDisplayMode(.large)
+            .overlay(alignment: .bottom) {
+                if showEmptyToast {
+                    Text("还没有记录，先写几条吧～")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Color(.darkGray).opacity(0.85), in: Capsule())
+                        .padding(.bottom, 40)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
         }
         .sheet(isPresented: $showCamera) {
             CameraView { photoData, additionalPhotoData, type, text, locationName, latitude, longitude, assetIdentifiers, tags, videoPaths, videoDurations, videoAssetIds in
