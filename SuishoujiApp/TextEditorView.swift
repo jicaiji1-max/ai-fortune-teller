@@ -74,10 +74,15 @@ struct TextEditorView: View {
                     .focused($isFocused)
                     .font(.body)
                     .padding()
-
-                Divider().padding(.horizontal)
-                TagSelectorView(selectedTags: $selectedTags)
-                    .padding(.vertical, 8)
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                VStack(spacing: 0) {
+                    Divider()
+                    TagSelectorView(selectedTags: $selectedTags)
+                        .padding(.vertical, 8)
+                }
+                .background(.regularMaterial)
+                .zIndex(100)
             }
             .navigationTitle(existingNote == nil ? "写字" : "编辑")
             .navigationBarTitleDisplayMode(.inline)
@@ -95,10 +100,6 @@ struct TextEditorView: View {
                     Button("保存") { save() }
                         .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         .fontWeight(.semibold)
-                }
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("完成") { isFocused = false }
                 }
             }
         }
